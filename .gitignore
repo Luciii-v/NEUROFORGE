@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+
+# Local secrets and environment files
+.env
+.env.*
+.streamlit/secrets.toml
+.agents/
+.claude/
+AGENTS.md
+neuroforge_state.mds
+
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Local datasets and extracted uploads
+custom_data/
+data/
+*.zip
+
+# Generated transient files
+candidate_config.json
+*.log

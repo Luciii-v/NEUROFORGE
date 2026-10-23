@@ -1,0 +1,6035 @@
+[
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C01",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 61.29032258064516,
+    "precision": 65.00627994537354,
+    "recall": 58.65126848220825,
+    "f1": 56.68327808380127,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        13,
+        3,
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        17,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        9,
+        1,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        3,
+        17,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        6,
+        0,
+        8,
+        2,
+        2,
+        7,
+        3,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 94857,
+    "training_time_seconds": 11.706092119216919,
+    "inference_latency_seconds": 0.25266313552856445,
+    "inference_latency_per_sample_seconds": 0.0013584039544546477,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "9bc9edb2ed50856a",
+    "score": 60.606501177328624,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C02",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 57.52688172043011,
+    "precision": 58.79926085472107,
+    "recall": 54.44133281707764,
+    "f1": 52.89754271507263,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        25,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        12,
+        2,
+        0,
+        0,
+        1,
+        8,
+        0
+      ],
+      [
+        0,
+        2,
+        3,
+        14,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        10,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        4,
+        16,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        4,
+        2,
+        1,
+        9,
+        4,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        5,
+        13
+      ]
+    ],
+    "parameters": 245321,
+    "training_time_seconds": 12.357304096221924,
+    "inference_latency_seconds": 0.2677271366119385,
+    "inference_latency_per_sample_seconds": 0.0014393932075910671,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "2b682fe945d7f199",
+    "score": 56.0669144816365,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C03",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "GELU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 62.365591397849464,
+    "precision": 64.74237442016602,
+    "recall": 59.82449650764465,
+    "f1": 58.47705006599426,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        13,
+        2,
+        0,
+        0,
+        1,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        17,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        7,
+        1,
+        0,
+        6,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        3,
+        18,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        5,
+        0,
+        7,
+        2,
+        2,
+        8,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 94857,
+    "training_time_seconds": 11.323376893997192,
+    "inference_latency_seconds": 0.2434999942779541,
+    "inference_latency_per_sample_seconds": 0.0013091397541825488,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f23762e52409e9b9",
+    "score": 61.56745377845379,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C04",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        16,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 52.1505376344086,
+    "precision": 57.87608623504639,
+    "recall": 50.74112415313721,
+    "f1": 47.93603718280792,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        22,
+        1,
+        3,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        12,
+        4,
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        18,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        8,
+        1,
+        2,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        1,
+        8,
+        11,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        10,
+        1,
+        2,
+        5,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        11
+      ]
+    ],
+    "parameters": 85161,
+    "training_time_seconds": 11.370627880096436,
+    "inference_latency_seconds": 0.2510700225830078,
+    "inference_latency_per_sample_seconds": 0.00134983883109144,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "5c931b19bfde783d",
+    "score": 52.0974297659787,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C05",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 55.376344086021504,
+    "precision": 54.09247875213623,
+    "recall": 53.09317111968994,
+    "f1": 49.07325208187103,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        13,
+        3,
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        3,
+        3,
+        14,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        9,
+        1,
+        0,
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        3,
+        18,
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        6,
+        1,
+        9,
+        1,
+        3,
+        1,
+        6,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 25593,
+    "training_time_seconds": 11.388226985931396,
+    "inference_latency_seconds": 0.24997878074645996,
+    "inference_latency_per_sample_seconds": 0.0013439719394970967,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "065180eb5511bee6",
+    "score": 53.00445995735534,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C06",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 72.04301075268818,
+    "precision": 69.69964504241943,
+    "recall": 66.89168214797974,
+    "f1": 66.86861515045166,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        16,
+        2,
+        0,
+        0,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        6,
+        0,
+        0,
+        5,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        2,
+        20,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        20,
+        2,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 245321,
+    "training_time_seconds": 12.319196939468384,
+    "inference_latency_seconds": 0.25768423080444336,
+    "inference_latency_per_sample_seconds": 0.0013853990903464697,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f1ce96a4a94225d2",
+    "score": 69.52098973541538,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C07",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 61.29032258064516,
+    "precision": 60.2699339389801,
+    "recall": 57.997339963912964,
+    "f1": 55.203574895858765,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        26,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        15,
+        3,
+        0,
+        0,
+        1,
+        4,
+        0
+      ],
+      [
+        0,
+        3,
+        3,
+        15,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        8,
+        1,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        0,
+        1,
+        19,
+        1,
+        0,
+        1
+      ],
+      [
+        2,
+        6,
+        0,
+        6,
+        2,
+        1,
+        7,
+        3,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        13
+      ]
+    ],
+    "parameters": 58361,
+    "training_time_seconds": 11.692362070083618,
+    "inference_latency_seconds": 0.2511129379272461,
+    "inference_latency_per_sample_seconds": 0.001350069558748635,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "59bc108456e8dd0e",
+    "score": 59.01583315891811,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G01-C08",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 61.82795698924731,
+    "precision": 62.98147439956665,
+    "recall": 56.096673011779785,
+    "f1": 55.27358651161194,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        14,
+        2,
+        0,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        8,
+        1,
+        1,
+        3,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        3,
+        17,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        5,
+        0,
+        6,
+        1,
+        3,
+        11,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        11
+      ]
+    ],
+    "parameters": 39561,
+    "training_time_seconds": 11.710659742355347,
+    "inference_latency_seconds": 0.24595379829406738,
+    "inference_latency_per_sample_seconds": 0.0013223322488928354,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "ac3ea4d787d5444b",
+    "score": 59.97823097364726,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C01",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 72.04301075268818,
+    "precision": 69.69964504241943,
+    "recall": 66.89168214797974,
+    "f1": 66.86861515045166,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        16,
+        2,
+        0,
+        0,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        6,
+        0,
+        0,
+        5,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        2,
+        20,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        20,
+        2,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 245321,
+    "training_time_seconds": 12.328008890151978,
+    "inference_latency_seconds": 0.2587161064147949,
+    "inference_latency_per_sample_seconds": 0.0013909468086816931,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f1ce96a4a94225d2",
+    "score": 69.52043496358186,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C02",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 67.74193548387096,
+    "precision": 65.34571647644043,
+    "recall": 62.77734041213989,
+    "f1": 61.39335632324219,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        15,
+        3,
+        0,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        17,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        7,
+        0,
+        0,
+        3,
+        2,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        1,
+        21,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        5,
+        1,
+        2,
+        15,
+        1,
+        5
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 258697,
+    "training_time_seconds": 12.45232892036438,
+    "inference_latency_seconds": 0.25762510299682617,
+    "inference_latency_per_sample_seconds": 0.0013850811989076675,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "539fcf2f27af89f4",
+    "score": 64.84110186393393,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C03",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 55.376344086021504,
+    "precision": 66.14582538604736,
+    "recall": 56.96694254875183,
+    "f1": 47.40687608718872,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        18,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        1,
+        4,
+        12,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        2,
+        4,
+        1,
+        1,
+        1,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        2,
+        0,
+        21,
+        0,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        6,
+        5,
+        0,
+        8,
+        2,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        7
+      ]
+    ],
+    "parameters": 130313,
+    "training_time_seconds": 12.962277173995972,
+    "inference_latency_seconds": 0.27532196044921875,
+    "inference_latency_per_sample_seconds": 0.0014802255938130041,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "6c82ffc1cbacc2e1",
+    "score": 55.39953845199683,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C04",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 65.05376344086021,
+    "precision": 65.50509929656982,
+    "recall": 61.33376955986023,
+    "f1": 60.30021905899048,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        13,
+        2,
+        0,
+        0,
+        1,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        3,
+        16,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        7,
+        1,
+        0,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        1,
+        0,
+        2,
+        19,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        3,
+        0,
+        4,
+        2,
+        2,
+        12,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        16
+      ]
+    ],
+    "parameters": 225929,
+    "training_time_seconds": 11.818449020385742,
+    "inference_latency_seconds": 0.25582218170166016,
+    "inference_latency_per_sample_seconds": 0.0013753880736648396,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "19a0a3cb87eb700d",
+    "score": 63.37706628286021,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C05",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C01",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        32,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 55.91397849462365,
+    "precision": 62.24687099456787,
+    "recall": 51.88973546028137,
+    "f1": 50.34188628196716,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        25,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        13,
+        2,
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        2,
+        1,
+        17,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        9,
+        1,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        1,
+        3,
+        16,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        9,
+        2,
+        2,
+        2,
+        6,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        13
+      ]
+    ],
+    "parameters": 39369,
+    "training_time_seconds": 11.834799766540527,
+    "inference_latency_seconds": 0.2515699863433838,
+    "inference_latency_per_sample_seconds": 0.0013525268082977622,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f8528cae7175f329",
+    "score": 55.65095227498298,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C06",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        32,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 59.67741935483871,
+    "precision": 59.79292392730713,
+    "recall": 55.717283487319946,
+    "f1": 53.80343198776245,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        14,
+        2,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        3,
+        16,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        10,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        4,
+        17,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        6,
+        1,
+        4,
+        2,
+        2,
+        12,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        5,
+        10
+      ]
+    ],
+    "parameters": 48681,
+    "training_time_seconds": 11.651362657546997,
+    "inference_latency_seconds": 0.25032711029052734,
+    "inference_latency_per_sample_seconds": 0.0013458446789813298,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "5bce9754a2c8322b",
+    "score": 57.7608338199348,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C07",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 5,
+        "to": 3
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 60.215053763440864,
+    "precision": 62.05456852912903,
+    "recall": 55.64281344413757,
+    "f1": 54.650044441223145,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        26,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        14,
+        2,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        7,
+        1,
+        0,
+        6,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        6,
+        14,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        6,
+        1,
+        5,
+        4,
+        0,
+        8,
+        2,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        11
+      ]
+    ],
+    "parameters": 31161,
+    "training_time_seconds": 11.829864025115967,
+    "inference_latency_seconds": 0.2503528594970703,
+    "inference_latency_per_sample_seconds": 0.0013459831155756467,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "da708a15dcf9156b",
+    "score": 58.83967034664002,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G02-C08",
+    "generation": 2,
+    "parent_id": "20261022T111838Z-G01-C08",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 2,
+        "to": 3
+      },
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 128
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.1
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 67.20430107526882,
+    "precision": 70.10581493377686,
+    "recall": 65.7990038394928,
+    "f1": 62.09028363227844,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        2
+      ],
+      [
+        0,
+        22,
+        0,
+        1,
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        6,
+        0,
+        0,
+        0,
+        8,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        13,
+        0,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        3,
+        6,
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        22,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        26,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 103561,
+    "training_time_seconds": 10.802553176879883,
+    "inference_latency_seconds": 0.2630808353424072,
+    "inference_latency_per_sample_seconds": 0.0014144130932387485,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "709b64df076a4247",
+    "score": 66.15047199767484,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C01",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 72.04301075268818,
+    "precision": 69.69964504241943,
+    "recall": 66.89168214797974,
+    "f1": 66.86861515045166,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        16,
+        2,
+        0,
+        0,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        6,
+        0,
+        0,
+        5,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        2,
+        20,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        20,
+        2,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 245321,
+    "training_time_seconds": 12.488329887390137,
+    "inference_latency_seconds": 0.2574589252471924,
+    "inference_latency_per_sample_seconds": 0.0013841877701461956,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f1ce96a4a94225d2",
+    "score": 69.52111086743541,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C02",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C04",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      },
+      {
+        "field": "kernel_sizes[3]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        32,
+        64,
+        128,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 63.97849462365591,
+    "precision": 69.16517615318298,
+    "recall": 59.95239615440369,
+    "f1": 57.760679721832275,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        21,
+        0,
+        0,
+        0,
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        14,
+        3,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        0,
+        2,
+        6,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        23,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        6,
+        1,
+        4,
+        0,
+        1,
+        9,
+        4,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 327561,
+    "training_time_seconds": 12.072948932647705,
+    "inference_latency_seconds": 0.2658412456512451,
+    "inference_latency_per_sample_seconds": 0.0014292540088776619,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "c51aba9c0f5451be",
+    "score": 62.93933413460282,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C03",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 128
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.1
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 74.19354838709677,
+    "precision": 71.6447114944458,
+    "recall": 69.52935457229614,
+    "f1": 68.10415983200073,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        17,
+        1,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        14,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        2,
+        6,
+        1,
+        0,
+        3,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        21,
+        1,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        26,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        4,
+        17
+      ]
+    ],
+    "parameters": 284105,
+    "training_time_seconds": 11.09480333328247,
+    "inference_latency_seconds": 0.2735781669616699,
+    "inference_latency_per_sample_seconds": 0.001470850360008978,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "44054ed071b9bd38",
+    "score": 71.29833256140431,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C04",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 128
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 5,
+        "to": 3
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.0
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 74.19354838709677,
+    "precision": 72.21605777740479,
+    "recall": 71.9878613948822,
+    "f1": 68.80390048027039,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        20,
+        0,
+        1,
+        2,
+        2,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        17,
+        1,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        15,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        4,
+        2,
+        0,
+        1,
+        3,
+        4,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        3,
+        22,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        17
+      ]
+    ],
+    "parameters": 153033,
+    "training_time_seconds": 11.303149223327637,
+    "inference_latency_seconds": 0.26787900924682617,
+    "inference_latency_per_sample_seconds": 0.0014402097271334741,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "4d0a88d9967a2cf9",
+    "score": 71.7852273899125,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C05",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "SiLU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "SiLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 70.96774193548387,
+    "precision": 72.94282913208008,
+    "recall": 66.57627820968628,
+    "f1": 67.02372431755066,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        12,
+        2,
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        0,
+        7,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        21,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        1,
+        3,
+        18,
+        5,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 142153,
+    "training_time_seconds": 12.23264217376709,
+    "inference_latency_seconds": 0.26149916648864746,
+    "inference_latency_per_sample_seconds": 0.0014059094972507927,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "da7bbe91942c153b",
+    "score": 69.99556449952789,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C06",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        32,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 54.3010752688172,
+    "precision": 59.543776512145996,
+    "recall": 50.34402012825012,
+    "f1": 48.665449023246765,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        24,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        11,
+        4,
+        0,
+        0,
+        0,
+        7,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        18,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        8,
+        1,
+        1,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        4,
+        16,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        9,
+        2,
+        2,
+        4,
+        4,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        10
+      ]
+    ],
+    "parameters": 20169,
+    "training_time_seconds": 11.828612804412842,
+    "inference_latency_seconds": 0.2458481788635254,
+    "inference_latency_per_sample_seconds": 0.001321764402492072,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "e446a9d0cdeab3aa",
+    "score": 53.76871726572906,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C07",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C02",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 60.215053763440864,
+    "precision": 61.40300631523132,
+    "recall": 56.87309503555298,
+    "f1": 54.1729211807251,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        13,
+        2,
+        0,
+        0,
+        1,
+        8,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        6,
+        0,
+        1,
+        2,
+        4,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        1,
+        2,
+        19,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        6,
+        2,
+        3,
+        7,
+        4,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        12
+      ]
+    ],
+    "parameters": 103945,
+    "training_time_seconds": 12.816324949264526,
+    "inference_latency_seconds": 0.25622081756591797,
+    "inference_latency_per_sample_seconds": 0.0013775312772361182,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "dd703f52eca59475",
+    "score": 58.45770399885013,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G03-C08",
+    "generation": 3,
+    "parent_id": "20261022T111838Z-G02-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 55.376344086021504,
+    "precision": 62.840914726257324,
+    "recall": 57.43644833564758,
+    "f1": 52.61004567146301,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        20,
+        0,
+        1,
+        6,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        14,
+        2,
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        2,
+        3,
+        8,
+        1,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        0,
+        10,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        5,
+        19,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        4,
+        1,
+        8,
+        3,
+        4,
+        1,
+        6,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 34169,
+    "training_time_seconds": 12.027035236358643,
+    "inference_latency_seconds": 0.2573859691619873,
+    "inference_latency_per_sample_seconds": 0.001383795533128964,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "31ba60cb8adc192b",
+    "score": 56.24004866840002,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C01",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 74.19354838709677,
+    "precision": 72.21605777740479,
+    "recall": 71.9878613948822,
+    "f1": 68.80390048027039,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        20,
+        0,
+        1,
+        2,
+        2,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        17,
+        1,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        15,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        4,
+        2,
+        0,
+        1,
+        3,
+        4,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        3,
+        22,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        17
+      ]
+    ],
+    "parameters": 153033,
+    "training_time_seconds": 11.148094177246094,
+    "inference_latency_seconds": 0.27291226387023926,
+    "inference_latency_per_sample_seconds": 0.0014672702358615015,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "4d0a88d9967a2cf9",
+    "score": 71.7825213390397,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C02",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 58.602150537634415,
+    "precision": 62.49632239341736,
+    "recall": 56.07312321662903,
+    "f1": 54.95659112930298,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        13,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        12,
+        3,
+        0,
+        0,
+        0,
+        7,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        15,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        1,
+        5,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        4,
+        16,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        5,
+        1,
+        7,
+        4,
+        0,
+        7,
+        2,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 71177,
+    "training_time_seconds": 11.707952976226807,
+    "inference_latency_seconds": 0.2460339069366455,
+    "inference_latency_per_sample_seconds": 0.0013227629405195996,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "15ec4b698aa70d92",
+    "score": 58.27857238502876,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C03",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 74.73118279569893,
+    "precision": 69.9428915977478,
+    "recall": 67.88928508758545,
+    "f1": 67.15142130851746,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        16,
+        2,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        17,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        4,
+        1,
+        1,
+        2,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        3,
+        21,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        3,
+        25,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 75065,
+    "training_time_seconds": 11.15384316444397,
+    "inference_latency_seconds": 0.25905394554138184,
+    "inference_latency_per_sample_seconds": 0.0013927631480719453,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "05f2126d1f4808c0",
+    "score": 71.04584023524951,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C04",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      },
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "GELU"
+      },
+      {
+        "field": "dropout",
+        "from": 0.1,
+        "to": 0.3
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.3
+    },
+    "accuracy": 58.06451612903226,
+    "precision": 52.305346727371216,
+    "recall": 52.195143699645996,
+    "f1": 50.35750865936279,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        14,
+        8,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        16,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        2,
+        6,
+        0,
+        0,
+        5,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        3,
+        18,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        2,
+        0,
+        3,
+        21,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        9
+      ]
+    ],
+    "parameters": 103561,
+    "training_time_seconds": 11.445710182189941,
+    "inference_latency_seconds": 0.2668159008026123,
+    "inference_latency_per_sample_seconds": 0.0014344940903366252,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "1a412a0e776b30d1",
+    "score": 54.0656111286825,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C05",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        128,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 69.35483870967742,
+    "precision": 66.51608943939209,
+    "recall": 63.959801197052,
+    "f1": 63.21383714675903,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        24,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        16,
+        2,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        3,
+        16,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        5,
+        1,
+        2,
+        4,
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        3,
+        1,
+        0,
+        3,
+        17,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        1,
+        1,
+        2,
+        23,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        13
+      ]
+    ],
+    "parameters": 78345,
+    "training_time_seconds": 11.446364879608154,
+    "inference_latency_seconds": 0.269564151763916,
+    "inference_latency_per_sample_seconds": 0.0014492696331393335,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "e4f7de2be06be16d",
+    "score": 66.57957895991665,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C06",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      },
+      {
+        "field": "filters[3]",
+        "from": 32,
+        "to": 128
+      },
+      {
+        "field": "kernel_sizes[3]",
+        "from": 5,
+        "to": 3
+      },
+      {
+        "field": "dropout",
+        "from": 0.0,
+        "to": 0.2
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        128,
+        64,
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 73.11827956989248,
+    "precision": 75.03336668014526,
+    "recall": 71.17230892181396,
+    "f1": 67.7574872970581,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        16,
+        2,
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        16,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        5,
+        1,
+        0,
+        3,
+        4,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        0,
+        22,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        2,
+        22,
+        2,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        17
+      ]
+    ],
+    "parameters": 300873,
+    "training_time_seconds": 11.935640811920166,
+    "inference_latency_seconds": 0.28492212295532227,
+    "inference_latency_per_sample_seconds": 0.001531839370727539,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "0a3e7afc9e248092",
+    "score": 71.53475672853261,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C07",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 68.27956989247312,
+    "precision": 69.30199861526489,
+    "recall": 69.95541453361511,
+    "f1": 64.04893398284912,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        20,
+        0,
+        3,
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        14,
+        3,
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        17,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        7,
+        3,
+        0,
+        0,
+        3,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        3,
+        21,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        3,
+        20,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        14
+      ]
+    ],
+    "parameters": 114249,
+    "training_time_seconds": 12.322284936904907,
+    "inference_latency_seconds": 0.2555668354034424,
+    "inference_latency_per_sample_seconds": 0.001374015244104529,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "1ae4cbde999e5093",
+    "score": 67.0143357758734,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G04-C08",
+    "generation": 4,
+    "parent_id": "20261022T111838Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 74.73118279569893,
+    "precision": 76.0875940322876,
+    "recall": 75.10851621627808,
+    "f1": 69.82661485671997,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        21,
+        0,
+        3,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        15,
+        2,
+        0,
+        0,
+        1,
+        7,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        17,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        5,
+        4,
+        0,
+        1,
+        3,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        21,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        16
+      ]
+    ],
+    "parameters": 179785,
+    "training_time_seconds": 13.30884313583374,
+    "inference_latency_seconds": 0.2751500606536865,
+    "inference_latency_per_sample_seconds": 0.001479301401363906,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "2d4d694138986ae9",
+    "score": 73.27120008301601,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C01",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C08",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 74.73118279569893,
+    "precision": 76.0875940322876,
+    "recall": 75.10851621627808,
+    "f1": 69.82661485671997,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        21,
+        0,
+        3,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        15,
+        2,
+        0,
+        0,
+        1,
+        7,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        17,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        5,
+        4,
+        0,
+        1,
+        3,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        21,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        16
+      ]
+    ],
+    "parameters": 179785,
+    "training_time_seconds": 13.275197267532349,
+    "inference_latency_seconds": 0.2757749557495117,
+    "inference_latency_per_sample_seconds": 0.0014826610524167297,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "2d4d694138986ae9",
+    "score": 73.27086411791073,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C02",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C06",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 4,
+        "to": 3
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 72.04301075268818,
+    "precision": 68.07743310928345,
+    "recall": 66.0296380519867,
+    "f1": 65.7030463218689,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        15,
+        1,
+        0,
+        0,
+        2,
+        6,
+        0
+      ],
+      [
+        0,
+        2,
+        2,
+        16,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        7,
+        1,
+        0,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        2,
+        20,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        1,
+        3,
+        23,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        4,
+        16
+      ]
+    ],
+    "parameters": 75065,
+    "training_time_seconds": 11.618253946304321,
+    "inference_latency_seconds": 0.27196216583251953,
+    "inference_latency_per_sample_seconds": 0.0014621621818952664,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "3e4dffc5e833b23c",
+    "score": 68.9283457944017,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C03",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        16,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 65.59139784946237,
+    "precision": 63.544487953186035,
+    "recall": 61.21588349342346,
+    "f1": 59.155088663101196,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        16,
+        3,
+        0,
+        0,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        18,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        6,
+        1,
+        1,
+        3,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        2,
+        20,
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        1,
+        5,
+        1,
+        3,
+        14,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        11
+      ]
+    ],
+    "parameters": 55577,
+    "training_time_seconds": 11.916125297546387,
+    "inference_latency_seconds": 0.2407059669494629,
+    "inference_latency_per_sample_seconds": 0.0012941181018788328,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "f143301500a820dc",
+    "score": 62.96378880929705,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C04",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        16,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 70.43010752688173,
+    "precision": 70.99304795265198,
+    "recall": 68.20390224456787,
+    "f1": 66.03600978851318,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        25,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        15,
+        3,
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        19,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        2,
+        8,
+        0,
+        0,
+        4,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        3,
+        19,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        1,
+        0,
+        4,
+        15,
+        4,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        4,
+        17
+      ]
+    ],
+    "parameters": 35513,
+    "training_time_seconds": 11.375996351242065,
+    "inference_latency_seconds": 0.26699399948120117,
+    "inference_latency_per_sample_seconds": 0.0014354516101139849,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "7f6ec9d0b1a8631e",
+    "score": 69.07355515080233,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C05",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      },
+      {
+        "field": "pooling",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.1
+    },
+    "accuracy": 47.31182795698925,
+    "precision": 62.09061145782471,
+    "recall": 52.32210159301758,
+    "f1": 45.09742558002472,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        9,
+        0,
+        4,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        21,
+        0,
+        1,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        12,
+        0,
+        0,
+        0,
+        0,
+        11,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        2,
+        3,
+        0,
+        0,
+        14,
+        0
+      ],
+      [
+        1,
+        2,
+        0,
+        0,
+        6,
+        5,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        3,
+        20,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        1,
+        9,
+        4,
+        1,
+        13,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6,
+        13
+      ]
+    ],
+    "parameters": 17785,
+    "training_time_seconds": 14.413437843322754,
+    "inference_latency_seconds": 0.27857208251953125,
+    "inference_latency_per_sample_seconds": 0.0014976993683845767,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "a0c724519b8a6bcc",
+    "score": 50.174648182270296,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C06",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "kernel_sizes[0]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 68.81720430107528,
+    "precision": 70.44650912284851,
+    "recall": 65.66968560218811,
+    "f1": 63.494062423706055,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        15,
+        2,
+        0,
+        0,
+        1,
+        7,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        17,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        4,
+        4,
+        0,
+        1,
+        3,
+        2,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        2,
+        21,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        3,
+        20,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        11
+      ]
+    ],
+    "parameters": 158985,
+    "training_time_seconds": 13.0714750289917,
+    "inference_latency_seconds": 0.303253173828125,
+    "inference_latency_per_sample_seconds": 0.0016303934076780913,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "fbe2f8c5cb9c578c",
+    "score": 67.30556360254,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C07",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 68.27956989247312,
+    "precision": 71.54982686042786,
+    "recall": 70.1336145401001,
+    "f1": 64.97131586074829,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        17,
+        0,
+        4,
+        2,
+        3,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        16,
+        1,
+        0,
+        0,
+        0,
+        8,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        14,
+        0,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        4,
+        2,
+        0,
+        1,
+        3,
+        4,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        24,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        19,
+        7,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        15
+      ]
+    ],
+    "parameters": 127625,
+    "training_time_seconds": 12.724270105361938,
+    "inference_latency_seconds": 0.2551722526550293,
+    "inference_latency_per_sample_seconds": 0.001371893831478652,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "3cd311b96e9f7749",
+    "score": 67.83984354179648,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261022T111838Z",
+    "candidate_id": "20261022T111838Z-G05-C08",
+    "generation": 5,
+    "parent_id": "20261022T111838Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        64,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 75.26881720430107,
+    "precision": 76.7544150352478,
+    "recall": 75.74217319488525,
+    "f1": 71.24972939491272,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        14,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        24,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        14,
+        3,
+        0,
+        0,
+        1,
+        7,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        16,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        5,
+        0,
+        1,
+        4,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        22,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        24,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        18
+      ]
+    ],
+    "parameters": 115401,
+    "training_time_seconds": 11.518496990203857,
+    "inference_latency_seconds": 0.27671122550964355,
+    "inference_latency_per_sample_seconds": 0.0014876947608045352,
+    "num_classes": 9,
+    "seed": 42,
+    "config_hash": "1a8f01b8359f5599",
+    "score": 74.17031984314079,
+    "status": "evaluated",
+    "rank": 1
+  }
+]

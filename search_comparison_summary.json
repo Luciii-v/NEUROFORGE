@@ -1,0 +1,52 @@
+{
+  "run_id": "20261021T084333Z",
+  "candidate_count": 12,
+  "manual_baseline": {
+    "accuracy": 44.623655913978496,
+    "precision": 41.25014841556549,
+    "recall": 43.53365898132324,
+    "f1": 37.35811710357666,
+    "parameters": 20169,
+    "score": 41.39270812159977
+  },
+  "selected_candidate": "20261021T084333Z-G03-C02",
+  "selected_metrics": {
+    "accuracy": 72.58064516129032,
+    "precision": 73.37158918380737,
+    "recall": 73.9020586013794,
+    "f1": 68.88677477836609,
+    "parameters": 127625,
+    "score": 71.2962590533841
+  },
+  "comparison": {
+    "accuracy_delta": 27.956989247311824,
+    "precision_delta": 32.12144076824188,
+    "recall_delta": 30.368399620056152,
+    "f1_delta": 31.52865767478943,
+    "parameter_delta": 107456
+  },
+  "selected_config": {
+    "num_layers": 3,
+    "filters": [
+      32,
+      64,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      5,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.0
+  },
+  "final_generated_model": {
+    "accuracy": 85.39325842696628,
+    "precision": 78.42112183570862,
+    "recall": 75.33097267150879,
+    "f1": 76.22325420379639,
+    "sample_count": 89
+  }
+}

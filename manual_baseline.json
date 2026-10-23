@@ -1,0 +1,134 @@
+{
+  "model_type": "manual_baseline",
+  "config": {
+    "num_layers": 2,
+    "filters": [
+      32,
+      64
+    ],
+    "kernel_sizes": [
+      3,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "ReLU",
+    "pooling": true,
+    "dropout": 0.2
+  },
+  "accuracy": 54.3010752688172,
+  "precision": 59.543776512145996,
+  "recall": 50.34402012825012,
+  "f1": 48.665449023246765,
+  "metric_average": "macro",
+  "metric_scale": "percent",
+  "confusion_matrix": [
+    [
+      14,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      24,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      11,
+      4,
+      0,
+      0,
+      0,
+      7,
+      1
+    ],
+    [
+      0,
+      1,
+      1,
+      18,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      8,
+      1,
+      1,
+      4,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      3,
+      0,
+      1,
+      4,
+      16,
+      0,
+      2,
+      0
+    ],
+    [
+      1,
+      6,
+      0,
+      9,
+      2,
+      2,
+      4,
+      4,
+      2
+    ],
+    [
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      6,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      5,
+      10
+    ]
+  ],
+  "parameters": 20169,
+  "training_time_seconds": 12.002943992614746,
+  "inference_latency_seconds": 0.2585122585296631,
+  "inference_latency_per_sample_seconds": 0.0013898508523100166,
+  "num_classes": 9,
+  "seed": 42,
+  "config_hash": "e446a9d0cdeab3aa",
+  "score": 53.76190862074727,
+  "status": "evaluated"
+}
