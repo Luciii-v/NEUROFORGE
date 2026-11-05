@@ -57,6 +57,34 @@ def register_dataset(path, metadata):
     st.session_state["use_tl_for_inference"] = False
 
 
+def saved_model_matches_active_state(metadata):
+    """Return whether the saved checkpoint belongs to the active design and dataset."""
+    if not WEIGHTS_PATH.exists():
+        return False
+    if metadata.get("training_mode") not in {"dynamic_cnn", "transfer_learning_resnet18"}:
+        return False
+    if not metadata.get("training_complete") or not metadata.get("held_out_test_metrics"):
+        return False
+    current_config = load_json(CONFIG_PATH)
+    saved_config_hash = metadata.get("config_hash")
+    if not current_config or not saved_config_hash:
+        return False
+    if neuroforge_core.config_hash(current_config) != saved_config_hash:
+        return False
+
+    active_dataset = st.session_state.get("dataset_metadata") or {}
+    saved_dataset = metadata.get("dataset") or {}
+    active_root = active_dataset.get("dataset_root")
+    saved_root = saved_dataset.get("dataset_root")
+    if active_root and saved_root:
+        try:
+            if Path(active_root).expanduser().resolve() != Path(saved_root).expanduser().resolve():
+                return False
+        except OSError:
+            return False
+    return True
+
+
 def render_lineage_board(search_result):
     """Render the model family tree as a presentation-friendly native UI board."""
     history = search_result.get("history", [])
@@ -81,9 +109,9 @@ def render_lineage_board(search_result):
 
     with st.container(border=True):
         st.subheader("Model lineage", icon=":material/account_tree:")
-        st.caption("The strongest candidates become parents. Their characteristics are mutated into the next generation.")
+        st.caption("Strong candidates become parents. Their architecture traits are mutated into the next generation.")
 
-        st.markdown("**Generation 1 · Candidate population**", text_alignment="center")
+        st.markdown("**Generation 1 · Candidate models**", text_alignment="center")
         first_columns = st.columns(min(4, len(generation_one)))
         for column, item in zip(first_columns, generation_one):
             with column:
@@ -109,9 +137,13 @@ def render_lineage_board(search_result):
                 with st.container(border=True):
                     st.markdown(f"**{item['candidate_id'].split('-')[-1]}**")
                     st.caption(f"Parent {item['parent_id'].split('-')[-1] if item.get('parent_id') else '—'}")
+                    operations = item.get("mutation_operations", [])
+                    if operations:
+                        changed = ", ".join(operation.get("field", "trait") for operation in operations[:2])
+                        st.caption(f"Mutation · {changed}")
                     st.caption(f"Accuracy {item['accuracy']:.1f}% · F1 {item['f1']:.1f}%")
 
-        st.markdown(":material/arrow_downward: **Selection continues until the final architecture emerges**", text_alignment="center")
+        st.markdown(":material/arrow_downward: **Selection continues until the final model design emerges**", text_alignment="center")
         with st.container(border=True):
             st.badge("Final selected architecture", icon=":material/emoji_events:", color="green")
             final_columns = st.columns(4)
@@ -122,7 +154,7 @@ def render_lineage_board(search_result):
             with final_columns[2]:
                 st.metric("Macro F1", f"{final_result['f1']:.1f}%")
             with final_columns[3]:
-                st.metric("Architecture", f"{final_result['config']['num_layers']} layers")
+                st.metric("Model design", f"{final_result['config']['num_layers']} layers")
             st.caption(
                 f"{final_result['config']['activation']} activation · "
                 f"filters {final_result['config']['filters']} · "
@@ -134,11 +166,6 @@ persisted_search = load_saved_search_result()
 persisted_metadata = load_json(METADATA_PATH) or {}
 if "search_result" not in st.session_state and persisted_search:
     st.session_state["search_result"] = persisted_search
-if "model_trained" not in st.session_state:
-    st.session_state["model_trained"] = (
-        WEIGHTS_PATH.exists()
-        and persisted_metadata.get("training_mode") in {"dynamic_cnn", "transfer_learning_resnet18"}
-    )
 if "use_tl_for_inference" not in st.session_state:
     st.session_state["use_tl_for_inference"] = persisted_metadata.get("training_mode") == "transfer_learning_resnet18"
 if "dataset_metadata" not in st.session_state and persisted_metadata.get("dataset"):
@@ -158,9 +185,15 @@ if st.session_state.get("dataset_dir"):
         st.session_state["dataset_classes"] = refreshed_dataset.get("num_classes")
         st.session_state["class_names"] = refreshed_dataset.get("class_names", [])
 
+saved_model_current = saved_model_matches_active_state(persisted_metadata)
+if "model_trained" not in st.session_state or (not st.session_state["model_trained"] and saved_model_current):
+    st.session_state["model_trained"] = saved_model_current
+if not saved_model_current and not st.session_state.get("model_trained", False):
+    st.session_state.pop("artifact_metadata", None)
+
 st.set_page_config(
     page_title="NEUROFORGE",
-    page_icon=":material/memory:",
+    page_icon=":material/analytics:",
     layout="wide"
 )
 
@@ -175,13 +208,13 @@ if "intro_seen" not in st.session_state:
             <div class="nf-splash-orbit nf-splash-orbit-two"></div>
             <div class="nf-splash-core"></div>
             <div class="nf-splash-content">
-                <div class="nf-splash-kicker">NEURAL ARCHITECTURE // DISCOVERY SYSTEM</div>
+                <div class="nf-splash-kicker">MODEL DEVELOPMENT STUDIO // IMAGE + AUDIO</div>
                 <div class="nf-splash-wordmark" aria-label="NEUROFORGE">
                     <span>N</span><span>E</span><span>U</span><span>R</span><span>O</span><span>F</span><span>O</span><span>R</span><span>G</span><span>E</span>
                 </div>
                 <div class="nf-splash-tagline"><span>BUILD</span><b>·</b><span>MUTATE</span><b>·</b><span>SHIP</span></div>
                 <div class="nf-splash-progress"><span></span></div>
-                <div class="nf-splash-status">INITIALIZING THE FORGE <i>///</i></div>
+                <div class="nf-splash-status">LOADING THE WORKSPACE <i>///</i></div>
             </div>
         </div>
         <style>
@@ -409,20 +442,20 @@ st.html(
 
 # Sidebar system status
 with st.sidebar:
-    st.title("NEUROFORGE", icon=":material/auto_awesome:")
-    st.caption("Generative ML studio · v0.2 MVP")
+    st.title("NEUROFORGE", icon=":material/analytics:")
+    st.caption("Evolutionary model studio · image + audio")
     st.space("large")
-    st.subheader("System status", icon=":material/memory:")
+    st.subheader("Workspace status", icon=":material/monitor_heart:")
     st.badge("Engine online", icon=":material/check_circle:", color="green")
     st.badge(f"Device · {str(neuroforge_core.device).upper()}", icon=":material/developer_board:", color="blue")
     st.badge(
-        "Final model ready" if st.session_state.get("model_trained") else "Awaiting training",
+        "Model ready" if st.session_state.get("model_trained") else "Awaiting training",
         icon=":material/model_training:",
         color="green" if st.session_state.get("model_trained") else "orange",
     )
     st.space("medium")
-    st.caption("Pipeline")
-    st.markdown(":green-badge[1 · Load]  →  :blue-badge[2 · Mutate]  →  :violet-badge[3 · Ship]")
+    st.caption("Workflow")
+    st.markdown(":green-badge[1 · Build]  →  :blue-badge[2 · Mutate]  →  :violet-badge[3 · Ship]")
     st.space("large")
     st.caption("Current workspace")
     dataset_metadata = st.session_state.get("dataset_metadata") or {}
@@ -431,21 +464,22 @@ with st.sidebar:
         st.caption(f"{dataset_metadata['num_classes']} classes · {dataset_metadata.get('num_samples', '—')} samples")
 
 
-final_test_metrics = persisted_metadata.get("held_out_test_metrics", {})
+final_test_metrics = persisted_metadata.get("held_out_test_metrics", {}) if saved_model_current else {}
 dataset_snapshot = persisted_metadata.get("dataset", {})
 dataset_label = dataset_snapshot.get("format", "image classification").replace("_", " ").upper()
+modality_label = dataset_snapshot.get("modality", "image").upper()
 run_label = persisted_metadata.get("run_id", "NO ACTIVE RUN")
 has_dataset = bool(st.session_state.get("dataset_metadata") or dataset_snapshot)
 has_search = bool(st.session_state.get("search_result"))
 has_model = bool(st.session_state.get("model_trained"))
 initial_search_count = len(st.session_state.get("search_result", {}).get("history", [])) if st.session_state.get("search_result") else 0
 active_pipeline_stage = 4 if has_model else 3 if has_search else 2 if has_dataset else 1
-pipeline_status = "SHIP READY" if has_model else "SEARCH COMPLETE" if has_search else "DATA LOADED" if has_dataset else "AWAITING DATA"
+pipeline_status = "SHIP READY" if has_model else "MUTATION COMPLETE" if has_search else "DATA LOADED" if has_dataset else "AWAITING DATA"
 rail_steps = [
-    ("01", "LOAD DATA", "Images now · audio next"),
-    ("02", "GENERATE", "Build a model population"),
-    ("03", "MUTATE", "Keep strong traits · evolve"),
-    ("04", "SHIP MVP", "Train · test · download"),
+        ("01", "BUILD", "Create a candidate population"),
+        ("02", "MUTATE", "Change strong architecture traits"),
+        ("03", "SELECT", "Track parents and lineage"),
+        ("04", "SHIP", "Train · test · export"),
 ]
 rail_track_html = ""
 for index, (number, title, copy) in enumerate(rail_steps, start=1):
@@ -462,10 +496,10 @@ for index, (number, title, copy) in enumerate(rail_steps, start=1):
 st.html(
     """
     <section class="nf-dashboard-hero">
-        <div class="nf-hero-signal"><span></span> NEUROFORGE // FORGE CONTROL <b>● __PIPELINE_STATUS__</b></div>
+        <div class="nf-hero-signal"><span></span> NEUROFORGE // EVOLUTIONARY MODEL STUDIO <b>● __PIPELINE_STATUS__</b></div>
         <div class="nf-hero-title"><span>BUILD.</span> <span>MUTATE.</span> <em>SHIP.</em></div>
-        <div class="nf-hero-copy">A generative ML studio that turns data into a measured, evolvable model MVP.</div>
-        <div class="nf-hero-meta"><span>DATASET // __DATASET__</span><span>RUN // __RUN__</span><span>ENGINE // MPS READY</span></div>
+        <div class="nf-hero-copy">An evolutionary model studio that generates candidates, mutates strong traits, and ships the measured winner.</div>
+        <div class="nf-hero-meta"><span>MODALITY // __MODALITY__</span><span>DATASET // __DATASET__</span><span>RUN // __RUN__</span><span>ENGINE // MPS READY</span></div>
         <div class="nf-hero-beam"></div>
         <div class="nf-hero-visual" aria-hidden="true">
             <div class="nf-hero-visual-grid"></div>
@@ -547,22 +581,23 @@ st.html(
          }
          @media (prefers-reduced-motion: reduce) { .nf-hero-orbit, .nf-hero-core { animation: none !important; } }
      </style>
-     """.replace("__DATASET__", dataset_label).replace("__RUN__", run_label).replace("__PIPELINE_STATUS__", pipeline_status),
+     """.replace("__MODALITY__", modality_label).replace("__DATASET__", dataset_label).replace("__RUN__", run_label).replace("__PIPELINE_STATUS__", pipeline_status),
     width="stretch",
 )
 with st.container(horizontal=True):
     top_accuracy_metric = st.empty()
     top_accuracy_metric.metric("Final test accuracy", f"{final_test_metrics.get('accuracy', 0):.2f}%" if final_test_metrics else "—", border=True)
     top_f1_metric = st.empty()
-    top_f1_metric.metric("Macro F1", f"{final_test_metrics.get('f1', 0):.2f}%" if final_test_metrics else "—", border=True)
+    top_f1_value = final_test_metrics.get("f1_present_classes", final_test_metrics.get("f1", 0))
+    top_f1_metric.metric("Macro F1", f"{top_f1_value:.2f}%" if final_test_metrics else "—", border=True)
     models_searched_metric = st.empty()
     models_searched_metric.metric("Models searched", str(initial_search_count) if initial_search_count else "—", border=True)
     st.metric("Classes", str(dataset_snapshot.get("num_classes", "—")), border=True)
 
 st.html(
     """
-    <section class="nf-forge-rail">
-        <div class="nf-rail-header"><span>THE NEUROFORGE LOOP</span><b>LIVE PIPELINE</b></div>
+        <section class="nf-forge-rail">
+        <div class="nf-rail-header"><span>THE NEUROFORGE LOOP</span><b>LIVE EVOLUTION</b></div>
         <div class="nf-rail-track">
             __RAIL_TRACK__
         </div>
@@ -599,72 +634,68 @@ st.html(
 st.space("small")
 
 # Create tabs for the product flow.
-tab1, tab2, tab3, tab4 = st.tabs(["Dataset", "Search lab", "Final model", "Live test"])
+tab1, tab2, tab3, tab4 = st.tabs(["Data", "Mutation lab", "Results & export", "Try a sample"])
 
 with tab1:
     with st.container(border=True):
-        st.header("Upload Dataset", icon=":material/cloud_upload:")
+        st.header("Connect your data", icon=":material/database:")
         
         data_type = st.pills(
             "Select modality",
-            options=["Images", "Audio (coming soon)"],
+            options=["Images", "Audio"],
             default="Images",
         )
-        
-        st.caption("Use class folders (ImageFolder) or a Roboflow export containing train/valid/test folders with _classes.csv.")
-        
-        if data_type != "Images":
-            st.info("Audio is part of the NEUROFORGE roadmap. The current MVP supports image classification with ImageFolder and Roboflow exports.", icon=":material/graphic_eq:")
+        if data_type == "Images":
+            st.caption("Use class folders, Roboflow train/valid/test exports, or a ZIP containing either format.")
+        else:
+            st.caption("Use WAV files arranged as class folders, ESC-50, or UrbanSound8K exports.")
+        with st.expander("Recommended public starters", icon=":material/collections_bookmark:"):
+            st.markdown("**Images · Oxford-IIIT Pet**  ")
+            st.caption("37 pet breeds · moderate size · good for a reliable image benchmark")
+            st.markdown("[Open the official Oxford dataset page](https://www.robots.ox.ac.uk/~vgg/data/pets/)")
+            st.markdown("**Audio · ESC-50**  ")
+            st.caption("2,000 environmental recordings · 50 classes · predefined folds")
+            st.markdown("[Open the official ESC-50 repository](https://github.com/karolpiczak/ESC-50)")
+        modality_slug = (data_type or "Images").lower()
         upload_mode = st.radio("How do you want to load data?", ["Enter Local Path (best for large datasets)", "Upload ZIP file"])
-        
-        if data_type == "Images" and upload_mode == "Upload ZIP file":
-            uploaded_file = st.file_uploader("Upload image ZIP", type=["zip"])
-            
+
+        if upload_mode == "Upload ZIP file":
+            uploaded_file = st.file_uploader(f"Upload {modality_slug} ZIP", type=["zip"], key=f"{modality_slug}_dataset_zip")
             if uploaded_file is not None:
-                extract_dir = f"./custom_data/{data_type.lower()}"
+                extract_dir = f"./custom_data/{modality_slug}"
                 if os.path.exists(extract_dir):
                     shutil.rmtree(extract_dir)
                 os.makedirs(extract_dir, exist_ok=True)
-                
+
                 with st.spinner(f"Extracting {uploaded_file.name}..."):
                     with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
                         zip_ref.extractall(extract_dir)
-                
-                search_dir = extract_dir
-                if not neuroforge_core.find_roboflow_dataset_root(search_dir):
-                    search_dir = str(neuroforge_core.find_imagefolder_dataset_root(search_dir))
+
                 try:
-                    dataset_metadata = neuroforge_core.get_dataset_metadata(search_dir)
+                    dataset_metadata = neuroforge_core.get_dataset_metadata(extract_dir)
                 except (ValueError, FileNotFoundError) as exc:
                     st.error(f"Dataset format not recognized: {exc}")
                     dataset_metadata = None
 
                 if dataset_metadata:
                     class_names = dataset_metadata['class_names']
-                    st.session_state['dataset_classes'] = dataset_metadata['num_classes']
-                    st.session_state['class_names'] = class_names
-                    st.session_state['dataset_dir'] = dataset_metadata.get('dataset_root', search_dir)
-                    st.session_state['dataset_metadata'] = dataset_metadata
-                    st.session_state['model_trained'] = False
+                    register_dataset(dataset_metadata.get('dataset_root', extract_dir), dataset_metadata)
 
                     st.toast(f"Successfully extracted {len(class_names)} classes!", icon=":material/check_circle:")
-                    st.success(f"Dataset ready! Found {len(class_names)} classes: {', '.join(class_names[:5])}{'...' if len(class_names)>5 else ''}. Proceed to Architecture Search.", icon=":material/arrow_forward:")
+                    st.success(f"Data ready · {len(class_names)} classes: {', '.join(class_names[:5])}{'...' if len(class_names)>5 else ''}.", icon=":material/check_circle:")
                     if dataset_metadata.get('splits'):
-                        st.caption(f"Usable samples — train: {dataset_metadata['splits']['train']}, validation: {dataset_metadata['splits']['valid']}, test: {dataset_metadata['splits']['test']}.")
+                        st.caption(f"Usable samples · train {dataset_metadata['splits']['train']} · validation {dataset_metadata['splits']['valid']} · test {dataset_metadata['splits']['test']}.")
                     quality_report = dataset_metadata.get('quality_report', {})
                     skipped_rows = sum(report.get('skipped_rows', 0) for report in quality_report.values() if isinstance(report, dict))
                     if skipped_rows:
                         st.warning(f"Skipped {skipped_rows} label rows with no label or multiple labels; they are excluded from classification training.")
-                
-        elif data_type == "Images":
-            # Local Path Mode
-            st.info("Since NEUROFORGE is running locally, you can just point it directly to the folder on your Mac!")
+
+        else:
+            st.info("For local development, point the workspace directly to the dataset folder on your Mac.", icon=":material/folder_open:")
             local_path = st.text_input("Enter absolute path to dataset folder (e.g. ~/Downloads/crop pest dataset):")
-            
-            if st.button("Load Local Dataset", type="primary") and local_path:
-                # Clean up the path (remove accidental spaces and expand ~ to /Users/...)
+
+            if st.button("Connect dataset", type="primary") and local_path:
                 clean_path = os.path.expanduser(local_path.strip())
-                
                 if os.path.exists(clean_path) and os.path.isdir(clean_path):
                     try:
                         dataset_metadata = neuroforge_core.get_dataset_metadata(clean_path)
@@ -674,29 +705,24 @@ with tab1:
 
                     if dataset_metadata and dataset_metadata['num_classes'] > 0:
                         class_names = dataset_metadata['class_names']
-                        st.session_state['dataset_classes'] = dataset_metadata['num_classes']
-                        st.session_state['dataset_dir'] = dataset_metadata.get('dataset_root', clean_path)
-                        st.session_state['class_names'] = class_names
-                        st.session_state['dataset_metadata'] = dataset_metadata
-                        st.session_state['model_trained'] = False
-                        
+                        register_dataset(dataset_metadata.get('dataset_root', clean_path), dataset_metadata)
                         st.toast(f"Successfully linked {len(class_names)} classes!", icon=":material/check_circle:")
-                        st.success(f"Dataset ready! Found {len(class_names)} classes: {', '.join(class_names[:5])}{'...' if len(class_names)>5 else ''}. Proceed to Architecture Search.", icon=":material/arrow_forward:")
+                        st.success(f"Data ready · {len(class_names)} classes: {', '.join(class_names[:5])}{'...' if len(class_names)>5 else ''}.", icon=":material/check_circle:")
                         if dataset_metadata.get('splits'):
-                            st.caption(f"Usable samples — train: {dataset_metadata['splits']['train']}, validation: {dataset_metadata['splits']['valid']}, test: {dataset_metadata['splits']['test']}.")
+                            st.caption(f"Usable samples · train {dataset_metadata['splits']['train']} · validation {dataset_metadata['splits']['valid']} · test {dataset_metadata['splits']['test']}.")
                         quality_report = dataset_metadata.get('quality_report', {})
                         skipped_rows = sum(report.get('skipped_rows', 0) for report in quality_report.values() if isinstance(report, dict))
                         if skipped_rows:
                             st.warning(f"Skipped {skipped_rows} label rows with no label or multiple labels; they are excluded from classification training.")
                     else:
-                        st.error(f"No supported classes found inside '{clean_path}'. Use class folders or a supported Roboflow export.")
+                        st.error(f"No supported classes found inside '{clean_path}'. Check the folder structure and supported dataset formats.")
                 else:
                     st.error(f"Path does not exist: '{clean_path}'. Please check the path and try again.")
 
 with tab2:
     with st.container(border=True):
-        st.header("Search lab", icon=":material/auto_fix_high:")
-        st.caption("Watch NEUROFORGE generate, evaluate, and mutate a population of model architectures.")
+        st.header("Mutation lab", icon=":material/tune:")
+        st.caption("Generate candidates, mutate strong parents, and watch the next architecture generation emerge.")
 
         active_dataset = st.session_state.get("dataset_metadata") or {}
         with st.container(horizontal=True):
@@ -727,7 +753,7 @@ with tab2:
 
         st.caption(
             f"Search budget: {int(generations * population)} candidate evaluations + 1 manual baseline. "
-            "Larger populations explore more architectural mutations; proxy epochs control evaluation depth."
+            "Every candidate is scored, parent lineage is preserved, and architecture traits are mutated across generations."
         )
         
         # Placeholders for live updates
@@ -747,15 +773,15 @@ with tab2:
                 pass # Can add more detailed logs here if needed
             elif update["type"] == "new_best":
                 best_acc_metric.metric("Best Proxy Accuracy", f"{update['accuracy']:.2f}%", delta="New Best!")
-                st.toast(f"New best architecture found: {update['accuracy']:.2f}%", icon=":material/emoji_events:")
+                st.toast(f"New best model design found: {update['accuracy']:.2f}%", icon=":material/emoji_events:")
             elif update["type"] == "complete":
-                status_text.success("✅ Architect Search Complete!")
+                status_text.success("Mutation cycle complete")
                 current_model_metric.metric("Search status", "Complete")
                 progress_bar.progress(1.0)
                 st.balloons()
 
         with st.container(horizontal=True, horizontal_alignment="right"):
-            if st.button("Start Search", icon=":material/play_arrow:", type="primary"):
+            if st.button("Start mutation cycle", icon=":material/play_arrow:", type="primary"):
                 # Initialize empty states
                 best_acc_metric.metric("Best Proxy Accuracy", "0.00%")
                 current_model_metric.metric("Currently Evaluating", "Initializing...")
@@ -763,7 +789,7 @@ with tab2:
                 
                 # Run the search and retain its auditable candidate history.
                 dataset_dir = st.session_state.get('dataset_dir')
-                with st.spinner("🧠 The Architect is mutating models in the background..."):
+                with st.spinner("Generating and mutating candidate models..."):
                     search_result = architect.run_architect_search(
                         generations=generations, 
                         population_size=population, 
@@ -776,8 +802,10 @@ with tab2:
                 st.session_state['use_tl_for_inference'] = False
                 models_searched_metric.metric("Models searched", str(len(search_result["history"])), border=True)
                 st.success(
-                    f"Built and evaluated {len(search_result['history'])} candidate models "
-                    f"across {generations} generations, plus one manual baseline."
+                    f"Evolved {len(search_result['history'])} candidate models "
+                    f"across {generations} generations, plus one reference baseline. "
+                    f"Unique evaluations: {search_result['metadata'].get('unique_evaluations', len(search_result['history']) + 1)}; "
+                    f"reused: {search_result['metadata'].get('reused_evaluations', 0)}."
                 )
 
         search_result = st.session_state.get('search_result')
@@ -794,7 +822,7 @@ with tab2:
                         "Recall": f"{baseline['recall']:.2f}%",
                         "F1": f"{baseline['f1']:.2f}%",
                         "Parameters": baseline["parameters"],
-                        "Architecture": "2 layers · 32/64 filters",
+                        "Model design": "2 layers · 32/64 filters",
                     },
                     {
                         "Model": "NEUROFORGE selected",
@@ -803,7 +831,7 @@ with tab2:
                         "Recall": f"{best_result['recall']:.2f}%",
                         "F1": f"{best_result['f1']:.2f}%",
                         "Parameters": best_result["parameters"],
-                        "Architecture": f"Generation {best_result['generation']} · {best_result['config']['num_layers']} layers",
+                        "Model design": f"Generation {best_result['generation']} · {best_result['config']['num_layers']} layers",
                     },
                 ]
                 st.dataframe(comparison_rows, width="stretch", hide_index=True)
@@ -811,12 +839,13 @@ with tab2:
 
             render_lineage_board(search_result)
 
-            st.subheader("Candidate Models", icon=":material/table_chart:")
+            st.subheader("Mutation history", icon=":material/account_tree:")
             history_rows = [
                 {
                     "Model": item["candidate_id"],
                     "Generation": item["generation"],
                     "Parent": item["parent_id"] or "Initial population",
+                    "Mutation": ", ".join(operation.get("field", "trait") for operation in item.get("mutation_operations", [])) or "Seed candidate",
                     "Accuracy": f"{item['accuracy']:.2f}%",
                     "Precision": f"{item['precision']:.2f}%",
                     "Recall": f"{item['recall']:.2f}%",
@@ -836,13 +865,9 @@ with tab2:
                 st.subheader("Search progression", icon=":material/trending_up:")
                 st.caption("Best proxy accuracy discovered in each generation")
                 st.line_chart(generation_scores, height=180)
-            with st.expander("Final architecture characteristics"):
+            with st.expander("Final model design"):
                 st.json(search_result["best_config"])
-                st.caption(
-                    "The characteristics shown here are the architecture decisions that survived "
-                    "selection and mutation. Learned feature maps will be added after the search "
-                    "pipeline is validated."
-                )
+                st.caption("This is the compact model design selected by the search. Training adds the learned weights separately.")
             history_download = json.dumps(search_result["history"], indent=2)
             st.download_button(
                 "Download search history",
@@ -854,10 +879,10 @@ with tab2:
         
 with tab3:
     with st.container(border=True):
-        st.header("Final model", icon=":material/model_training:")
-        st.caption("This is the model MVP produced by the search. Retrain it, inspect its held-out metrics, and download the artifacts.")
+        st.header("Results & export", icon=":material/verified:")
+        st.caption("Review held-out metrics, retrain the selected design, and export the artifacts.")
 
-        artifact_metadata = st.session_state.get("artifact_metadata") or load_json(METADATA_PATH) or {}
+        artifact_metadata = st.session_state.get("artifact_metadata") or (persisted_metadata if saved_model_current else {})
         artifact_test_metrics = artifact_metadata.get("held_out_test_metrics", {})
         ship_snapshot_slots = {}
         if artifact_metadata:
@@ -869,7 +894,8 @@ with tab3:
                     ship_snapshot_slots["accuracy"].metric("Test accuracy", f"{artifact_test_metrics.get('accuracy', 0):.2f}%" if artifact_test_metrics else "Not evaluated")
                 with final_columns[1]:
                     ship_snapshot_slots["f1"] = st.empty()
-                    ship_snapshot_slots["f1"].metric("Macro F1", f"{artifact_test_metrics.get('f1', 0):.2f}%" if artifact_test_metrics else "Not evaluated")
+                    artifact_f1 = artifact_test_metrics.get("f1_present_classes", artifact_test_metrics.get("f1", 0))
+                    ship_snapshot_slots["f1"].metric("Macro F1", f"{artifact_f1:.2f}%" if artifact_test_metrics else "Not evaluated")
                 with final_columns[2]:
                     ship_snapshot_slots["precision"] = st.empty()
                     ship_snapshot_slots["precision"].metric("Precision", f"{artifact_test_metrics.get('precision', 0):.2f}%" if artifact_test_metrics else "Not evaluated")
@@ -916,10 +942,16 @@ with tab3:
                         icon=":material/description:",
                     )
 
+        active_training_modality = (st.session_state.get("dataset_metadata") or persisted_metadata.get("dataset", {})).get("modality", "image")
         st.space("small")
+        if not st.session_state.get("model_trained", False):
+            st.info("A new architecture is selected. Train it once to create the matching checkpoint and enable live testing.", icon=":material/model_training:")
         with st.container(border=True):
             st.subheader("Retrain the selected model", icon=":material/rocket_launch:")
-            st.caption("Use the generated architecture by default. ResNet-18 remains available only as a comparison baseline.")
+            st.caption(
+                "Use the selected model design by default. "
+                + ("ResNet-18 is available as an image-only comparison baseline." if active_training_modality == "image" else "Audio uses the log-mel DynamicCNN path.")
+            )
         
         train_status = st.empty()
         train_progress = st.empty()
@@ -942,7 +974,7 @@ with tab3:
         with st.container(horizontal=True):
             training_epochs = st.number_input("Training epochs", min_value=1, max_value=100, value=20)
             demo_mode = st.checkbox("Presentation mode (1 epoch)", value=False)
-            use_tl = st.checkbox("Use ResNet-18 baseline", value=False)
+            use_tl = st.checkbox("Use ResNet-18 baseline", value=False, disabled=active_training_modality != "image")
             
             if st.button("Run Full Training", icon=":material/rocket_launch:", type="primary"):
                 train_status.info("Loading best architecture...", icon=":material/hourglass_top:")
@@ -978,63 +1010,97 @@ with tab3:
                     if refreshed_test_metrics:
                         if ship_snapshot_slots:
                             ship_snapshot_slots["accuracy"].metric("Test accuracy", f"{refreshed_test_metrics['accuracy']:.2f}%")
-                            ship_snapshot_slots["f1"].metric("Macro F1", f"{refreshed_test_metrics['f1']:.2f}%")
+                            refreshed_f1 = refreshed_test_metrics.get("f1_present_classes", refreshed_test_metrics.get("f1", 0))
+                            ship_snapshot_slots["f1"].metric("Macro F1", f"{refreshed_f1:.2f}%")
                             ship_snapshot_slots["precision"].metric("Precision", f"{refreshed_test_metrics['precision']:.2f}%")
                         top_accuracy_metric.metric("Final test accuracy", f"{refreshed_test_metrics['accuracy']:.2f}%", border=True)
-                        top_f1_metric.metric("Macro F1", f"{refreshed_test_metrics['f1']:.2f}%", border=True)
+                        top_f1_metric.metric("Macro F1", f"{refreshed_test_metrics.get('f1_present_classes', refreshed_test_metrics.get('f1', 0)):.2f}%", border=True)
                     
                     train_status.success(f"🎉 Training Complete! Final Validation Accuracy: {final_acc:.2f}%", icon=":material/verified:")
                     train_progress.progress(1.0)
                     st.balloons()
                     
                 except FileNotFoundError:
-                    train_status.error("No architecture found! Please run the Architect Search first so it can generate 'best_model_config.json'.", icon=":material/error:")
+                    train_status.error("No selected model found. Start the mutation cycle first so the workspace can create the architecture configuration.", icon=":material/error:")
 
 # --- TAB 4: Live Testing ---
 with tab4:
-    st.header("Live test", icon=":material/visibility:")
-    st.caption("Upload one image and inspect the final model's prediction and confidence.")
-    
+    st.header("Try a sample", icon=":material/visibility:")
+    st.caption("Upload one image or WAV clip and inspect the model's prediction and confidence.")
+
+    saved_dataset = st.session_state.get("dataset_metadata") or persisted_metadata.get("dataset", {})
+    active_modality = saved_dataset.get("modality", "image")
     if not st.session_state.get('model_trained', False):
-        st.warning("Train a final model in the Final model tab before testing.", icon=":material/warning:")
+        st.warning("Train a model in Results & export before testing a sample.", icon=":material/warning:")
     else:
-        uploaded_test_file = st.file_uploader("Upload an image to test", type=["png", "jpg", "jpeg"], key="test_upload")
-        
+        model_classes = saved_dataset.get("class_names", [])
+        model_dataset_name = Path(saved_dataset.get("dataset_root", "active dataset")).name
+        with st.container(border=True):
+            st.markdown(f"**Active classifier · {model_dataset_name}**")
+            st.caption(
+                "This checkpoint can recognize only: "
+                + (", ".join(name.title() for name in model_classes) if model_classes else "the classes in the active dataset")
+            )
+        accepted_types = ["wav"] if active_modality == "audio" else ["png", "jpg", "jpeg"]
+        uploaded_test_file = st.file_uploader(
+            "Upload a WAV clip to test" if active_modality == "audio" else "Upload an image to test",
+            type=accepted_types,
+            key="audio_test_upload" if active_modality == "audio" else "test_upload",
+        )
+
         if uploaded_test_file is not None:
             col1, col2 = st.columns([1, 1])
-            
             with col1:
-                st.image(uploaded_test_file, caption="Input Image", width="stretch")
-                
+                if active_modality == "audio":
+                    st.audio(uploaded_test_file.getvalue(), format="audio/wav")
+                    st.caption("Input audio")
+                else:
+                    st.image(uploaded_test_file, caption="Input image", width="stretch")
+
             with col2:
-                with st.spinner("Analyzing image..."):
+                with st.spinner("Analyzing sample..."):
                     try:
-                        from PIL import Image
-                        import torchvision.transforms as transforms
-                        
-                        # Open and transform image
-                        image = Image.open(uploaded_test_file).convert('RGB')
-                        transform = transforms.Compose([
-                            transforms.Resize((64, 64)),
-                            transforms.ToTensor(),
-                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-                        ])
-                        img_tensor = transform(image)
-                        
-                        # Get model config and classes
                         with open(CONFIG_PATH, "r") as f:
                             best_config = json.load(f)
-                        saved_dataset = st.session_state.get("dataset_metadata") or persisted_metadata.get("dataset", {})
                         num_classes = st.session_state.get('dataset_classes') or saved_dataset.get('num_classes', 10)
                         class_names = st.session_state.get('class_names') or saved_dataset.get('class_names', [f"Class {i}" for i in range(num_classes)])
                         use_tl = st.session_state.get('use_tl_for_inference', False)
-                        
-                        # Predict
-                        pred_idx, confidence = neuroforge_core.predict_image(img_tensor, best_config, num_classes, use_transfer_learning=use_tl)
+
+                        if active_modality == "audio":
+                            pred_idx, confidence = neuroforge_core.predict_audio(
+                                uploaded_test_file.getvalue(),
+                                best_config,
+                                num_classes,
+                                dataset_dir=st.session_state.get("dataset_dir"),
+                            )
+                        else:
+                            from PIL import Image
+                            import torchvision.transforms as transforms
+
+                            image = Image.open(uploaded_test_file).convert('RGB')
+                            transform = transforms.Compose([
+                                transforms.Resize((64, 64)),
+                                transforms.ToTensor(),
+                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+                            ])
+                            img_tensor = transform(image)
+                            pred_idx, confidence = neuroforge_core.predict_image(
+                                img_tensor,
+                                best_config,
+                                num_classes,
+                                use_transfer_learning=use_tl,
+                                dataset_dir=st.session_state.get("dataset_dir"),
+                            )
                         predicted_label = class_names[pred_idx]
-                        
-                        st.success(f"**Prediction:** {predicted_label.title()}", icon=":material/target:")
+
+                        if confidence < 0.70:
+                            st.warning(
+                                f"Low-confidence result: **{predicted_label.title()}**. "
+                                "This sample may be outside the active classifier's classes.",
+                                icon=":material/warning:",
+                            )
+                        else:
+                            st.success(f"**Prediction:** {predicted_label.title()}", icon=":material/target:")
                         st.metric("Confidence Score", f"{confidence * 100:.2f}%")
-                        
                     except Exception as e:
                         st.error(f"Prediction failed: {str(e)}", icon=":material/error:")

@@ -1,0 +1,3561 @@
+[
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C01",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 14.754098360655737,
+    "precision": 9.003321826457977,
+    "recall": 25.0,
+    "f1": 9.286608546972275,
+    "f1_present_classes": 9.286608546972275,
+    "precision_present_classes": 9.003321826457977,
+    "recall_present_classes": 25.0,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        10,
+        3,
+        1
+      ],
+      [
+        0,
+        0,
+        4,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        12,
+        5,
+        3
+      ],
+      [
+        0,
+        0,
+        13,
+        3,
+        0
+      ]
+    ],
+    "parameters": 94341,
+    "training_time_seconds": 1.3195700645446777,
+    "inference_latency_seconds": 0.1397721767425537,
+    "inference_latency_per_sample_seconds": 0.002291347159713995,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "9bc9edb2ed50856a",
+    "score": 11.35268156702986,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C02",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 32.78688524590164,
+    "precision": 31.37539029121399,
+    "recall": 25.357142090797424,
+    "f1": 24.145106971263885,
+    "f1_present_classes": 24.145106971263885,
+    "precision_present_classes": 31.37539029121399,
+    "recall_present_classes": 25.357142090797424,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        3,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        5,
+        0
+      ],
+      [
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        5,
+        0,
+        10,
+        1
+      ],
+      [
+        3,
+        7,
+        0,
+        4,
+        2
+      ]
+    ],
+    "parameters": 244805,
+    "training_time_seconds": 1.3630249500274658,
+    "inference_latency_seconds": 0.1474311351776123,
+    "inference_latency_per_sample_seconds": 0.0024169038553706933,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "2b682fe945d7f199",
+    "score": 29.354982639301333,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C03",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "GELU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 16.39344262295082,
+    "precision": 9.739130735397339,
+    "recall": 25.999999046325684,
+    "f1": 10.057143121957779,
+    "f1_present_classes": 10.057143121957779,
+    "precision_present_classes": 9.739130735397339,
+    "recall_present_classes": 25.999999046325684,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        12,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        14,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        13,
+        3,
+        0
+      ]
+    ],
+    "parameters": 94341,
+    "training_time_seconds": 1.257416009902954,
+    "inference_latency_seconds": 0.13729405403137207,
+    "inference_latency_per_sample_seconds": 0.0022507221972356078,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f23762e52409e9b9",
+    "score": 12.509561581040977,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C04",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        16,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 29.508196721311474,
+    "precision": 24.772539734840393,
+    "recall": 23.250000178813934,
+    "f1": 18.27191263437271,
+    "f1_present_classes": 18.27191263437271,
+    "precision_present_classes": 24.772539734840393,
+    "recall_present_classes": 23.250000178813934,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        0,
+        0,
+        7
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        3
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        13,
+        0,
+        0,
+        2,
+        5
+      ],
+      [
+        7,
+        0,
+        0,
+        0,
+        9
+      ]
+    ],
+    "parameters": 84645,
+    "training_time_seconds": 1.285539150238037,
+    "inference_latency_seconds": 0.13798809051513672,
+    "inference_latency_per_sample_seconds": 0.002262099844510438,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "5c931b19bfde783d",
+    "score": 24.642542264161037,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C05",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 16.39344262295082,
+    "precision": 28.017321228981018,
+    "recall": 28.24999988079071,
+    "f1": 17.291554808616638,
+    "f1_present_classes": 17.291554808616638,
+    "precision_present_classes": 28.017321228981018,
+    "recall_present_classes": 28.24999988079071,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        1,
+        2,
+        7,
+        4,
+        0
+      ],
+      [
+        1,
+        3,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        14,
+        2,
+        1
+      ],
+      [
+        1,
+        1,
+        8,
+        5,
+        1
+      ]
+    ],
+    "parameters": 25077,
+    "training_time_seconds": 1.2903642654418945,
+    "inference_latency_seconds": 0.1429920196533203,
+    "inference_latency_per_sample_seconds": 0.0023441314697265625,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "065180eb5511bee6",
+    "score": 19.30935578318546,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C06",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 29.508196721311474,
+    "precision": 20.000000298023224,
+    "recall": 28.857144713401794,
+    "f1": 21.08234465122223,
+    "f1_present_classes": 21.08234465122223,
+    "precision_present_classes": 20.000000298023224,
+    "recall_present_classes": 28.857144713401794,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        8,
+        3,
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        10,
+        0,
+        6,
+        0
+      ],
+      [
+        9,
+        4,
+        0,
+        3,
+        0
+      ]
+    ],
+    "parameters": 244805,
+    "training_time_seconds": 1.3573660850524902,
+    "inference_latency_seconds": 0.13902807235717773,
+    "inference_latency_per_sample_seconds": 0.002279148727166848,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f1ce96a4a94225d2",
+    "score": 24.130672121745956,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C07",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 26.229508196721312,
+    "precision": 23.159773647785187,
+    "recall": 35.28571426868439,
+    "f1": 22.205331921577454,
+    "f1_present_classes": 22.205331921577454,
+    "precision_present_classes": 23.159773647785187,
+    "recall_present_classes": 35.28571426868439,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        4,
+        5,
+        0,
+        5
+      ],
+      [
+        0,
+        5,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        2,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        9,
+        1,
+        3
+      ],
+      [
+        0,
+        1,
+        5,
+        2,
+        8
+      ]
+    ],
+    "parameters": 57845,
+    "training_time_seconds": 1.2996180057525635,
+    "inference_latency_seconds": 0.14588284492492676,
+    "inference_latency_per_sample_seconds": 0.002391522047949619,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "59bc108456e8dd0e",
+    "score": 23.957824472149163,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G01-C08",
+    "generation": 1,
+    "parent_id": null,
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 24.59016393442623,
+    "precision": 37.162163853645325,
+    "recall": 34.535714983940125,
+    "f1": 23.44539612531662,
+    "f1_present_classes": 23.44539612531662,
+    "precision_present_classes": 37.162163853645325,
+    "recall_present_classes": 34.535714983940125,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        1,
+        1,
+        8,
+        0,
+        4
+      ],
+      [
+        0,
+        1,
+        4,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        12,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        9,
+        2,
+        5
+      ]
+    ],
+    "parameters": 39301,
+    "training_time_seconds": 1.2861220836639404,
+    "inference_latency_seconds": 0.14001822471618652,
+    "inference_latency_per_sample_seconds": 0.002295380733052238,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ac3ea4d787d5444b",
+    "score": 27.120894498192897,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C01",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C02",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 32.78688524590164,
+    "precision": 31.37539029121399,
+    "recall": 25.357142090797424,
+    "f1": 24.145106971263885,
+    "f1_present_classes": 24.145106971263885,
+    "precision_present_classes": 31.37539029121399,
+    "recall_present_classes": 25.357142090797424,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        3,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        5,
+        0
+      ],
+      [
+        2,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        5,
+        0,
+        10,
+        1
+      ],
+      [
+        3,
+        7,
+        0,
+        4,
+        2
+      ]
+    ],
+    "parameters": 244805,
+    "training_time_seconds": 1.3630249500274658,
+    "inference_latency_seconds": 0.1474311351776123,
+    "inference_latency_per_sample_seconds": 0.0024169038553706933,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "2b682fe945d7f199",
+    "score": 29.354982639301333,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 3
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C02",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C02",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 22.950819672131146,
+    "precision": 22.73504287004471,
+    "recall": 24.285714328289032,
+    "f1": 19.571717083454132,
+    "f1_present_classes": 19.571717083454132,
+    "precision_present_classes": 22.73504287004471,
+    "recall_present_classes": 24.285714328289032,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        6,
+        1,
+        4
+      ],
+      [
+        1,
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        11,
+        5,
+        1
+      ],
+      [
+        4,
+        0,
+        4,
+        4,
+        4
+      ]
+    ],
+    "parameters": 258181,
+    "training_time_seconds": 1.428636074066162,
+    "inference_latency_seconds": 0.14253592491149902,
+    "inference_latency_per_sample_seconds": 0.0023366545067458858,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "fe4145b9436329ca",
+    "score": 21.391298244331843,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C03",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C02",
+    "mutation_operations": [
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 19.672131147540984,
+    "precision": 15.269163250923157,
+    "recall": 30.28571307659149,
+    "f1": 17.119590938091278,
+    "f1_present_classes": 17.119590938091278,
+    "precision_present_classes": 15.269163250923157,
+    "recall_present_classes": 30.28571307659149,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        6,
+        0,
+        5,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        2,
+        1,
+        0,
+        0
+      ],
+      [
+        2,
+        14,
+        3,
+        1,
+        0
+      ],
+      [
+        4,
+        5,
+        2,
+        5,
+        0
+      ]
+    ],
+    "parameters": 130245,
+    "training_time_seconds": 1.4484920501708984,
+    "inference_latency_seconds": 0.14785289764404297,
+    "inference_latency_per_sample_seconds": 0.0024238179941646386,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "e2a1c14f6bb0f302",
+    "score": 17.433000311135153,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C04",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C02",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "dropout",
+        "from": 0.4,
+        "to": 0.2
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 11.475409836065573,
+    "precision": 15.50000011920929,
+    "recall": 20.28571367263794,
+    "f1": 9.642655402421951,
+    "f1_present_classes": 9.642655402421951,
+    "precision_present_classes": 15.50000011920929,
+    "recall_present_classes": 20.28571367263794,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        11,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        16,
+        1,
+        0
+      ],
+      [
+        2,
+        3,
+        9,
+        2,
+        0
+      ]
+    ],
+    "parameters": 225413,
+    "training_time_seconds": 1.316260814666748,
+    "inference_latency_seconds": 0.1466052532196045,
+    "inference_latency_per_sample_seconds": 0.002403364806878762,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "19a0a3cb87eb700d",
+    "score": 11.46598159607054,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C05",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C04",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 40.98360655737705,
+    "precision": 23.33333194255829,
+    "recall": 28.285712003707886,
+    "f1": 25.337928533554077,
+    "f1_present_classes": 25.337928533554077,
+    "precision_present_classes": 23.33333194255829,
+    "recall_present_classes": 28.285712003707886,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        0,
+        6,
+        5
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        14,
+        2
+      ],
+      [
+        4,
+        0,
+        0,
+        4,
+        8
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.2862539291381836,
+    "inference_latency_seconds": 0.15006017684936523,
+    "inference_latency_per_sample_seconds": 0.002460002899169922,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "4cce479bd074955a",
+    "score": 31.611393206608476,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C06",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 16.39344262295082,
+    "precision": 19.308176636695862,
+    "recall": 23.92857074737549,
+    "f1": 10.8030304312706,
+    "f1_present_classes": 10.8030304312706,
+    "precision_present_classes": 19.308176636695862,
+    "recall_present_classes": 23.92857074737549,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        1,
+        10,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        18,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        14,
+        0,
+        0,
+        2
+      ]
+    ],
+    "parameters": 20613,
+    "training_time_seconds": 1.290132999420166,
+    "inference_latency_seconds": 0.1451280117034912,
+    "inference_latency_per_sample_seconds": 0.002379147732844118,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "833bf221916c0778",
+    "score": 15.186474695598601,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C07",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C06",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "pooling",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 32.78688524590164,
+    "precision": 14.421053230762482,
+    "recall": 22.999998927116394,
+    "f1": 16.77655726671219,
+    "f1_present_classes": 16.77655726671219,
+    "precision_present_classes": 14.421053230762482,
+    "recall_present_classes": 22.999998927116394,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        1,
+        3,
+        10
+      ],
+      [
+        0,
+        0,
+        0,
+        5,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        8,
+        12
+      ],
+      [
+        0,
+        0,
+        1,
+        3,
+        12
+      ]
+    ],
+    "parameters": 5349,
+    "training_time_seconds": 1.301307201385498,
+    "inference_latency_seconds": 0.13752293586730957,
+    "inference_latency_per_sample_seconds": 0.0022544743584804847,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "bda68f2fd5126570",
+    "score": 23.161532412511967,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G02-C08",
+    "generation": 2,
+    "parent_id": "20261027T084850Z-G01-C08",
+    "mutation_operations": [
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.3
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.3
+    },
+    "accuracy": 29.508196721311474,
+    "precision": 36.699604988098145,
+    "recall": 37.85714507102966,
+    "f1": 29.701966047286987,
+    "f1_present_classes": 29.701966047286987,
+    "precision_present_classes": 36.699604988098145,
+    "recall_present_classes": 37.85714507102966,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        3,
+        5,
+        2,
+        1
+      ],
+      [
+        0,
+        3,
+        1,
+        2,
+        1
+      ],
+      [
+        0,
+        1,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        3,
+        10,
+        5,
+        0
+      ],
+      [
+        4,
+        2,
+        4,
+        2,
+        4
+      ]
+    ],
+    "parameters": 39301,
+    "training_time_seconds": 1.298375129699707,
+    "inference_latency_seconds": 0.14432191848754883,
+    "inference_latency_per_sample_seconds": 0.0023659330899598167,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "a7b36ffd87120c95",
+    "score": 31.088285276804818,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C01",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C05",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 40.98360655737705,
+    "precision": 23.33333194255829,
+    "recall": 28.285712003707886,
+    "f1": 25.337928533554077,
+    "f1_present_classes": 25.337928533554077,
+    "precision_present_classes": 23.33333194255829,
+    "recall_present_classes": 28.285712003707886,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        0,
+        6,
+        5
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        14,
+        2
+      ],
+      [
+        4,
+        0,
+        0,
+        4,
+        8
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.2862539291381836,
+    "inference_latency_seconds": 0.15006017684936523,
+    "inference_latency_per_sample_seconds": 0.002460002899169922,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "4cce479bd074955a",
+    "score": 31.611393206608476,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 2
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C02",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C05",
+    "mutation_operations": [
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "SiLU"
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "SiLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 21.638889610767365,
+    "recall": 26.85714364051819,
+    "f1": 23.51432740688324,
+    "f1_present_classes": 23.51432740688324,
+    "precision_present_classes": 21.638889610767365,
+    "recall_present_classes": 26.85714364051819,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        2,
+        0,
+        0,
+        6,
+        6
+      ],
+      [
+        0,
+        0,
+        0,
+        6,
+        1
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        14,
+        3
+      ],
+      [
+        2,
+        0,
+        1,
+        5,
+        8
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.2892968654632568,
+    "inference_latency_seconds": 0.14508795738220215,
+    "inference_latency_per_sample_seconds": 0.0023784911046262646,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f0d9a337b1473193",
+    "score": 29.911148547081073,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C03",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        32,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.3
+    },
+    "accuracy": 34.42622950819672,
+    "precision": 14.17582482099533,
+    "recall": 25.285714864730835,
+    "f1": 17.7284836769104,
+    "f1_present_classes": 17.7284836769104,
+    "precision_present_classes": 14.17582482099533,
+    "recall_present_classes": 25.285714864730835,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        9,
+        0,
+        0,
+        11,
+        0
+      ],
+      [
+        11,
+        0,
+        0,
+        5,
+        0
+      ]
+    ],
+    "parameters": 5605,
+    "training_time_seconds": 1.2161309719085693,
+    "inference_latency_seconds": 0.13068723678588867,
+    "inference_latency_per_sample_seconds": 0.002142413717801454,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "6022d7f38f6eab4c",
+    "score": 24.13445821523033,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C04",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C05",
+    "mutation_operations": [
+      {
+        "field": "pooling",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 31.93681240081787,
+    "recall": 30.785712599754333,
+    "f1": 29.88034188747406,
+    "f1_present_classes": 29.88034188747406,
+    "precision_present_classes": 31.93681240081787,
+    "recall_present_classes": 30.785712599754333,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        0,
+        6,
+        5
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        14,
+        2
+      ],
+      [
+        3,
+        0,
+        1,
+        6,
+        6
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.4021060466766357,
+    "inference_latency_seconds": 0.16585803031921387,
+    "inference_latency_per_sample_seconds": 0.00271898410359367,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "be81bb4ba916f93f",
+    "score": 34.3613842888742,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C05",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C07",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 32,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 11.475409836065573,
+    "precision": 2.295081876218319,
+    "recall": 20.000000298023224,
+    "f1": 4.117647185921669,
+    "f1_present_classes": 4.117647185921669,
+    "precision_present_classes": 2.295081876218319,
+    "recall_present_classes": 20.000000298023224,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        14,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        20,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        16,
+        0,
+        0,
+        0
+      ]
+    ],
+    "parameters": 2917,
+    "training_time_seconds": 1.207617998123169,
+    "inference_latency_seconds": 0.13765287399291992,
+    "inference_latency_per_sample_seconds": 0.002256604491687212,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "76ed24e7239a9bcb",
+    "score": 6.744421601891867,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C06",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C05",
+    "mutation_operations": [
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 29.508196721311474,
+    "precision": 21.853283047676086,
+    "recall": 23.28571379184723,
+    "f1": 20.776942372322083,
+    "f1_present_classes": 20.776942372322083,
+    "precision_present_classes": 21.853283047676086,
+    "recall_present_classes": 23.28571379184723,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        3,
+        0,
+        7,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        5,
+        1,
+        0,
+        14,
+        0
+      ],
+      [
+        3,
+        3,
+        1,
+        9,
+        0
+      ]
+    ],
+    "parameters": 19653,
+    "training_time_seconds": 1.2078230381011963,
+    "inference_latency_seconds": 0.13179588317871094,
+    "inference_latency_per_sample_seconds": 0.002160588248831327,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "58bb7a2377046d2a",
+    "score": 24.73938017332268,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C07",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C05",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 11.475409836065573,
+    "precision": 2.295081876218319,
+    "recall": 20.000000298023224,
+    "f1": 4.117647185921669,
+    "f1_present_classes": 4.117647185921669,
+    "precision_present_classes": 2.295081876218319,
+    "recall_present_classes": 20.000000298023224,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        14,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        7,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        20,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        16,
+        0,
+        0,
+        0
+      ]
+    ],
+    "parameters": 2917,
+    "training_time_seconds": 1.1608498096466064,
+    "inference_latency_seconds": 0.13044404983520508,
+    "inference_latency_per_sample_seconds": 0.002138427046478772,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f80bd21ae386f23d",
+    "score": 6.756239346412711,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G03-C08",
+    "generation": 3,
+    "parent_id": "20261027T084850Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      },
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 32
+      },
+      {
+        "field": "filters[3]",
+        "from": 32,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        64,
+        64,
+        32,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 8.19672131147541,
+    "precision": 11.379309743642807,
+    "recall": 21.250000596046448,
+    "f1": 4.802867025136948,
+    "f1_present_classes": 4.802867025136948,
+    "precision_present_classes": 11.379309743642807,
+    "recall_present_classes": 21.250000596046448,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        14,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        19,
+        0,
+        1
+      ],
+      [
+        1,
+        0,
+        14,
+        0,
+        1
+      ]
+    ],
+    "parameters": 141989,
+    "training_time_seconds": 1.3810889720916748,
+    "inference_latency_seconds": 0.1488938331604004,
+    "inference_latency_per_sample_seconds": 0.002440882510826236,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "0894d576357d2cc7",
+    "score": 7.588134882533097,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C01",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 31.93681240081787,
+    "recall": 30.785712599754333,
+    "f1": 29.88034188747406,
+    "f1_present_classes": 29.88034188747406,
+    "precision_present_classes": 31.93681240081787,
+    "recall_present_classes": 30.785712599754333,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        0,
+        0,
+        6,
+        5
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        14,
+        2
+      ],
+      [
+        3,
+        0,
+        1,
+        6,
+        6
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.4021060466766357,
+    "inference_latency_seconds": 0.16585803031921387,
+    "inference_latency_per_sample_seconds": 0.00271898410359367,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "be81bb4ba916f93f",
+    "score": 34.3613842888742,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 3
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C02",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C02",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "activation",
+        "from": "SiLU",
+        "to": "ReLU"
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 36.0655737704918,
+    "precision": 24.50854778289795,
+    "recall": 29.357141256332397,
+    "f1": 25.245562195777893,
+    "f1_present_classes": 25.245562195777893,
+    "precision_present_classes": 24.50854778289795,
+    "recall_present_classes": 29.357141256332397,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        2,
+        1,
+        8,
+        3
+      ],
+      [
+        0,
+        1,
+        0,
+        5,
+        1
+      ],
+      [
+        0,
+        0,
+        1,
+        2,
+        1
+      ],
+      [
+        0,
+        1,
+        3,
+        14,
+        2
+      ],
+      [
+        0,
+        0,
+        3,
+        7,
+        6
+      ]
+    ],
+    "parameters": 10213,
+    "training_time_seconds": 1.2791621685028076,
+    "inference_latency_seconds": 0.13283300399780273,
+    "inference_latency_per_sample_seconds": 0.002177590229472176,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "fdaf94c1b531e80a",
+    "score": 29.70234177823195,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C03",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 27.86885245901639,
+    "precision": 38.00000250339508,
+    "recall": 19.535714387893677,
+    "f1": 15.703381597995758,
+    "f1_present_classes": 15.703381597995758,
+    "precision_present_classes": 38.00000250339508,
+    "recall_present_classes": 19.535714387893677,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        1,
+        4,
+        0,
+        9,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        6,
+        0,
+        14,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        12,
+        1
+      ]
+    ],
+    "parameters": 10053,
+    "training_time_seconds": 1.2179388999938965,
+    "inference_latency_seconds": 0.13090896606445312,
+    "inference_latency_per_sample_seconds": 0.0021460486240074284,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "4ebd80babe37814b",
+    "score": 26.52734084940413,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C04",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C02",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 2,
+        "to": 3
+      },
+      {
+        "field": "filters[0]",
+        "from": 16,
+        "to": 128
+      },
+      {
+        "field": "activation",
+        "from": "SiLU",
+        "to": "ReLU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        128,
+        128,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 36.0655737704918,
+    "precision": 36.6596519947052,
+    "recall": 36.78571581840515,
+    "f1": 34.71328616142273,
+    "f1_present_classes": 34.71328616142273,
+    "precision_present_classes": 36.6596519947052,
+    "recall_present_classes": 36.78571581840515,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        6,
+        2,
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        2,
+        0,
+        3,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        7,
+        1,
+        1,
+        10,
+        1
+      ],
+      [
+        8,
+        0,
+        2,
+        4,
+        2
+      ]
+    ],
+    "parameters": 254341,
+    "training_time_seconds": 1.2632546424865723,
+    "inference_latency_seconds": 0.16253900527954102,
+    "inference_latency_per_sample_seconds": 0.002664573857041656,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "87e516d30e676b18",
+    "score": 35.28760865812027,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C05",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C01",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 2,
+        "to": 3
+      },
+      {
+        "field": "filters[0]",
+        "from": 16,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        128,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 34.99999940395355,
+    "recall": 31.785714626312256,
+    "f1": 32.00121521949768,
+    "f1_present_classes": 32.00121521949768,
+    "precision_present_classes": 34.99999940395355,
+    "recall_present_classes": 31.785714626312256,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        6,
+        1,
+        0,
+        3,
+        4
+      ],
+      [
+        2,
+        2,
+        0,
+        3,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        8,
+        1,
+        0,
+        10,
+        1
+      ],
+      [
+        5,
+        0,
+        0,
+        5,
+        6
+      ]
+    ],
+    "parameters": 89541,
+    "training_time_seconds": 1.3404591083526611,
+    "inference_latency_seconds": 0.14940500259399414,
+    "inference_latency_per_sample_seconds": 0.0024492623376064612,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ba86279d4a90fe0b",
+    "score": 35.72081521586394,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C06",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 16,
+        "to": 64
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.1
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 27.86885245901639,
+    "precision": 20.212912559509277,
+    "recall": 26.71428620815277,
+    "f1": 21.401843428611755,
+    "f1_present_classes": 21.401843428611755,
+    "precision_present_classes": 20.212912559509277,
+    "recall_present_classes": 26.71428620815277,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        9,
+        1,
+        2,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        2,
+        3,
+        0
+      ],
+      [
+        3,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        9,
+        5,
+        0,
+        6,
+        0
+      ],
+      [
+        10,
+        1,
+        2,
+        3,
+        0
+      ]
+    ],
+    "parameters": 76677,
+    "training_time_seconds": 1.4024617671966553,
+    "inference_latency_seconds": 0.14546990394592285,
+    "inference_latency_per_sample_seconds": 0.0023847525237036533,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "52ea4b0edd400401",
+    "score": 23.699612522647858,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C07",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 16,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 32.78688524590164,
+    "precision": 32.0389598608017,
+    "recall": 30.250000953674316,
+    "f1": 30.238094925880432,
+    "f1_present_classes": 30.238094925880432,
+    "precision_present_classes": 32.0389598608017,
+    "recall_present_classes": 30.250000953674316,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        3,
+        0,
+        4,
+        4
+      ],
+      [
+        0,
+        2,
+        1,
+        4,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      [
+        4,
+        5,
+        0,
+        9,
+        2
+      ],
+      [
+        2,
+        3,
+        1,
+        5,
+        5
+      ]
+    ],
+    "parameters": 152325,
+    "training_time_seconds": 1.6949450969696045,
+    "inference_latency_seconds": 0.2298579216003418,
+    "inference_latency_per_sample_seconds": 0.003768162649185931,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "0717ab6fc208ec38",
+    "score": 31.3061255387017,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G04-C08",
+    "generation": 4,
+    "parent_id": "20261027T084850Z-G03-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 16,
+        "to": 128
+      },
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "GELU"
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "GELU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 31.581902503967285,
+    "recall": 38.357141613960266,
+    "f1": 29.962158203125,
+    "f1_present_classes": 29.962158203125,
+    "precision_present_classes": 31.581902503967285,
+    "recall_present_classes": 38.357141613960266,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        2,
+        0,
+        2,
+        6,
+        4
+      ],
+      [
+        1,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        5,
+        13,
+        1
+      ],
+      [
+        1,
+        0,
+        4,
+        5,
+        6
+      ]
+    ],
+    "parameters": 151813,
+    "training_time_seconds": 1.7641310691833496,
+    "inference_latency_seconds": 0.21021318435668945,
+    "inference_latency_per_sample_seconds": 0.003446117776339171,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f8ec766fac37be52",
+    "score": 34.092616342082295,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C01",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C05",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        128,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 34.99999940395355,
+    "recall": 31.785714626312256,
+    "f1": 32.00121521949768,
+    "f1_present_classes": 32.00121521949768,
+    "precision_present_classes": 34.99999940395355,
+    "recall_present_classes": 31.785714626312256,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        6,
+        1,
+        0,
+        3,
+        4
+      ],
+      [
+        2,
+        2,
+        0,
+        3,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        8,
+        1,
+        0,
+        10,
+        1
+      ],
+      [
+        5,
+        0,
+        0,
+        5,
+        6
+      ]
+    ],
+    "parameters": 89541,
+    "training_time_seconds": 1.3404591083526611,
+    "inference_latency_seconds": 0.14940500259399414,
+    "inference_latency_per_sample_seconds": 0.0024492623376064612,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ba86279d4a90fe0b",
+    "score": 35.72081521586394,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 2
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C02",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.4
+    },
+    "accuracy": 42.62295081967213,
+    "precision": 35.922497510910034,
+    "recall": 34.142857789993286,
+    "f1": 33.828726410865784,
+    "f1_present_classes": 33.828726410865784,
+    "precision_present_classes": 35.922497510910034,
+    "recall_present_classes": 34.142857789993286,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        5,
+        0,
+        0,
+        5,
+        4
+      ],
+      [
+        1,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        7,
+        0,
+        0,
+        12,
+        1
+      ],
+      [
+        4,
+        0,
+        1,
+        3,
+        8
+      ]
+    ],
+    "parameters": 19941,
+    "training_time_seconds": 1.3506031036376953,
+    "inference_latency_seconds": 0.1632061004638672,
+    "inference_latency_per_sample_seconds": 0.0026755098436699537,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "5b01c3cd21d0cf31",
+    "score": 38.0220781854727,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C03",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        128,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 24.59016393442623,
+    "precision": 20.666666328907013,
+    "recall": 24.714288115501404,
+    "f1": 20.631809532642365,
+    "f1_present_classes": 20.631809532642365,
+    "precision_present_classes": 20.666666328907013,
+    "recall_present_classes": 24.714288115501404,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        3,
+        3,
+        0,
+        5,
+        3
+      ],
+      [
+        1,
+        4,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        0,
+        1
+      ],
+      [
+        1,
+        11,
+        0,
+        4,
+        4
+      ],
+      [
+        7,
+        1,
+        1,
+        3,
+        4
+      ]
+    ],
+    "parameters": 309765,
+    "training_time_seconds": 1.4401090145111084,
+    "inference_latency_seconds": 0.1560680866241455,
+    "inference_latency_per_sample_seconds": 0.002558493223346648,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "0922d46d089f4f8f",
+    "score": 21.8561688901766,
+    "status": "evaluated",
+    "rank": 7
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C04",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        128,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "GELU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 21.311475409836063,
+    "precision": 45.95137536525726,
+    "recall": 32.107141613960266,
+    "f1": 20.811662077903748,
+    "f1_present_classes": 20.811662077903748,
+    "precision_present_classes": 45.95137536525726,
+    "recall_present_classes": 32.107141613960266,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        9,
+        0,
+        5
+      ],
+      [
+        0,
+        1,
+        5,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        15,
+        3,
+        1
+      ],
+      [
+        1,
+        0,
+        10,
+        0,
+        5
+      ]
+    ],
+    "parameters": 22117,
+    "training_time_seconds": 1.4125170707702637,
+    "inference_latency_seconds": 0.15212798118591309,
+    "inference_latency_per_sample_seconds": 0.002493901330916608,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "42e415b28d4a8e26",
+    "score": 27.049999266020006,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C05",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "GELU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 26.229508196721312,
+    "precision": 13.246753811836243,
+    "recall": 29.857143759727478,
+    "f1": 17.02222377061844,
+    "f1_present_classes": 17.02222377061844,
+    "precision_present_classes": 13.246753811836243,
+    "recall_present_classes": 29.857143759727478,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        3,
+        6,
+        4,
+        1
+      ],
+      [
+        0,
+        1,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        6,
+        12,
+        0
+      ],
+      [
+        0,
+        5,
+        5,
+        6,
+        0
+      ]
+    ],
+    "parameters": 19653,
+    "training_time_seconds": 1.55598783493042,
+    "inference_latency_seconds": 0.1567699909210205,
+    "inference_latency_per_sample_seconds": 0.0025699998511642705,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "68712d25f692071d",
+    "score": 19.944981287552757,
+    "status": "evaluated",
+    "rank": 8
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C06",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "kernel_sizes[0]",
+        "from": 3,
+        "to": 5
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 37.704918032786885,
+    "precision": 35.57284474372864,
+    "recall": 30.17857074737549,
+    "f1": 31.183069944381714,
+    "f1_present_classes": 31.183069944381714,
+    "precision_present_classes": 35.57284474372864,
+    "recall_present_classes": 30.17857074737549,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        4,
+        1,
+        0,
+        4,
+        5
+      ],
+      [
+        1,
+        2,
+        0,
+        3,
+        1
+      ],
+      [
+        3,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        8,
+        0,
+        0,
+        10,
+        2
+      ],
+      [
+        3,
+        0,
+        1,
+        5,
+        7
+      ]
+    ],
+    "parameters": 20709,
+    "training_time_seconds": 1.4544181823730469,
+    "inference_latency_seconds": 0.17248892784118652,
+    "inference_latency_per_sample_seconds": 0.0028276873416587956,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "b56324eb2351e1f7",
+    "score": 34.9118675498349,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C07",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C08",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 128,
+        "to": 16
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "GELU",
+      "pooling": false,
+      "dropout": 0.4
+    },
+    "accuracy": 29.508196721311474,
+    "precision": 15.579268336296082,
+    "recall": 31.857141852378845,
+    "f1": 18.816693127155304,
+    "f1_present_classes": 18.816693127155304,
+    "precision_present_classes": 15.579268336296082,
+    "recall_present_classes": 31.857141852378845,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        1,
+        3,
+        10,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        5,
+        14,
+        0
+      ],
+      [
+        0,
+        1,
+        4,
+        11,
+        0
+      ]
+    ],
+    "parameters": 19653,
+    "training_time_seconds": 1.5381758213043213,
+    "inference_latency_seconds": 0.15741896629333496,
+    "inference_latency_per_sample_seconds": 0.0025806387916940156,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "df06f68f2adbdd1e",
+    "score": 22.540796667641374,
+    "status": "evaluated",
+    "rank": 6
+  },
+  {
+    "run_id": "20261027T084850Z",
+    "candidate_id": "20261027T084850Z-G05-C08",
+    "generation": 5,
+    "parent_id": "20261027T084850Z-G04-C05",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 16,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        128,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 33.76923203468323,
+    "recall": 31.178569793701172,
+    "f1": 28.859853744506836,
+    "f1_present_classes": 28.859853744506836,
+    "precision_present_classes": 33.76923203468323,
+    "recall_present_classes": 31.178569793701172,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        2,
+        3,
+        1,
+        4,
+        4
+      ],
+      [
+        0,
+        3,
+        1,
+        3,
+        0
+      ],
+      [
+        0,
+        3,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        9,
+        2,
+        6,
+        2
+      ],
+      [
+        1,
+        2,
+        1,
+        5,
+        7
+      ]
+    ],
+    "parameters": 243525,
+    "training_time_seconds": 1.3748700618743896,
+    "inference_latency_seconds": 0.14718985557556152,
+    "inference_latency_per_sample_seconds": 0.0024129484520583858,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "2995142a001bf226",
+    "score": 30.63183772943997,
+    "status": "evaluated",
+    "rank": 4
+  }
+]

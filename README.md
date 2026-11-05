@@ -1,15 +1,17 @@
 # NEUROFORGE
 
-> **Build. Mutate. Ship.** — a cinematic Streamlit studio for evolving image-classification models.
+> **Build. Mutate. Ship.** — an evolutionary Streamlit studio for image and audio classification.
 
-NEUROFORGE searches over dynamically generated CNN architectures, evaluates candidates with a proxy training budget, tracks parent/mutation lineage, retrains the selected architecture, and supports single-image live inference.
+NEUROFORGE generates CNN candidates, mutates strong architecture traits across generations, tracks parent lineage, retrains the selected design, and supports image or WAV sample inference.
 
 ## Current status
 
-- Streamlit workspace with four product stages: Dataset, Search lab, Final model, and Live test.
+- Streamlit workspace with four product stages: Data, Mutation lab, Results & export, and Try a sample.
 - Dynamic CNN architecture generator with mutation operations across layers, filters, kernels, activations, dropout, pooling, and batch normalization.
 - Deterministic class-aware splits for ImageFolder datasets.
 - Roboflow `_classes.csv` export support.
+- Audio classification preview through WAV class folders, ESC-50, and UrbanSound8K metadata layouts.
+- Log-mel audio features with deterministic fold-aware evaluation for supported audio datasets.
 - ZIP upload hardening for macOS `__MACOSX`, `._*`, `.DS_Store`, and non-image artifacts.
 - Train-only image augmentation and inverse-frequency class-balanced loss for the ImageFolder path.
 - Persisted candidate history, baseline comparison, architecture lineage, final checkpoint metadata, and held-out test metrics.
@@ -27,10 +29,10 @@ python -m streamlit run app.py
 
 Then open `http://localhost:8501`.
 
-For a local image dataset, use either:
+For a local dataset, use either:
 
 1. **Enter Local Path** — recommended for large datasets.
-2. **Upload ZIP file** — supported for ImageFolder-style archives.
+2. **Upload ZIP file** — supported for image or audio archives.
 
 The supported ImageFolder shape is:
 
@@ -46,16 +48,17 @@ dataset-root/
 
 Roboflow exports may use `train/`, `valid/`, and `test/` folders with `_classes.csv` files.
 
+Audio datasets can use class folders containing `.wav` files. ESC-50 and UrbanSound8K are detected from their metadata files and predefined folds.
+
 ## Demo flow
 
 ```text
-Load data
-  → Generate candidates
-  → Mutate architectures
-  → Select the strongest candidate
+Connect data
+  → Compare candidate models
+  → Select the strongest design
   → Retrain the selected model
   → Evaluate on held-out data
-  → Test a new image
+  → Try a new image or WAV sample
 ```
 
 The default Search lab budget is currently:
@@ -81,6 +84,10 @@ The settings can be changed in the Search lab UI.
 | `search_history.json` | Auditable candidate records, mutations, parents, and metrics. |
 | `manual_baseline.json` | Fixed manual-baseline comparison record. |
 | `docs/presentation-handoff.md` | Storyline, demo sequence, metrics, limitations, and presentation guidance for collaborators. |
+| `docs/dataset-and-training-plan.md` | Public dataset choices, audio setup, quality rules, and runtime strategy. |
+| `docs/neuroforge-ultimate-plan/NEUROFORGE-Ultimate-System-Plan.pdf` | Full image + audio strategy, current progress, architecture, UI system, prompts, roadmap, and viva plan. |
+| `docs/learning-guide/NEUROFORGE-Mutation-Playbook.pdf` | English project playbook with architecture, audio foundation, evidence rules, and viva practice. |
+| `docs/hinglish-guide/NEUROFORGE-Hinglish-Implementation-Guide.pdf` | Hinglish project playbook with architecture, audio flow, implementation steps, and viva answers. |
 
 ## Dataset and generated-file policy
 
@@ -95,7 +102,7 @@ The checked-in crop-pest artifact snapshot was produced before the latest augmen
 ## Verification commands
 
 ```bash
-python3 -m py_compile app.py architect.py neuroforge_core.py
+python3 -m py_compile app.py architect.py neuroforge_core.py audio_pipeline.py
 python3 -m streamlit run app.py --server.headless true --server.port 8501
 ```
 

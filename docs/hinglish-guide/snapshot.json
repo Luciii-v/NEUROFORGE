@@ -1,0 +1,228 @@
+{
+  "as_of": "2026-11-04",
+  "run_id": "20261103T112330Z",
+  "training_mode": "dynamic_cnn_proxy_search",
+  "training_complete": null,
+  "epochs": null,
+  "generations": 3,
+  "population_size": 4,
+  "proxy_epochs": 2,
+  "dataset": {
+    "format": "roboflow_csv_classification",
+    "modality": "image",
+    "num_classes": 9,
+    "num_samples": 2960,
+    "class_names": [
+      "Apple",
+      "Banana",
+      "Grapes",
+      "Kiwi",
+      "Mango",
+      "Orange",
+      "Pineapple",
+      "Sugerapple",
+      "Watermelon"
+    ]
+  },
+  "selected_config": {
+    "num_layers": 3,
+    "filters": [
+      32,
+      64,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      5,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.0
+  },
+  "selected_candidate": "20261103T112330Z-G03-C02",
+  "selected_parent": "20261103T112330Z-G02-C03",
+  "selected_mutation": [
+    {
+      "field": "activation",
+      "from": "ReLU",
+      "to": "GELU"
+    },
+    {
+      "field": "dropout",
+      "from": 0.2,
+      "to": 0.0
+    }
+  ],
+  "proxy": {
+    "accuracy": 74.19354838709677,
+    "precision": 71.07175588607788,
+    "recall": 69.94653344154358,
+    "f1": 67.47093796730042,
+    "mse": 0.04172529652714729,
+    "rmse": 0.2042677104473114,
+    "parameters": 127625,
+    "score": 71.13431532289648
+  },
+  "baseline_proxy": {
+    "accuracy": 50.0,
+    "precision": 52.60875225067139,
+    "recall": 46.10096216201782,
+    "f1": 43.222686648368835,
+    "mse": 0.07973891496658325,
+    "rmse": 0.2823807895183563,
+    "parameters": 20169,
+    "score": 48.462175448566434
+  },
+  "final_evaluation": {
+    "accuracy": 74.19354838709677,
+    "precision": 71.07175588607788,
+    "recall": 69.94653344154358,
+    "f1": 67.47093796730042,
+    "mse": null,
+    "rmse": null,
+    "parameters": 127625,
+    "score": 71.13431532289648,
+    "confusion_matrix": null,
+    "sample_count": null
+  },
+  "resnet_evaluation": {
+    "accuracy": 70.78651685393258,
+    "precision": 70.25086283683777,
+    "recall": 62.007808685302734,
+    "f1": 64.01011943817139,
+    "mse": 0.047927550971508026,
+    "rmse": 0.21892361342906952,
+    "parameters": null,
+    "score": null,
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        11,
+        1,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        10,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        1,
+        0,
+        9,
+        1,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        0,
+        0,
+        1,
+        9,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ]
+    ],
+    "sample_count": 89
+  },
+  "resnet_training": {
+    "architecture": "ResNet-18",
+    "epochs": 20,
+    "training_mode": "transfer_learning_resnet18",
+    "comparison_role": "fixed_transfer_learning_baseline"
+  },
+  "evaluation_caveat": "ImageFolder reuses the same evaluation subset for selection and final reporting; not an independent test.",
+  "candidate_slots": 12,
+  "unique_candidate_configs": 10,
+  "unique_evaluations_including_baseline": 11,
+  "reused_evaluations": 2,
+  "source_sha256": {
+    "architect.py": "52d71d7a6b16c5a816896c817e6244b15371bc167b131bfcf74373f229d9fa2d",
+    "neuroforge_core.py": "b5b11d9ced966ab8795f3b1aaea18033f83f2419e7ff847bd0e05da3d3abf381",
+    "audio_pipeline.py": "1d80704166130d36ceb2c49616f598c163eb26753f29121b9aae35b7f155debb",
+    "server.py": "374a7045ff56b885a15f4cd2f750d9f4e50f86f8cff37bd956f1a0eed42df3a9",
+    "run_studio.sh": "29152c9b98925ceb5654869dea01a90cba9012701e30d29ec48a76d1fb01c647",
+    "frontend/package.json": "98346e7aa0ce14abcd46a02d70d99e996cf99274577267354d73a6f3acc192a1",
+    "frontend/src/App.jsx": "a64631d4075eef4449a602ee18b023a1e350d935126b70219ea6c58bb897a1d1",
+    "frontend/src/components/MutationLoopPage.jsx": "08967e6b2a32ddfe3b82c22a703fa64816a72e0da7b1c28ce7e18c98627a8aad",
+    "best_model_config.json": "ef6b57e439b9e9083e349feff4f6d9fa257e3ac72f3231ce306b618e60a80a4c",
+    "best_model_metadata.json": "fb70d7629997fea32e89a3a46a893bcdd716ad09b824ca85b025bb8580684f8f",
+    "search_history.json": "78d312fc36f339226c75c6b746c979bfc6e701716b48ce97159b76f4f9c2b3a3",
+    "manual_baseline.json": "1ec2750ea71ea398bce1e604b3a854f49f459ae3ae683923d362744d19ed4690",
+    "resnet18_comparison_metadata.json": "4d95dd86b98154c6f149f8e7ae6963c353f962f8d8b48a8f30ff02767d2299f1"
+  }
+}

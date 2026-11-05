@@ -128,6 +128,8 @@ def run_architect_search(
     generations=5,
     population_size=8,
     st_callback=None,
+    progress_callback=None,
+    generation_callback=None,
     dataset_dir=None,
     seed=42,
     proxy_epochs=3,
@@ -146,16 +148,24 @@ def run_architect_search(
     dataset_metadata = neuroforge_core.get_dataset_metadata(dataset_dir)
     split_indices = None
     if dataset_dir:
-        split_indices = neuroforge_core.get_image_split_indices(dataset_dir, seed=seed)
+        split_indices = neuroforge_core.get_dataset_split_metadata(dataset_dir, seed=seed)
+
+    metrics_cache = {}
+    cache_hits = 0
+    evaluations_run = 0
 
     neuroforge_core.validate_config(MANUAL_BASELINE_CONFIG)
-    baseline_metrics = evaluate_candidate(
-        MANUAL_BASELINE_CONFIG,
-        epochs=proxy_epochs,
-        dataset_dir=dataset_dir,
-        seed=seed,
-        split_indices=split_indices,
-    )
+    baseline_cache_key = neuroforge_core.config_hash(MANUAL_BASELINE_CONFIG)
+    if baseline_cache_key not in metrics_cache:
+        evaluations_run += 1
+        metrics_cache[baseline_cache_key] = evaluate_candidate(
+            MANUAL_BASELINE_CONFIG,
+            epochs=proxy_epochs,
+            dataset_dir=dataset_dir,
+            seed=seed,
+            split_indices=split_indices,
+        )
+    baseline_metrics = dict(metrics_cache[baseline_cache_key])
     manual_baseline = {
         "model_type": "manual_baseline",
         "config": copy.deepcopy(MANUAL_BASELINE_CONFIG),
@@ -208,13 +218,21 @@ def run_architect_search(
                 st_callback({"type": "evaluating", "candidate": index, "total": len(candidates)})
 
             _write_json(os.path.join(output_dir, "candidate_config.json"), config)
-            metrics = evaluate_candidate(
-                config,
-                epochs=proxy_epochs,
-                dataset_dir=dataset_dir,
-                seed=seed,
-                split_indices=split_indices,
-            )
+            cache_key = neuroforge_core.config_hash(config)
+            cache_hit = cache_key in metrics_cache
+            if cache_hit:
+                cache_hits += 1
+                metrics = dict(metrics_cache[cache_key])
+            else:
+                evaluations_run += 1
+                metrics = evaluate_candidate(
+                    config,
+                    epochs=proxy_epochs,
+                    dataset_dir=dataset_dir,
+                    seed=seed,
+                    split_indices=split_indices,
+                )
+                metrics_cache[cache_key] = dict(metrics)
             result = {
                 "run_id": run_id,
                 "candidate_id": candidate_id,
@@ -226,17 +244,28 @@ def run_architect_search(
                 "score": _fitness(metrics),
                 "status": "evaluated",
             }
+            if cache_hit:
+                result["evaluation_reused"] = True
             generation_results.append(result)
             history.append(result)
             if st_callback:
                 st_callback({
                     "type": "result",
                     "candidate": index,
+                    "candidate_id": result["candidate_id"],
+                    "generation": result["generation"],
+                    "parent_id": result["parent_id"],
+                    "mutation_operations": result["mutation_operations"],
+                    "config": copy.deepcopy(result["config"]),
                     "accuracy": result["accuracy"],
                     "precision": result["precision"],
                     "f1": result["f1"],
                     "params": result["parameters"],
+                    "parameters": result["parameters"],
+                    "score": result["score"],
                 })
+            if progress_callback:
+                progress_callback(copy.deepcopy(result))
 
         generation_results.sort(key=lambda item: item["score"], reverse=True)
         for rank, result in enumerate(generation_results, start=1):
@@ -258,6 +287,19 @@ def run_architect_search(
                 })
         previous_generation = generation_results
         _write_json(os.path.join(output_dir, "search_history.json"), history)
+        if generation_callback:
+            generation_callback(
+                generation,
+                {
+                    "best_candidate_id": generation_best["candidate_id"],
+                    "accuracy": generation_best["accuracy"],
+                    "precision": generation_best["precision"],
+                    "recall": generation_best["recall"],
+                    "f1": generation_best["f1"],
+                    "score": generation_best["score"],
+                    "candidate_count": len(generation_results),
+                },
+            )
 
     metadata = {
         "schema_version": 1,
@@ -266,6 +308,8 @@ def run_architect_search(
         "generations": generations,
         "population_size": population_size,
         "proxy_epochs": proxy_epochs,
+        "unique_evaluations": evaluations_run,
+        "reused_evaluations": cache_hits,
         "dataset": dataset_metadata,
         "split_indices": split_indices,
         "objective": "0.45*accuracy + 0.25*precision + 0.30*f1 - params/1e6 - latency_per_sample*100",
@@ -298,11 +342,40 @@ def run_architect_search(
         })
     return {
         "run_id": run_id,
+        "best_candidate_id": best_result["candidate_id"],
         "best_config": best_config,
         "best_result": best_result,
         "manual_baseline": manual_baseline,
         "history": history,
         "metadata": metadata,
+    }
+
+
+def train_final_model(
+    config,
+    dataset_dir,
+    epochs=20,
+    output_weights_path="best_model_weights.pth",
+    output_metadata_path="best_model_metadata.json",
+    seed=42,
+    use_transfer_learning=False,
+):
+    """Train the selected architecture and return the persisted evaluation bundle."""
+    best_accuracy = neuroforge_core.full_train(
+        config=config,
+        epochs=epochs,
+        dataset_dir=dataset_dir,
+        use_transfer_learning=use_transfer_learning,
+        seed=seed,
+        weights_path=output_weights_path,
+        metadata_path=output_metadata_path,
+    )
+    with open(output_metadata_path) as handle:
+        metadata = json.load(handle)
+    return {
+        "best_validation_accuracy": best_accuracy,
+        "held_out_test_metrics": metadata.get("held_out_test_metrics", {}),
+        "training_complete": metadata.get("training_complete", False),
     }
 
 

@@ -1,17 +1,17 @@
 {
   "num_layers": 3,
   "filters": [
-    128,
+    32,
     64,
-    64
+    128
   ],
   "kernel_sizes": [
     3,
-    3,
+    5,
     3
   ],
   "batch_norm": true,
-  "activation": "ReLU",
+  "activation": "GELU",
   "pooling": true,
   "dropout": 0.0
 }

@@ -22,8 +22,23 @@ neuroforge_state.mds
 # Local datasets and extracted uploads
 custom_data/
 data/
+datasets/
 *.zip
 
-# Generated transient files
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+
+# Heavy weights
+resnet18_comparison_weights.pth
+
+# Generated transient files and screenshots
 candidate_config.json
 *.log
+screenshot_*.png
+option*.png
+direction_*.jpg
+hybrid_optical_bench.jpg
+.archify/
+brag-output/
+

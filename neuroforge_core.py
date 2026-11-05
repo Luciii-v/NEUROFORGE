@@ -12,6 +12,8 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+import audio_pipeline
+
 # 1. Device Configuration (Apple Silicon MPS or standard CPU/CUDA)
 device = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
 print(f"NEUROFORGE Engine initialized. Using device: {device}")
@@ -260,9 +262,19 @@ def get_image_split_indices(dataset_dir, seed=42, train_fraction=0.8):
     )
 
 
+def get_dataset_split_metadata(dataset_dir, seed=42, train_fraction=0.8):
+    """Return the stable split descriptor for either image or audio data."""
+    audio_metadata = audio_pipeline.get_split_metadata(dataset_dir, seed=seed)
+    if audio_metadata:
+        return audio_metadata
+    return get_image_split_indices(dataset_dir, seed=seed, train_fraction=train_fraction)
+
+
 def get_dataset_metadata(dataset_dir=None):
     """Return stable class metadata for the current supported image datasets."""
     if dataset_dir:
+        if audio_pipeline.detect_audio_dataset(dataset_dir):
+            return audio_pipeline.get_audio_metadata(dataset_dir)
         roboflow_root = find_roboflow_dataset_root(dataset_dir)
         if roboflow_root:
             class_names, train_samples, train_report = _read_roboflow_labels(roboflow_root / "train")
@@ -270,6 +282,7 @@ def get_dataset_metadata(dataset_dir=None):
             _, test_samples, test_report = _read_roboflow_labels(roboflow_root / "test")
             return {
                 "format": "roboflow_csv_classification",
+                "modality": "image",
                 "dataset_root": str(roboflow_root),
                 "class_names": class_names,
                 "class_to_idx": {name: index for index, name in enumerate(class_names)},
@@ -291,6 +304,7 @@ def get_dataset_metadata(dataset_dir=None):
         dataset = CleanImageFolder(root=imagefolder_root, is_valid_file=_is_usable_image_file)
         return {
             "format": "imagefolder_classification",
+            "modality": "image",
             "dataset_root": str(imagefolder_root),
             "class_names": list(dataset.classes),
             "class_to_idx": dict(dataset.class_to_idx),
@@ -305,6 +319,7 @@ def get_dataset_metadata(dataset_dir=None):
     ]
     return {
         "format": "cifar10_classification",
+        "modality": "image",
         "dataset_root": "./data",
         "class_names": classes,
         "class_to_idx": {name: index for index, name in enumerate(classes)},
@@ -317,6 +332,14 @@ def get_dataset_metadata(dataset_dir=None):
 # 2. Dataset & Preprocessing (Supports CIFAR-10 Fallback or Custom ImageFolder)
 def get_dataloaders(batch_size=64, dataset_dir=None, split_indices=None, seed=42, evaluation_split="valid"):
     if dataset_dir:
+        if audio_pipeline.detect_audio_dataset(dataset_dir):
+            return audio_pipeline.get_audio_dataloaders(
+                batch_size=batch_size,
+                dataset_dir=dataset_dir,
+                split_metadata=split_indices,
+                seed=seed,
+                evaluation_split=evaluation_split,
+            )
         if evaluation_split not in {"valid", "test"}:
             raise ValueError("evaluation_split must be 'valid' or 'test'")
         roboflow_root = find_roboflow_dataset_root(dataset_dir)
@@ -419,11 +442,11 @@ def _class_weights(dataset, num_classes):
 
 # 3. Dynamic Candidate Generator (The Forge)
 class DynamicCNN(nn.Module):
-    def __init__(self, config, num_classes=10):
+    def __init__(self, config, num_classes=10, in_channels=3):
         super(DynamicCNN, self).__init__()
         validate_config(config)
         layers = []
-        in_channels = 3 # RGB Images
+        current_channels = in_channels
         
         # Build Convolutional Layers dynamically based on config
         for i in range(config.get('num_layers', 2)):
@@ -431,7 +454,7 @@ class DynamicCNN(nn.Module):
             kernel = config['kernel_sizes'][i]
             padding = kernel // 2 # Keep spatial dimensions intact
             
-            layers.append(nn.Conv2d(in_channels, filters, kernel_size=kernel, padding=padding))
+            layers.append(nn.Conv2d(current_channels, filters, kernel_size=kernel, padding=padding))
             
             if config.get('batch_norm', True):
                 layers.append(nn.BatchNorm2d(filters))
@@ -448,13 +471,13 @@ class DynamicCNN(nn.Module):
             if config.get('dropout', 0) > 0:
                 layers.append(nn.Dropout2d(config['dropout']))
                 
-            in_channels = filters
+            current_channels = filters
 
         self.features = nn.Sequential(*layers)
         
         # Adaptive pooling ensures output is exactly 1x1 per filter, eliminating shape math for the linear layer
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.classifier = nn.Linear(in_channels, num_classes)
+        self.classifier = nn.Linear(current_channels, num_classes)
 
     def forward(self, x):
         x = self.features(x)
@@ -463,9 +486,35 @@ class DynamicCNN(nn.Module):
         x = self.classifier(x)
         return x
 
+
+def _dataset_modality(dataset_dir=None):
+    if dataset_dir and audio_pipeline.detect_audio_dataset(dataset_dir):
+        return "audio"
+    return "image"
+
+
+def _build_model(config, num_classes, dataset_dir=None, use_transfer_learning=False, pretrained=False):
+    modality = _dataset_modality(dataset_dir)
+    if use_transfer_learning:
+        if modality != "image":
+            raise ValueError("The ResNet-18 baseline is available for image datasets only")
+        weights = torchvision.models.ResNet18_Weights.DEFAULT if pretrained else None
+        model = torchvision.models.resnet18(weights=weights)
+        for parameter in model.parameters():
+            parameter.requires_grad = False
+        model.fc = nn.Linear(model.fc.in_features, num_classes)
+        return model
+    return DynamicCNN(config, num_classes=num_classes, in_channels=1 if modality == "audio" else 3)
+
 # 4. Proxy Trainer & Judge
-def classification_metrics(labels, predictions, num_classes):
-    """Calculate accuracy and macro precision/recall/F1 in percentage units."""
+def classification_metrics(labels, predictions, num_classes, probabilities=None):
+    """Calculate classification metrics plus probability-vector MSE/RMSE.
+
+    MSE and RMSE compare each predicted probability vector with a one-hot
+    target vector. They are auxiliary classification diagnostics, not
+    regression scores, and remain in raw 0-1 units while the traditional
+    classification metrics are percentages.
+    """
     confusion = torch.zeros((num_classes, num_classes), dtype=torch.long)
     for actual, predicted in zip(labels, predictions):
         if 0 <= actual < num_classes and 0 <= predicted < num_classes:
@@ -482,13 +531,35 @@ def classification_metrics(labels, predictions, num_classes):
         2 * precision * recall / f1_denominator,
         torch.zeros_like(true_positive),
     )
+    present_classes = actual_count > 0
+    macro_f1_present = f1[present_classes].mean().item() * 100 if present_classes.any() else 0.0
+    macro_precision_present = precision[present_classes].mean().item() * 100 if present_classes.any() else 0.0
+    macro_recall_present = recall[present_classes].mean().item() * 100 if present_classes.any() else 0.0
     total = confusion.sum().item()
     accuracy = true_positive.sum().item() / total if total else 0.0
+    mse = None
+    rmse = None
+    if probabilities is not None and len(probabilities) == len(labels):
+        probability_tensor = torch.as_tensor(probabilities, dtype=torch.float32)
+        if probability_tensor.ndim == 2 and probability_tensor.shape == (len(labels), num_classes):
+            target_tensor = torch.nn.functional.one_hot(
+                torch.as_tensor(labels, dtype=torch.long),
+                num_classes=num_classes,
+            ).float()
+            mse = torch.mean((probability_tensor - target_tensor) ** 2).item()
+            rmse = float(torch.sqrt(torch.tensor(mse)).item())
+
     return {
         "accuracy": accuracy * 100,
         "precision": precision.mean().item() * 100,
         "recall": recall.mean().item() * 100,
         "f1": f1.mean().item() * 100,
+        "f1_present_classes": macro_f1_present,
+        "precision_present_classes": macro_precision_present,
+        "recall_present_classes": macro_recall_present,
+        "mse": mse,
+        "rmse": rmse,
+        "evaluated_class_count": int(present_classes.sum().item()),
         "metric_average": "macro",
         "metric_scale": "percent",
         "confusion_matrix": confusion.tolist(),
@@ -504,7 +575,7 @@ def evaluate_candidate(config, epochs=3, dataset_dir=None, seed=42, split_indice
         split_indices=split_indices,
         seed=seed,
     )
-    model = DynamicCNN(config, num_classes=num_classes).to(device)
+    model = _build_model(config, num_classes, dataset_dir=dataset_dir).to(device)
     
     criterion = nn.CrossEntropyLoss(
         weight=_class_weights(trainloader.dataset, num_classes).to(device),
@@ -531,16 +602,19 @@ def evaluate_candidate(config, epochs=3, dataset_dir=None, seed=42, split_indice
     model.eval()
     all_labels = []
     predictions = []
+    probabilities = []
     inference_start = time.time()
     with torch.no_grad():
         for inputs, batch_labels in testloader:
             inputs, batch_labels = inputs.to(device), batch_labels.to(device)
             outputs = model(inputs)
-            _, predicted = torch.max(outputs.data, 1)
+            batch_probabilities = torch.softmax(outputs, dim=1)
+            _, predicted = torch.max(batch_probabilities.data, 1)
             all_labels.extend(batch_labels.detach().cpu().tolist())
             predictions.extend(predicted.detach().cpu().tolist())
+            probabilities.extend(batch_probabilities.detach().cpu().tolist())
     inference_time = time.time() - inference_start
-    metrics = classification_metrics(all_labels, predictions, num_classes)
+    metrics = classification_metrics(all_labels, predictions, num_classes, probabilities)
 
     print(f"Params: {total_params:,} | Accuracy: {metrics['accuracy']:.2f}% | F1: {metrics['f1']:.2f}%")
     print(f"Training Time: {training_time:.2f}s | Inference Time: {inference_time:.2f}s")
@@ -577,15 +651,15 @@ def full_train(
     
     if use_transfer_learning:
         print("Using Pretrained ResNet18 for Transfer Learning...")
-        model = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.DEFAULT)
-        # Freeze early layers for speed
-        for param in model.parameters():
-            param.requires_grad = False
-        # Replace the final classification layer (this will have requires_grad=True by default)
-        model.fc = nn.Linear(model.fc.in_features, num_classes)
-        model = model.to(device)
+        model = _build_model(
+            config,
+            num_classes,
+            dataset_dir=dataset_dir,
+            use_transfer_learning=True,
+            pretrained=True,
+        ).to(device)
     else:
-        model = DynamicCNN(config, num_classes=num_classes).to(device)
+        model = _build_model(config, num_classes, dataset_dir=dataset_dir).to(device)
     
     criterion = nn.CrossEntropyLoss(
         weight=_class_weights(trainloader.dataset, num_classes).to(device),
@@ -625,18 +699,22 @@ def full_train(
         model.eval()
         validation_labels = []
         validation_predictions = []
+        validation_probabilities = []
         with torch.no_grad():
             for inputs, batch_labels in testloader:
                 inputs, batch_labels = inputs.to(device), batch_labels.to(device)
                 outputs = model(inputs)
-                _, predicted = torch.max(outputs.data, 1)
+                batch_probabilities = torch.softmax(outputs, dim=1)
+                _, predicted = torch.max(batch_probabilities.data, 1)
                 validation_labels.extend(batch_labels.detach().cpu().tolist())
                 validation_predictions.extend(predicted.detach().cpu().tolist())
+                validation_probabilities.extend(batch_probabilities.detach().cpu().tolist())
 
         validation_metrics = classification_metrics(
             validation_labels,
             validation_predictions,
             num_classes,
+            validation_probabilities,
         )
         val_accuracy = validation_metrics["accuracy"]
         
@@ -680,8 +758,9 @@ def full_train(
                 "epochs": epochs,
                 "best_metrics": {
                     key: best_metrics[key]
-                    for key in ("accuracy", "precision", "recall", "f1")
+                    for key in ("accuracy", "precision", "recall", "f1", "mse", "rmse")
                 },
+                "dataset": get_dataset_metadata(dataset_dir),
                 "weights_path": weights_path,
             })
             with open(metadata_path, "w") as handle:
@@ -723,11 +802,16 @@ def evaluate_checkpoint(
 ):
     """Evaluate a saved model on a named dataset split without updating weights."""
     if use_transfer_learning:
-        model = torchvision.models.resnet18(weights=None)
-        model.fc = nn.Linear(model.fc.in_features, num_classes)
+        model = _build_model(
+            config,
+            num_classes,
+            dataset_dir=dataset_dir,
+            use_transfer_learning=True,
+            pretrained=False,
+        )
         expected_key = "fc.weight"
     else:
-        model = DynamicCNN(config, num_classes=num_classes)
+        model = _build_model(config, num_classes, dataset_dir=dataset_dir)
         expected_key = "classifier.weight"
 
     state_dict = torch.load(weights_path, map_location=device, weights_only=True)
@@ -750,15 +834,18 @@ def evaluate_checkpoint(
 
     all_labels = []
     predictions = []
+    probabilities = []
     inference_start = time.time()
     with torch.no_grad():
         for inputs, batch_labels in evaluation_loader:
             outputs = model(inputs.to(device))
-            _, predicted = torch.max(outputs.data, 1)
+            batch_probabilities = torch.softmax(outputs, dim=1)
+            _, predicted = torch.max(batch_probabilities.data, 1)
             all_labels.extend(batch_labels.tolist())
             predictions.extend(predicted.cpu().tolist())
+            probabilities.extend(batch_probabilities.cpu().tolist())
     elapsed = time.time() - inference_start
-    metrics = classification_metrics(all_labels, predictions, num_classes)
+    metrics = classification_metrics(all_labels, predictions, num_classes, probabilities)
     metrics.update({
         "split": evaluation_split,
         "sample_count": len(all_labels),
@@ -768,12 +855,24 @@ def evaluate_checkpoint(
     return metrics
 
 
-def predict_image(image_tensor, config, num_classes, use_transfer_learning=False, weights_path="best_model_weights.pth"):
+def predict_image(
+    image_tensor,
+    config,
+    num_classes,
+    use_transfer_learning=False,
+    weights_path="best_model_weights.pth",
+    dataset_dir=None,
+):
     if use_transfer_learning:
-        model = torchvision.models.resnet18(weights=None)
-        model.fc = nn.Linear(model.fc.in_features, num_classes)
+        model = _build_model(
+            config,
+            num_classes,
+            dataset_dir=dataset_dir,
+            use_transfer_learning=True,
+            pretrained=False,
+        )
     else:
-        model = DynamicCNN(config, num_classes=num_classes)
+        model = _build_model(config, num_classes, dataset_dir=dataset_dir)
         
     state_dict = torch.load(weights_path, map_location=device, weights_only=True)
     expected_key = "fc.weight" if use_transfer_learning else "classifier.weight"
@@ -800,6 +899,35 @@ def predict_image(image_tensor, config, num_classes, use_transfer_learning=False
         confidence, predicted_idx = torch.max(probabilities, 0)
         
     return predicted_idx.item(), confidence.item()
+
+
+def predict_audio(audio_bytes, config, num_classes, weights_path="best_model_weights.pth", dataset_dir=None):
+    """Predict a 16-bit PCM WAV upload with the saved audio checkpoint."""
+    probabilities, _ = predict_audio_distribution(
+        audio_bytes,
+        config,
+        num_classes,
+        weights_path=weights_path,
+        dataset_dir=dataset_dir,
+    )
+    confidence, predicted_idx = torch.max(probabilities, 0)
+    return predicted_idx.item(), confidence.item()
+
+
+def predict_audio_distribution(audio_bytes, config, num_classes, weights_path="best_model_weights.pth", dataset_dir=None):
+    """Return all class probabilities and feature shape for an audio upload."""
+    if _dataset_modality(dataset_dir) != "audio":
+        raise ValueError("The selected dataset is not an audio dataset")
+    model = _build_model(config, num_classes, dataset_dir=dataset_dir).to(device)
+    state_dict = torch.load(weights_path, map_location=device, weights_only=True)
+    if "classifier.weight" not in state_dict:
+        raise ValueError("The saved checkpoint is not a DynamicCNN audio checkpoint")
+    model.load_state_dict(state_dict)
+    model.eval()
+    feature_tensor = audio_pipeline.audio_sample_from_bytes(audio_bytes)
+    with torch.no_grad():
+        probabilities = torch.nn.functional.softmax(model(feature_tensor.unsqueeze(0).to(device))[0], dim=0)
+    return probabilities.cpu(), list(feature_tensor.shape)
 
 # Quick test if run directly
 if __name__ == "__main__":

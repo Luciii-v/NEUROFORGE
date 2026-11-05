@@ -1,0 +1,74 @@
+{
+  "model_type": "manual_baseline",
+  "config": {
+    "num_layers": 2,
+    "filters": [
+      32,
+      64
+    ],
+    "kernel_sizes": [
+      3,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "ReLU",
+    "pooling": true,
+    "dropout": 0.2
+  },
+  "accuracy": 31.147540983606557,
+  "precision": 25.248676538467407,
+  "recall": 28.928571939468384,
+  "f1": 21.869388222694397,
+  "f1_present_classes": 21.869388222694397,
+  "precision_present_classes": 25.248676538467407,
+  "recall_present_classes": 28.928571939468384,
+  "evaluated_class_count": 5,
+  "metric_average": "macro",
+  "metric_scale": "percent",
+  "confusion_matrix": [
+    [
+      0,
+      7,
+      0,
+      0,
+      7
+    ],
+    [
+      0,
+      4,
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      2,
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      10,
+      0,
+      5,
+      5
+    ],
+    [
+      1,
+      4,
+      0,
+      1,
+      10
+    ]
+  ],
+  "parameters": 19909,
+  "training_time_seconds": 1.5386741161346436,
+  "inference_latency_seconds": 0.17536497116088867,
+  "inference_latency_per_sample_seconds": 0.002874835592801454,
+  "num_classes": 5,
+  "seed": 42,
+  "config_hash": "e446a9d0cdeab3aa",
+  "score": 26.581986484767977,
+  "status": "evaluated"
+}
