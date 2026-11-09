@@ -433,9 +433,22 @@ async def predict_sample(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         start_time = time.perf_counter()
+        is_wav = file.filename.lower().endswith(".wav") if file.filename else False
+        
+        if is_wav and modality != "audio":
+            raise HTTPException(
+                status_code=400,
+                detail="Active model is trained on image data (3-channel RGB). To evaluate WAV audio, mount an audio dataset (e.g., ESC-50 or UrbanSound8K) in the Mutation Loop."
+            )
+        if not is_wav and modality == "audio":
+            raise HTTPException(
+                status_code=400,
+                detail="Active model is trained on audio data (1-channel log-mel spectrogram). Please upload a 16-bit PCM WAV audio file."
+            )
+
         if modality == "audio":
-            if not file.filename.lower().endswith(".wav"):
-                raise ValueError("Audio inference currently accepts 16-bit PCM WAV files.")
+            if not is_wav:
+                raise ValueError("Audio inference requires 16-bit PCM WAV files.")
             probs, feature_shape = neuroforge_core.predict_audio_distribution(
                 contents,
                 config,
@@ -485,8 +498,16 @@ async def predict_sample(file: UploadFile = File(...)):
                 "preprocessing": "16 kHz mono · 4 s · 64-band log-mel",
             })
         return response
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+
+
+@app.post("/api/audio/predict")
+async def predict_audio_sample(file: UploadFile = File(...)):
+    """Dedicated endpoint for 16-bit PCM WAV audio inference."""
+    return await predict_sample(file)
 
 
 @app.websocket("/ws/search")
@@ -597,6 +618,36 @@ def get_sample_files():
             })
         return {"samples": samples[:6]}
 
+    roboflow_root = neuroforge_core.find_roboflow_dataset_root(dataset_dir)
+    if roboflow_root:
+        samples = []
+        seen_classes = set()
+        for split in ("test", "valid"):
+            split_dir = roboflow_root / split
+            if split_dir.is_dir():
+                try:
+                    class_names, split_samples, _ = neuroforge_core._read_roboflow_labels(split_dir)
+                    for img_path, label_idx in split_samples:
+                        c_name = class_names[label_idx]
+                        if c_name in seen_classes:
+                            continue
+                        seen_classes.add(c_name)
+                        p_obj = Path(img_path)
+                        samples.append({
+                            "class_name": c_name,
+                            "filename": p_obj.name,
+                            "rel_path": str(p_obj.resolve().relative_to(Path(dataset_dir).resolve())),
+                            "modality": "image",
+                        })
+                        if len(samples) >= 6:
+                            break
+                except Exception:
+                    pass
+            if len(samples) >= 6:
+                break
+        if samples:
+            return {"samples": samples}
+
     p = Path(dataset_dir)
     samples = []
     # Search for up to 6 diverse class samples
@@ -617,15 +668,15 @@ def get_sample_files():
 @app.get("/api/sample-image")
 def get_sample_image(rel_path: str):
     """Serve a sample image file."""
-    dataset_dir = workspace_state["dataset_dir"]
-    if not dataset_dir:
-        meta = load_json(METADATA_PATH) or {}
-        dataset_dir = meta.get("dataset", {}).get("dataset_root")
-    
+    dataset_dir = _active_dataset_dir()
     if not dataset_dir:
         raise HTTPException(status_code=404, detail="Dataset directory not configured.")
     
-    img_path = (Path(dataset_dir) / rel_path).resolve()
+    effective_root = neuroforge_core.find_roboflow_dataset_root(dataset_dir) or Path(dataset_dir)
+    img_path = (Path(effective_root) / rel_path).resolve()
+    if not img_path.exists() or not img_path.is_file():
+        img_path = (Path(dataset_dir) / rel_path).resolve()
+    
     if not img_path.exists() or not img_path.is_file():
         raise HTTPException(status_code=404, detail="Image not found.")
     

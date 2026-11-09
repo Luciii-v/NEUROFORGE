@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, Zap, CheckCircle2, Cpu, ArrowUpRight, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, Zap, Cpu, Sparkles, Image as ImageIcon, Volume2, Music, Headphones } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInferEnd }) {
-  const [testImage, setTestImage] = useState(null);
+  const [testMedia, setTestMedia] = useState(null); // { url, type: 'image' | 'audio', name }
   const [evaluating, setEvaluating] = useState(false);
   const [result, setResult] = useState(null);
   const [samples, setSamples] = useState([]);
@@ -12,7 +12,7 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Fetch quick-test sample images from backend
+    // Fetch quick-test sample files from backend (images or audio)
     fetch('/api/samples')
       .then((res) => res.json())
       .then((data) => {
@@ -23,7 +23,7 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
       .catch((err) => console.log('Samples API not available yet', err));
   }, []);
 
-  const handlePredict = async (fileBlob, filename = 'test.jpg') => {
+  const handlePredict = async (fileBlob, filename = 'specimen.jpg') => {
     if (!fileBlob) return;
 
     setEvaluating(true);
@@ -52,10 +52,11 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
         });
       }
 
-       if (onSetSpeech) {
-         const qualifier = data.percentage < 40 ? ' Low-confidence result; the model is uncertain.' : '';
-         onSetSpeech(`Inference returned '${data.prediction}' with ${data.percentage}% confidence in ${data.latency_ms}ms.${qualifier}`);
-       }
+      if (onSetSpeech) {
+        const qualifier = data.percentage < 40 ? ' Low-confidence result; the model is uncertain.' : '';
+        const modalityTag = data.modality === 'audio' ? ' (Audio Log-Mel Spectrogram)' : '';
+        onSetSpeech(`Inference returned '${data.prediction}'${modalityTag} with ${data.percentage}% confidence in ${data.latency_ms}ms.${qualifier}`);
+      }
     } catch (e) {
       console.error(e);
       if (onSetSpeech) onSetSpeech(`Inference error: ${e.message}`);
@@ -68,7 +69,12 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
   const handleFileUpload = (file) => {
     if (!file) return;
     setActiveSampleName(file.name);
-    setTestImage(URL.createObjectURL(file));
+    const isAudio = file.name.toLowerCase().endsWith('.wav') || file.type.includes('audio');
+    setTestMedia({
+      url: URL.createObjectURL(file),
+      type: isAudio ? 'audio' : 'image',
+      name: file.name,
+    });
     handlePredict(file, file.name);
   };
 
@@ -76,17 +82,28 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
     setActiveSampleName(sample.class_name);
     try {
       setEvaluating(true);
-      const url = `/api/sample-image?rel_path=${encodeURIComponent(sample.rel_path)}`;
-      setTestImage(url);
-      
+      const isAudio = sample.modality === 'audio' || sample.filename?.toLowerCase().endsWith('.wav');
+      const url = isAudio
+        ? `/api/sample-audio?rel_path=${encodeURIComponent(sample.rel_path)}`
+        : `/api/sample-image?rel_path=${encodeURIComponent(sample.rel_path)}`;
+
+      setTestMedia({
+        url,
+        type: isAudio ? 'audio' : 'image',
+        name: sample.filename,
+      });
+
       const res = await fetch(url);
       const blob = await res.blob();
       await handlePredict(blob, sample.filename);
     } catch (err) {
-      console.error('Failed to load sample image', err);
+      console.error('Failed to load sample specimen', err);
       setEvaluating(false);
     }
   };
+
+  const numClasses = result?.all_classes?.length || 9;
+  const randomBaseline = Math.round(100 / numClasses);
 
   return (
     <div className="w-full rounded-3xl p-6 md:p-8 border border-white/[0.08] relative overflow-hidden backdrop-blur-2xl bg-gradient-to-b from-[#0b0e17]/80 to-[#05070c]/90 shadow-2xl">
@@ -94,7 +111,7 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/[0.06] mb-6">
         <div>
           <span className="font-mono text-[10px] tracking-[0.2em] text-zinc-500 uppercase block mb-1">
-            CRUCIBLE // REAL-TIME INFERENCE SUITE
+            CRUCIBLE // MULTIMODAL INFERENCE SUITE
           </span>
           <span className="font-sans text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
             Interactive Prediction Chamber
@@ -116,6 +133,7 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
           <div className="flex flex-wrap gap-2">
             {samples.map((s, idx) => {
               const isSelected = activeSampleName === s.class_name;
+              const isAudio = s.modality === 'audio' || s.filename?.toLowerCase().endsWith('.wav');
               return (
                 <button
                   key={idx}
@@ -127,7 +145,11 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
                       : 'bg-white/[0.03] border-white/[0.08] text-zinc-300 hover:border-white/20 hover:bg-white/[0.06]'
                   } disabled:opacity-50`}
                 >
-                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  {isAudio ? (
+                    <Volume2 className="w-3 h-3 text-cyan-400" />
+                  ) : (
+                    <Sparkles className="w-3 h-3 text-cyan-400" />
+                  )}
                   <span>{s.class_name}</span>
                 </button>
               );
@@ -147,30 +169,74 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
             <input
               type="file"
               ref={fileInputRef}
-              accept="image/*"
+              accept="image/*,audio/wav,audio/x-wav,.wav"
               className="hidden"
               onChange={(e) => handleFileUpload(e.target.files?.[0])}
             />
 
-            {testImage ? (
-              <div className="relative w-full h-full flex flex-col items-center justify-center">
-                <img
-                  src={testImage}
-                  alt="Specimen Preview"
-                  className="w-full h-full object-cover rounded-xl shadow-lg border border-white/10"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-xl font-mono text-xs text-cyan-300 backdrop-blur-xs gap-1">
-                  <ImageIcon className="w-5 h-5 text-cyan-400" />
-                  <span>DROP OR CLICK TO SWAP</span>
+            {testMedia ? (
+              testMedia.type === 'audio' ? (
+                <div
+                  className="relative w-full h-full flex flex-col items-center justify-center p-4 bg-zinc-950/80 rounded-xl border border-white/10"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400 mb-3 shadow-[0_0_20px_rgba(0,240,255,0.15)]">
+                    <Headphones className="w-7 h-7" />
+                  </div>
+                  <div className="font-mono text-xs text-zinc-200 font-semibold truncate max-w-full mb-1">
+                    {testMedia.name || 'audio-specimen.wav'}
+                  </div>
+                  <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-widest mb-4">
+                    16 kHz Mono WAV
+                  </span>
+
+                  {/* Animated Waveform Visualizer */}
+                  <div className="flex items-center gap-1 h-8 mb-4">
+                    {[12, 24, 18, 30, 15, 28, 20, 14, 26, 16, 22].map((h, i) => (
+                      <div
+                        key={i}
+                        className="w-1 bg-cyan-400/70 rounded-full animate-pulse"
+                        style={{
+                          height: `${h}px`,
+                          animationDelay: `${i * 90}ms`,
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <audio
+                    src={testMedia.url}
+                    controls
+                    className="w-full max-w-[240px] h-8 accent-cyan-400 opacity-90"
+                  />
+
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="mt-4 font-mono text-[10px] text-cyan-400 hover:text-cyan-300 underline tracking-wider"
+                  >
+                    CLICK TO SWAP SPECIMEN
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <div className="relative w-full h-full flex flex-col items-center justify-center">
+                  <img
+                    src={testMedia.url}
+                    alt="Specimen Preview"
+                    className="w-full h-full object-cover rounded-xl shadow-lg border border-white/10"
+                  />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-xl font-mono text-xs text-cyan-300 backdrop-blur-xs gap-1">
+                    <ImageIcon className="w-5 h-5 text-cyan-400" />
+                    <span>DROP OR CLICK TO SWAP</span>
+                  </div>
+                </div>
+              )
             ) : (
               <div className="flex flex-col items-center">
                 <div className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-400/20 flex items-center justify-center text-cyan-400 mb-4 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(0,240,255,0.2)] transition-all">
                   <UploadCloud className="w-7 h-7" />
                 </div>
-                <div className="font-sans text-sm font-semibold text-zinc-100">Drop Custom Test Image</div>
-                <div className="font-mono text-[11px] text-zinc-500 mt-1">PNG, JPG, or WEBP (Direct Inference)</div>
+                <div className="font-sans text-sm font-semibold text-zinc-100">Drop Custom Test Specimen</div>
+                <div className="font-mono text-[11px] text-zinc-500 mt-1">Image (PNG, JPG, WEBP) or Audio (.WAV)</div>
               </div>
             )}
 
@@ -197,8 +263,15 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
                 {/* Top Prediction Banner */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
                   <div className="flex items-center justify-between text-xs font-mono text-zinc-500 mb-1">
-                    <span>IDENTIFIED CLASS</span>
-                    <span className="text-cyan-400 flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      <span>IDENTIFIED CLASS</span>
+                      {result.modality === 'audio' && (
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-400/20">
+                          AUDIO LOG-MEL
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-cyan-400 flex items-center gap-1 font-mono">
                       <Zap className="w-3 h-3 fill-current" />
                       {result.latency_ms}ms LATENCY
                     </span>
@@ -209,19 +282,26 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
                       {result.percentage}% CONFIDENCE
                     </span>
                   </div>
+
+                  {result.modality === 'audio' && result.preprocessing && (
+                    <div className="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-zinc-400">
+                      <span>SPECTRUM: <strong className="text-zinc-200">{JSON.stringify(result.feature_shape)}</strong></span>
+                      <span className="text-zinc-500">{result.preprocessing}</span>
+                    </div>
+                  )}
                 </div>
 
                 {result.percentage < 40 && (
                   <div className="rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] px-5 py-3 text-xs font-mono text-amber-200">
                     <span className="font-semibold">Low-confidence reading.</span>{' '}
-                    Five classes give a 20% random baseline. This {result.percentage}% result is close to that baseline, so treat the label as uncertain—not as a reliable identification.
+                    {numClasses} classes give a {randomBaseline}% random baseline. This {result.percentage}% result is close to that baseline, so treat the label as uncertain—not as a reliable identification.
                   </div>
                 )}
 
                 {/* Probability Spectrum Breakdown */}
                 <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
                   <div className="font-mono text-[10px] tracking-wider uppercase text-zinc-500 flex justify-between">
-                    <span>Probability Distribution Across 5 Classes</span>
+                    <span>Probability Distribution Across {result.all_classes?.length || numClasses} Classes</span>
                     <span>Softmax Probability</span>
                   </div>
 
@@ -259,7 +339,7 @@ export default function InteractiveCrucible({ onSetSpeech, onInferStart, onInfer
                 <Cpu className="w-8 h-8 text-zinc-600" />
                 <div className="text-zinc-300 font-sans font-semibold text-sm">Awaiting Specimen Input</div>
                 <div className="max-w-sm text-zinc-500">
-                  Select one of the sample presets above or drop an image to execute real-time tensor inference directly through the Apple M5 accelerator.
+                  Select one of the sample presets above or drop an image / WAV file to execute real-time tensor inference directly through the Apple M5 accelerator.
                 </div>
               </div>
             )}

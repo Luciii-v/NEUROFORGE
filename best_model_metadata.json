@@ -135,12 +135,12 @@
   "objective": "0.45*accuracy + 0.25*precision + 0.30*f1 - params/1e6 - latency_per_sample*100",
   "best_candidate_id": "20261103T112330Z-G03-C02",
   "best_metrics": {
-    "accuracy": 74.19354838709677,
-    "precision": 71.07175588607788,
-    "recall": 69.94653344154358,
-    "f1": 67.47093796730042,
-    "parameters": 127625,
-    "score": 71.13431532289648
+    "accuracy": 84.40860215053763,
+    "precision": 82.86013007164001,
+    "recall": 84.8974347114563,
+    "f1": 80.75366020202637,
+    "mse": 0.02597144991159439,
+    "rmse": 0.16115659475326538
   },
   "best_config_hash": "fadb6bc03d4c4b1a",
   "manual_baseline": {
@@ -290,5 +290,140 @@
     "f1_delta": 24.24825131893158,
     "parameter_delta": 107456
   },
-  "training_mode": "dynamic_cnn_proxy_search"
+  "training_mode": "dynamic_cnn",
+  "num_classes": 9,
+  "class_names": [
+    "Apple",
+    "Banana",
+    "Grapes",
+    "Kiwi",
+    "Mango",
+    "Orange",
+    "Pineapple",
+    "Sugerapple",
+    "Watermelon"
+  ],
+  "config_hash": "fadb6bc03d4c4b1a",
+  "epochs": 20,
+  "weights_path": "best_model_weights.pth",
+  "held_out_test_metrics": {
+    "accuracy": 84.26966292134831,
+    "precision": 77.82407402992249,
+    "recall": 74.42335486412048,
+    "f1": 75.609290599823,
+    "f1_present_classes": 85.06044745445251,
+    "precision_present_classes": 87.55208253860474,
+    "recall_present_classes": 83.7262749671936,
+    "mse": 0.02689690701663494,
+    "rmse": 0.16400276124477386,
+    "evaluated_class_count": 8,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        10,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        9,
+        0,
+        0,
+        0,
+        1,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        11,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        14,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        13,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6
+      ]
+    ],
+    "split": "test",
+    "sample_count": 89,
+    "inference_latency_seconds": 0.16286015510559082,
+    "inference_latency_per_sample_seconds": 0.0018298893832088855
+  },
+  "training_complete": true
 }

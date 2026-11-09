@@ -420,6 +420,7 @@ model.to(device).eval()
               isInferring={isInferring}
               activeConfig={selectedConfig}
               numClasses={dataset.num_classes || 5}
+              latencyMs={latency}
             />
             <div className="nf-specimen-explainer">
               <span>Topology specimen</span>

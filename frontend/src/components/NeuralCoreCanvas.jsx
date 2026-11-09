@@ -9,6 +9,7 @@ export default function NeuralCoreCanvas({
   isInferring = false,
   activeConfig = null,
   numClasses = 5,
+  latencyMs = null,
 }) {
   const containerRef = useRef(null);
   const [hoveredNode, setHoveredNode] = useState(null);
@@ -557,24 +558,26 @@ export default function NeuralCoreCanvas({
         </div>
       )}
 
-      {/* Bottom Layer Status Legend */}
-      <div className="absolute bottom-5 left-6 pointer-events-none flex items-center gap-6 font-mono text-[11px] text-zinc-400">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-zinc-300" />
-          <span className="text-zinc-300">Conv2D Feature Plinth</span>
+      {/* Bottom Layer Status & Telemetry Bar */}
+      <div className="absolute bottom-4 left-6 right-6 pointer-events-none flex flex-wrap items-center justify-between gap-3 font-mono text-[11px]">
+        <div className="flex flex-wrap items-center gap-4 text-zinc-400">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-zinc-300" />
+            <span className="text-zinc-300">Conv2D Plinth</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+            <span className="text-cyan-300">Active Synapse</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]" />
+            <span className="text-emerald-300">Classifier Head</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
-          <span className="text-cyan-300">Active Synapse Path</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]" />
-          <span className="text-emerald-300">Champion Classifier Head</span>
-        </div>
-      </div>
 
-      <div className="absolute bottom-5 right-6 pointer-events-none font-mono text-[11px] text-zinc-500 hidden md:block">
-        TENSOR LATENCY: <span className="text-cyan-400 font-bold">2.05ms</span> (APPLE M5 MPS)
+        <div className="text-zinc-500 font-mono text-[11px] shrink-0">
+          TENSOR LATENCY: <span className="text-cyan-400 font-bold">{latencyMs ? `${latencyMs}` : '2.05ms'}</span> (APPLE M5 MPS)
+        </div>
       </div>
     </div>
   );

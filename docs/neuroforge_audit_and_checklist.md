@@ -37,18 +37,24 @@
 ## 03. Pending Work & Action Checklist (Next Slices)
 
 ### Phase 1: Close the Loop on the Active 9-Class Model
-- [ ] **Run Full Training for Current Champion**:
-  - The live UI metric ribbon currently displays `—%` because the 9-class Fruits run only completed proxy search (3 gens × 4 candidates).
-  - Execute 20-epoch final training to populate evaluation accuracy, macro F1, and per-sample latency on the live home ribbon.
-- [ ] **Fix Minor Legend Text Collision**:
-  - Resolve the slight text overlap between `Champion Classifier Head` and the latency readout on narrower browser frames.
+- [x] **Run Full Training for Current Champion**:
+  - Executed 20-epoch final training on Apple M5 MPS device (`best_model_config.json`: 3 layers, GELU, BatchNorm, filters `[32, 64, 128]`).
+  - Validation accuracy reached **84.41%**; held-out test evaluation reached **84.27%** with **85.06%** macro F1 on present classes and **1.83ms** inference latency per sample.
+  - Persisted to `best_model_weights.pth` and `best_model_metadata.json` (`training_complete: true`).
+  - UI ribbon metrics are fully populated on `http://127.0.0.1:8000/`.
+- [x] **Fix Minor Legend Text Collision**:
+  - Replaced overlapping fixed elements in `NeuralCoreCanvas.jsx` with a responsive flexbar (`justify-between gap-3 flex-wrap`).
+  - Dynamically wired live per-sample latency directly to the Apple M5 MPS badge.
 
 ### Phase 2: Audio Modality Web Flow Integration
-- [ ] **FastAPI Audio Routing**:
-  - Add `/api/audio/predict` supporting `.wav` uploads using `audio_pipeline.py`.
-  - Add `/api/audio/samples` providing sample audio clips.
-- [ ] **React Audio Component**:
-  - Build audio dropzone, waveform/spectrogram canvas visualizer, and live playback in the crucible.
+- [x] **FastAPI Audio Routing**:
+  - Added dedicated `/api/audio/predict` and enhanced `/api/predict` with automatic format validation and helpful error messaging.
+  - Added Roboflow CSV classification quick sample generation to `/api/samples` and dynamic image serving to `/api/sample-image`.
+  - Added `/api/sample-audio` for streaming WAV audio samples.
+- [x] **React Audio Component & Multimodal Crucible**:
+  - Enhanced `InteractiveCrucible.jsx` to accept both images and audio (`image/*, .wav`).
+  - Built an animated audio waveform visualizer, audio player, and audio spec metadata chip (`[1, 64, 400]` log-mel spectrogram shape).
+  - Wired quick-test presets for instant 1-click evaluation (tested `Watermelon` at 96.69% confidence).
 - [ ] **ESC-50 / ESC-10 Smoke Benchmark**:
   - Run fold-respecting audio classification benchmark to earn real acoustic accuracy numbers.
 
