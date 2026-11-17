@@ -236,3 +236,14 @@ def test_full_flow_search_train_predict(client, tiny_dataset):
 def test_training_requires_a_search_for_this_dataset(client, tiny_dataset):
     client.post("/api/dataset/load", json={"path": str(tiny_dataset)})
     assert client.post("/api/train/full", json={"epochs": 1}).status_code == 400
+
+
+def test_evaluate_config_trains_a_hand_built_design(client, tiny_dataset):
+    client.post("/api/dataset/load", json={"path": str(tiny_dataset)})
+    config = {"num_layers": 2, "filters": [16, 32], "kernel_sizes": [3, 3], "batch_norm": True, "activation": "ReLU", "pooling": True, "dropout": 0.0}
+    response = client.post("/api/evaluate-config", json={"config": config, "proxy_epochs": 1})
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["split"] == "valid" and 0 <= body["metrics"]["accuracy"] <= 100
+    bad = client.post("/api/evaluate-config", json={"config": {**config, "kernel_sizes": [7, 3]}})
+    assert bad.status_code == 400

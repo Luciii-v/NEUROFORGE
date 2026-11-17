@@ -1,0 +1,99 @@
+/* Evidence instruments (lineage, learning curve, confusion heatmap) rendered as
+   NEUROFORGE "night bays": graphite instrument surfaces from the studio design
+   system (docs/neuroforge-ultimate-plan §10) — paper ink, cobalt / coral series,
+   acid lime reserved for the winning lineage. */
+
+.nf-evidence {
+  --sheet: #101215;
+  --panel: #17191d;
+  --panel-raised: #22252b;
+  --ink: #f2efe7;
+  --ink-2: #c9c6bd;
+  --ink-3: #8f8d86;
+  --line: rgba(242, 239, 231, 0.12);
+  --line-strong: rgba(242, 239, 231, 0.34);
+  --grid: rgba(242, 239, 231, 0.045);
+  --sodium: #d4ed42;          /* acid lime: winner + kept checkpoint */
+  --sodium-ink: #111315;
+  --rust: #ff5d42;
+  --good: #9ad76b;
+  --series-a: #e5603f;        /* validation F1 (coral) — validated vs #17191d */
+  --series-b: #5a7bf0;        /* train accuracy (cobalt) */
+  --heat-lo: #1f2329;
+  --heat-hi: #e9e5da;
+  --focus: #d4ed42;
+  --radius: 4px;
+  color: var(--ink);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.nf-evidence-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+.nf-evidence-grid-even { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+.nf-evidence-grid > *, .nf-evidence-grid-even > * { min-width: 0; }
+.nf-evidence-bay { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; }
+.nf-evidence-bay h3 { margin: 0 0 6px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.nf-evidence-bay .nf-bay-label { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; margin: 0 0 10px; }
+.nf-evidence .muted { color: var(--ink-3); }
+.nf-evidence .small { font-size: 13px; }
+.nf-evidence .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.nf-evidence .stat-line { display: flex; gap: 26px; flex-wrap: wrap; margin: 10px 0 14px; }
+.nf-evidence .stat-line div { display: flex; flex-direction: column; }
+.nf-evidence .stat-line b { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.nf-evidence .stat-line span { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3); }
+.nf-evidence .notice { padding: 10px 14px; border-left: 3px solid var(--sodium); background: var(--panel-raised); color: var(--ink-2); font-size: 13.5px; border-radius: 0 6px 6px 0; }
+
+/* lineage */
+.nf-evidence .lineage-wrap {
+  position: relative; overflow: auto; min-height: 300px; border-radius: 14px;
+  background-color: var(--sheet);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px; border: 1px solid var(--line);
+}
+.nf-evidence .lineage-wrap svg { display: block; }
+.nf-evidence .node { cursor: pointer; }
+.nf-evidence .node:focus { outline: none; }
+.nf-evidence .node:focus-visible rect.chip { stroke: var(--focus) !important; stroke-width: 2.5; }
+.nf-evidence .lineage-legend { display: flex; gap: 16px; flex-wrap: wrap; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-3); padding: 10px 2px 0; align-items: center; }
+.nf-evidence .lineage-legend i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+.nf-evidence .empty-lineage { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--ink-2); padding: 24px; }
+
+/* inspector */
+.nf-evidence .inspector { position: sticky; top: 90px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+.nf-evidence .inspector h3 { font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+.nf-evidence .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 13px; margin: 12px 0; }
+.nf-evidence .kv dt { color: var(--ink-3); }
+.nf-evidence .kv dd { margin: 0; }
+.nf-evidence .mutations { list-style: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+.nf-evidence .mutations li { padding: 4px 0; border-bottom: 1px dotted var(--line); display: flex; justify-content: space-between; gap: 10px; }
+.nf-evidence .mutations li span:last-child { color: var(--ink-2); font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+.nf-evidence .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-family: "IBM Plex Mono", monospace; padding: 3px 9px; border: 1px solid var(--line-strong); border-radius: 99px; color: var(--ink-2); }
+.nf-evidence .tag.sodium { border-color: var(--sodium); color: var(--sodium); }
+.nf-evidence .btn { appearance: none; border: 1px solid var(--line-strong); background: transparent; color: var(--ink); padding: 8px 14px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; display: inline-flex; gap: 8px; align-items: center; }
+.nf-evidence .btn:hover:not(:disabled) { background: var(--panel-raised); }
+.nf-evidence .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.nf-evidence .btn.primary { background: var(--sodium); border-color: var(--sodium); color: var(--sodium-ink); }
+.nf-evidence .btn.small { padding: 5px 11px; font-size: 12px; }
+.nf-evidence .field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-3); }
+.nf-evidence .field input { background: var(--sheet); border: 1px solid var(--line-strong); border-radius: 8px; padding: 7px 10px; color: var(--ink); width: 84px; font: inherit; }
+
+/* charts */
+.nf-evidence .legend { display: flex; gap: 16px; flex-wrap: wrap; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--ink-2); margin-bottom: 6px; }
+.nf-evidence .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.nf-evidence .chart-tip { position: absolute; pointer-events: none; background: var(--panel-raised); border: 1px solid var(--line-strong); padding: 6px 10px; border-radius: 8px; font-size: 12px; white-space: nowrap; z-index: 2; }
+.nf-evidence details.table-view { margin-top: 10px; font-size: 12.5px; }
+.nf-evidence details.table-view summary { cursor: pointer; color: var(--ink-3); font-family: "IBM Plex Mono", monospace; font-size: 11px; }
+.nf-evidence .mini-table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+.nf-evidence .mini-table th, .nf-evidence .mini-table td { text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--line); }
+.nf-evidence .mini-table th:first-child, .nf-evidence .mini-table td:first-child { text-align: left; }
+.nf-evidence .confusion { border-collapse: separate; border-spacing: 3px; font-size: 12.5px; }
+.nf-evidence .confusion th { font-weight: 500; color: var(--ink-3); padding: 2px 6px; font-size: 11px; }
+.nf-evidence .confusion thead th { width: 58px; vertical-align: bottom; line-height: 1.2; }
+.nf-evidence .confusion th.rowh { text-align: right; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nf-evidence .confusion td { width: 58px; height: 36px; text-align: center; border-radius: 6px; }
+.nf-evidence .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 1080px) {
+  .nf-evidence-grid, .nf-evidence-grid-even { grid-template-columns: minmax(0, 1fr); }
+  .nf-evidence .inspector { position: static; }
+}

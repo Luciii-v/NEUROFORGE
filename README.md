@@ -81,7 +81,7 @@ A search never touches the active model. A training run writes its bundle first 
 | `architect.py` | Mutation search, run bundles, lineage, promotion. |
 | `neuroforge_core.py` | DynamicCNN (plain / residual / depthwise), dataset adapters, splits, training, metrics, transfer baselines. |
 | `audio_pipeline.py` | WAV decoding, log-mel features, ESC-50 / UrbanSound8K fold handling. |
-| `frontend/` | React studio ("Blueprint"): lineage drawing, inspector, training curves, confusion matrix, scoreboard, test bench, export. |
+| `frontend/` | React studio: editorial home (3D specimen, trajectory, lineage tree + inspector, learning curve, confusion heatmap, Coliseum, live crucible with Grad-CAM, DNA sequencer) and the mutation loop workbench (`/?view=loop`). New evidence panels live in `frontend/src/evidence/`. |
 | `scripts/run_benchmark.py` | Reproducible search → train → baselines benchmark. |
 | `tests/` | `python -m pytest tests -q` (`pip install -r requirements-dev.txt`). |
 | `app.py` | Legacy Streamlit UI, no longer maintained. |

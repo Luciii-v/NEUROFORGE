@@ -227,6 +227,14 @@ def get_status():
             "preprocessing": active["metadata"].get("preprocessing"),
         },
         "latest_search": load_json(LATEST_SEARCH_PATH),
+        # Shape read by the studio's hero, ribbon and specimen canvas.
+        "checkpoint": {
+            "ready": active["ready"],
+            "config": active["config"],
+            "metadata": active["metadata"],
+            "best_test_metrics": active["test_metrics"],
+            "history_count": len(load_json(HISTORY_PATH) or []),
+        },
     }
 
 
@@ -559,6 +567,43 @@ def run_baseline_training(req: BaselineTrainRequest):
     except Exception as e:
         _end_job(error=str(e))
         raise HTTPException(status_code=500, detail=f"{spec['name']} comparison failed: {e}")
+
+
+class EvaluateConfigRequest(BaseModel):
+    config: Dict[str, Any]
+    proxy_epochs: int = Field(3, ge=1, le=5)
+
+
+@app.post("/api/evaluate-config")
+def evaluate_config(req: EvaluateConfigRequest):
+    """Proxy-train a hand-built design under the search budget (validation split).
+
+    Lets the DNA sequencer compare a human design with the search winner on
+    equal terms instead of with a made-up estimate.
+    """
+    dataset_dir = _active_dataset_dir()
+    if not dataset_dir:
+        raise HTTPException(status_code=400, detail="Mount a dataset first.")
+    try:
+        neuroforge_core.validate_config(req.config)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    _begin_job("evaluate", "Evaluating a hand-built design")
+    try:
+        split = neuroforge_core.get_dataset_split_metadata(dataset_dir)
+        metrics = neuroforge_core.evaluate_candidate(req.config, epochs=req.proxy_epochs, dataset_dir=dataset_dir, split_indices=split)
+        _end_job()
+    except Exception as e:
+        _end_job(error=str(e))
+        raise HTTPException(status_code=500, detail=f"Evaluation failed: {e}")
+    summary = load_json(LATEST_SEARCH_PATH) or {}
+    same_dataset = _same_path((summary.get("dataset") or {}).get("dataset_root"), (neuroforge_core.get_dataset_metadata(dataset_dir) or {}).get("dataset_root"))
+    return {
+        "metrics": {k: metrics[k] for k in ("accuracy", "precision", "recall", "f1", "parameters", "training_time_seconds")},
+        "split": "valid",
+        "proxy_epochs": req.proxy_epochs,
+        "search_winner": summary.get("best_metrics") if same_dataset and summary.get("proxy_epochs") == req.proxy_epochs else None,
+    }
 
 
 # Backwards-compatible aliases for the previous studio build.

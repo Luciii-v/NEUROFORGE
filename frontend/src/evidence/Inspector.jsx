@@ -1,5 +1,5 @@
 import { Crown, Hammer } from 'lucide-react';
-import { compact, describeConfig, describeOperation, pct } from '../api';
+import { compact, describeConfig, describeOperation, pct } from './api';
 import ArchitectureDrawing from './ArchitectureDrawing';
 
 export default function Inspector({ candidate, winnerId, baseline, numClasses, epochs, setEpochs, onTrain, busy, onSelect }) {
@@ -48,6 +48,7 @@ export default function Inspector({ candidate, winnerId, baseline, numClasses, e
         <button type="button" className="btn small" style={{ marginTop: 10 }} onClick={() => onSelect(candidate.parent_id)}>Show parent</button>
       )}
 
+      {onTrain && (<>
       <div className="row" style={{ marginTop: 18 }}>
         <label className="field">Training epochs
           <input type="number" min="1" max="200" value={epochs} onChange={(e) => setEpochs(e.target.value)} />
@@ -57,6 +58,7 @@ export default function Inspector({ candidate, winnerId, baseline, numClasses, e
         </button>
       </div>
       <p className="muted small" style={{ margin: '8px 0 0' }}>Trains from fresh weights. The checkpoint is chosen on validation, then the sealed test split is measured once.</p>
+      </>)}
     </aside>
   );
 }

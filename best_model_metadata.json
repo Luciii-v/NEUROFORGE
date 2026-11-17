@@ -53,7 +53,7 @@
   "best_epoch": 12,
   "parameters": 566213,
   "trainable_parameters": 566213,
-  "training_seconds": 49.72798204421997,
+  "training_seconds": 44.21218991279602,
   "device": "mps",
   "training": {
     "optimizer": "AdamW",
@@ -200,8 +200,8 @@
     ],
     "split": "test",
     "sample_count": 44,
-    "inference_latency_seconds": 0.1620957851409912,
-    "inference_latency_per_sample_seconds": 0.0036839951168407092
+    "inference_latency_seconds": 0.15039896965026855,
+    "inference_latency_per_sample_seconds": 0.003418158401142467
   },
   "learning_curve": [
     {
@@ -380,8 +380,8 @@
   },
   "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/best_model_weights.pth",
   "training_complete": true,
-  "bundle_id": "20261117T162226Z/model-dynamic-20261117T162353Z",
-  "bundle_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T162226Z/model-dynamic-20261117T162353Z",
+  "bundle_id": "20261117T162226Z/model-dynamic-20261117T163720Z",
+  "bundle_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T162226Z/model-dynamic-20261117T163720Z",
   "run_id": "20261117T162226Z",
   "objective": "0.45*accuracy + 0.25*precision + 0.30*f1 - params/1e6 - latency_per_sample*100 (validation split)",
   "best_candidate_id": "20261117T162226Z-G05-C06",
@@ -483,5 +483,6 @@
     "f1": 41.58186912536621,
     "parameters": 566213,
     "score": 46.64671363704265
-  }
+  },
+  "candidate_id": "20261117T162226Z-G05-C06"
 }

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { pct } from '../api';
+import { pct } from './api';
 
 /** Train accuracy vs validation F1 per epoch (same unit, one axis). Marks the selected epoch. */
 export function LearningCurve({ curve, bestEpoch, height = 220 }) {
