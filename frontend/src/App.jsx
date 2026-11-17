@@ -1,635 +1,154 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import NeuralCoreCanvas from './components/NeuralCoreCanvas';
-import KineticTrajectoryGraph from './components/KineticTrajectoryGraph';
-import InteractiveCrucible from './components/InteractiveCrucible';
-import ModelColiseum from './components/ModelColiseum';
-import ArchitectureSequencer from './components/ArchitectureSequencer';
-import HolographicSpecimenCard from './components/HolographicSpecimenCard';
-import CinematicSplash from './components/CinematicSplash';
-import MutationLoopPage from './components/MutationLoopPage';
-import soundEngine from './utils/soundEngine';
-import { 
-  Play, 
-  RotateCcw, 
-  Download, 
-  Copy, 
-  Check, 
-  X, 
-  ArrowUpRight,
-  Layers, 
-  FolderOpen,
-  Moon,
-  Sun,
-  Volume2,
-  VolumeX,
-  Swords,
-  Dna,
-  Award
-} from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
+import { api, datasetName, pct } from './api';
+import DataSection from './components/DataSection';
+import EvolveSection from './components/EvolveSection';
+import Scoreboard from './components/Scoreboard';
+import ShipSection from './components/ShipSection';
+import TestBench from './components/TestBench';
+import TrainSection from './components/TrainSection';
+
+const sameRoot = (a, b) => !!a && !!b && a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
+
+function readTheme() {
+  const fromUrl = new URLSearchParams(window.location.search).get('theme');
+  if (fromUrl === 'light' || fromUrl === 'dark') return fromUrl;
+  try {
+    return localStorage.getItem('nf-theme') || 'dark';
+  } catch {
+    return 'dark';
+  }
+}
+
+function Mark() {
+  return (
+    <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+      <rect width="32" height="32" rx="3" fill="var(--sodium)" />
+      <path d="M9 24V8l14 16V8" fill="none" stroke="var(--sodium-ink)" strokeWidth="3" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function App() {
-  // The title sequence is intentionally part of every fresh page load.
-  const [showOpening, setShowOpening] = useState(true);
-  const [scrollReady, setScrollReady] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [navScrolled, setNavScrolled] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem('neuroforge-theme') || 'light';
-    } catch {
-      return 'light';
-    }
-  });
-  const [soundEnabled, setSoundEnabled] = useState(!soundEngine.isMuted);
-  const [lastInference, setLastInference] = useState(null);
-  const isMutationLoop = new URLSearchParams(window.location.search).get('view') === 'loop';
-  const [selectedGen, setSelectedGen] = useState(5);
+  const [theme, setTheme] = useState(readTheme);
   const [status, setStatus] = useState(null);
-  const [historyPayload, setHistoryPayload] = useState(null);
-  const [mutating, setMutating] = useState(false);
-  const [isInferring, setIsInferring] = useState(false);
-  const [speech, setSpeech] = useState(
-    'The search is ready. Choose a generation, inspect its mutation, and follow the evidence to the current champion.'
-  );
-
-  // Drawers
-  const [showDatasetDrawer, setShowDatasetDrawer] = useState(false);
-  const [showExportDrawer, setShowExportDrawer] = useState(false);
-  const [customPath, setCustomPath] = useState('');
-  const [pathLoading, setPathLoading] = useState(false);
-  const [copiedCode, setCopiedCode] = useState(false);
-
-  const refreshWorkspace = async () => {
-    try {
-      const [statusRes, historyRes] = await Promise.all([
-        fetch('/api/status'),
-        fetch('/api/history'),
-      ]);
-      if (statusRes.ok) setStatus(await statusRes.json());
-      if (historyRes.ok) setHistoryPayload(await historyRes.json());
-    } catch (e) {
-      console.log('Workspace polling...', e);
-    }
-  };
-
-  const fetchStatus = async () => {
-    try {
-      const res = await fetch('/api/status');
-      if (res.ok) {
-        const data = await res.json();
-        setStatus(data);
-      }
-    } catch (e) {
-      console.log('Status polling...', e);
-    }
-  };
+  const [history, setHistory] = useState({ history: [] });
+  const [comparison, setComparison] = useState(null);
+  const [offline, setOffline] = useState(false);
+  const [trainError, setTrainError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    refreshWorkspace();
-    const interval = setInterval(refreshWorkspace, 4000);
-    return () => clearInterval(interval);
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('nf-theme', theme); } catch { /* private mode */ }
+  }, [theme]);
+
+  const refresh = useCallback(async () => {
+    try {
+      const [s, h, c] = await Promise.all([api('/api/status'), api('/api/history'), api('/api/comparison')]);
+      setStatus(s);
+      setHistory(h);
+      setComparison(c);
+      setOffline(false);
+      setRefreshKey((k) => k + 1);
+    } catch {
+      setOffline(true);
+    }
   }, []);
 
+  useEffect(() => { refresh(); }, [refresh]);
+
+  // Poll only while the server is busy, so training progress streams in.
+  const running = status?.job?.running;
   useEffect(() => {
-    const revealNodes = document.querySelectorAll('[data-scroll-reveal], .nf-scroll-reveal');
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        revealObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.14, rootMargin: '0px 0px -12% 0px' });
-
-    revealNodes.forEach((node) => revealObserver.observe(node));
-    const readyFrame = requestAnimationFrame(() => setScrollReady(true));
-    let scrollFrame = null;
-    const updateScrollState = () => {
-      if (scrollFrame) return;
-      scrollFrame = requestAnimationFrame(() => {
-        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
-        document.documentElement.style.setProperty('--nf-scroll-y', `${window.scrollY}px`);
-        setScrollProgress(progress);
-        setNavScrolled(window.scrollY > 28);
-        scrollFrame = null;
-      });
-    };
-
-    updateScrollState();
-    window.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
-    return () => {
-      cancelAnimationFrame(readyFrame);
-      if (scrollFrame) cancelAnimationFrame(scrollFrame);
-      revealObserver.disconnect();
-      window.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
-    };
-  }, [isMutationLoop]);
-
-  useEffect(() => {
-    const magneticNodes = [...document.querySelectorAll('.nf-magnetic')];
-    const physicsSurfaces = [...document.querySelectorAll('.nf-physics-surface')];
-    const states = [
-      ...magneticNodes.map((node) => ({ node, type: 'magnetic', current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } })),
-      ...physicsSurfaces.map((node) => ({ node, type: 'surface', current: { x: 0, y: 0 }, target: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } })),
-    ];
-    let frame = null;
-
-    const settle = () => {
-      if (frame) return;
-      const tick = () => {
-        let moving = false;
-        states.forEach((state) => {
-          const spring = state.type === 'surface' ? 0.085 : 0.12;
-          const damping = state.type === 'surface' ? 0.78 : 0.72;
-          state.velocity.x += (state.target.x - state.current.x) * spring;
-          state.velocity.y += (state.target.y - state.current.y) * spring;
-          state.velocity.x *= damping;
-          state.velocity.y *= damping;
-          state.current.x += state.velocity.x;
-          state.current.y += state.velocity.y;
-          if (
-            Math.abs(state.current.x - state.target.x) > 0.08
-            || Math.abs(state.current.y - state.target.y) > 0.08
-            || Math.abs(state.velocity.x) > 0.02
-            || Math.abs(state.velocity.y) > 0.02
-          ) moving = true;
-          if (state.type === 'surface') {
-            state.node.style.setProperty('--nf-surface-x', `${state.current.x * 1.5}px`);
-            state.node.style.setProperty('--nf-surface-y', `${state.current.y * 1.5}px`);
-            state.node.style.setProperty('--nf-surface-rx', `${state.current.y * -0.035}deg`);
-            state.node.style.setProperty('--nf-surface-ry', `${state.current.x * 0.035}deg`);
-          } else {
-            state.node.style.setProperty('--nf-magnetic-x', `${state.current.x}px`);
-            state.node.style.setProperty('--nf-magnetic-y', `${state.current.y}px`);
-          }
-        });
-        frame = moving ? requestAnimationFrame(tick) : null;
-      };
-      frame = requestAnimationFrame(tick);
-    };
-
-    const bindings = states.map((state) => {
-      const move = (event) => {
-        const rect = state.node.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-        const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
-        if (state.type === 'surface') {
-          state.target.x = x * 14;
-          state.target.y = y * 14;
-        } else {
-          state.target.x = x * 6;
-          state.target.y = y * 4;
-        }
-        settle();
-      };
-      const leave = () => {
-        state.target.x = 0;
-        state.target.y = 0;
-        settle();
-      };
-      state.node.addEventListener('pointermove', move);
-      state.node.addEventListener('pointerleave', leave);
-      return { node: state.node, move, leave };
-    });
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      bindings.forEach(({ node, move, leave }) => {
-        node.removeEventListener('pointermove', move);
-        node.removeEventListener('pointerleave', leave);
-      });
-    };
-  }, [isMutationLoop, scrollReady]);
-
-  const handleStartMutation = async () => {
-    if (mutating) return;
-    setMutating(true);
-    setSpeech('Initiating genetic mutation sweep: recombining filter kernels, pooling branches, and activation functions...');
-
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/search`;
-    const socket = new WebSocket(wsUrl);
-
-    socket.onopen = () => {
-      socket.send(JSON.stringify({
-        generations: 3,
-        population: 4,
-        proxy_epochs: 2,
-        dataset_dir: status?.checkpoint?.metadata?.dataset?.dataset_root,
-      }));
-    };
-
-    socket.onmessage = (event) => {
+    if (!running) return undefined;
+    const id = setInterval(async () => {
       try {
-        const msg = JSON.parse(event.data);
-        if (msg.type === 'candidate_evaluated') {
-          setSpeech(`Candidate #${msg.data.candidate_id} evaluated: ${msg.data.accuracy?.toFixed(1)}% accuracy (${msg.data.parameters} params).`);
-        } else if (msg.type === 'search_completed') {
-          setMutating(false);
-          setSpeech(`Evolution complete! Top candidate hit ${msg.best_result?.accuracy?.toFixed(1)}% accuracy.`);
-          refreshWorkspace();
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
+        const s = await api('/api/status');
+        setStatus(s);
+        if (!s.job.running) refresh();
+      } catch { setOffline(true); }
+    }, 1500);
+    return () => clearInterval(id);
+  }, [running, refresh]);
 
-    socket.onclose = () => setMutating(false);
-    socket.onerror = () => setMutating(false);
-  };
+  // A long request just started on the server: fetch status once so polling kicks in.
+  const kick = () => setTimeout(async () => {
+    try { setStatus(await api('/api/status')); } catch { /* next refresh will report */ }
+  }, 400);
 
-  const handleLoadDatasetPath = async () => {
-    if (!customPath.trim()) return;
-    setPathLoading(true);
+  const train = async (candidateId, epochs) => {
+    setTrainError('');
+    document.getElementById('step-train')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const request = api('/api/train/full', { json: { candidate_id: candidateId, epochs } });
+    kick();
     try {
-      const res = await fetch('/api/dataset/load', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: customPath.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Failed to inspect dataset path');
-      setSpeech(`Dataset mounted: ${data.metadata.num_classes} classes detected with ${data.metadata.num_samples} samples.`);
-      setShowDatasetDrawer(false);
-      fetchStatus();
-    } catch (err) {
-      alert(`Error loading dataset: ${err.message}`);
-    } finally {
-      setPathLoading(false);
+      await request;
+    } catch (e) {
+      setTrainError(`Training failed: ${e.message}`);
     }
+    refresh();
   };
 
-  const checkpoint = status?.checkpoint || {};
-  const metadata = checkpoint.metadata || {};
-  const metrics = checkpoint.best_test_metrics || {};
-  const history = historyPayload?.history || [];
-  const baseline = historyPayload?.metadata?.manual_baseline || metadata.manual_baseline || {};
-  const bestCandidate = history.find((item) => item.candidate_id === historyPayload?.metadata?.best_candidate_id)
-    || history.reduce((best, item) => (!best || item.score > best.score ? item : best), null);
-  const bestAcc = Number.isFinite(metrics.accuracy) ? metrics.accuracy.toFixed(1) : '—';
-  const baselineDelta = Number.isFinite(bestCandidate?.accuracy) && Number.isFinite(baseline?.accuracy)
-    ? `${bestCandidate.accuracy - baseline.accuracy >= 0 ? '+' : ''}${(bestCandidate.accuracy - baseline.accuracy).toFixed(1)} pp`
-    : '—';
-  const latency = Number.isFinite(metrics.inference_latency_per_sample_seconds)
-    ? `${(metrics.inference_latency_per_sample_seconds * 1000).toFixed(1)} ms`
-    : '—';
-  const dataset = metadata.dataset || {};
-  const generationData = useMemo(() => {
-    const byGeneration = new Map();
-    history.forEach((item) => {
-      const generation = Number(item.generation);
-      if (!generation) return;
-      const current = byGeneration.get(generation);
-      if (!current || Number(item.accuracy || 0) > Number(current.accuracy || 0)) {
-        byGeneration.set(generation, item);
-      }
-    });
-    const rows = [...byGeneration.entries()].sort((a, b) => a[0] - b[0]);
-    if (!rows.length) return undefined;
-    return rows.map(([gen, item]) => ({
-      gen,
-      acc: Number(item.accuracy || 0),
-      f1: Number(item.f1 || 0),
-      name: gen === rows.at(-1)[0] ? 'Current best' : (item.mutation_operations?.[0]?.field || 'Architecture shift'),
-      desc: item.mutation_operations?.map((op) => `${op.field}${op.from !== undefined ? ` ${op.from} → ${op.to}` : ''}`).join(' · ') || 'Elite preserved or mutation recorded',
-      params: `${(Number(item.parameters || 0) / 1000).toFixed(1)}k`,
-      champion: item.candidate_id === historyPayload?.metadata?.best_candidate_id,
-    }));
-  }, [history, historyPayload]);
-  const selectedGenerationRecord = useMemo(() => {
-    const candidates = history.filter((item) => Number(item.generation) === Number(selectedGen));
-    return candidates.reduce((best, item) => (!best || Number(item.accuracy || 0) > Number(best.accuracy || 0) ? item : best), null);
-  }, [history, selectedGen]);
-  const selectedConfig = selectedGenerationRecord?.config || checkpoint.config;
+  const workspace = status?.workspace || {};
+  const dataset = workspace.dataset_metadata;
+  const active = status?.active_model;
+  const latestSearch = status?.latest_search;
+  const searchMatches = sameRoot(latestSearch?.dataset?.dataset_root, dataset?.dataset_root);
+  const busy = !!status?.job?.running;
 
-  const jumpTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-  const completeOpening = useCallback(() => {
-    setShowOpening(false);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    soundEngine.tick(1500, 0.01);
-    setTheme((current) => {
-      const next = current === 'light' ? 'dark' : 'light';
-      try {
-        localStorage.setItem('neuroforge-theme', next);
-      } catch {
-        // The visual toggle still works when storage is unavailable.
-      }
-      return next;
-    });
-  }, []);
-
-  const toggleSound = useCallback(() => {
-    const next = soundEngine.toggle();
-    setSoundEnabled(next);
-  }, []);
-
-  const pyTorchInferenceCode = `# NEUROFORGE Champion Model Inference Pipeline
-import torch
-import torch.nn as nn
-from PIL import Image
-import torchvision.transforms as transforms
-
-# 1. Architecture Topology (Generated by NEUROFORGE)
-class GeneratedChampionCNN(nn.Module):
-    def __init__(self, num_classes=5):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=3, padding=1),
-            nn.BatchNorm2d(16),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(16, 128, kernel_size=3, padding=1),
-            nn.BatchNorm2d(128),
-            nn.ReLU(inplace=True),
-            nn.AdaptiveAvgPool2d((1, 1)),
-        )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Dropout(0.4),
-            nn.Linear(128, num_classes)
-        )
-
-    def forward(self, x):
-        return self.classifier(self.features(x))
-
-# 2. Load Weights
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-model = GeneratedChampionCNN(num_classes=5)
-model.load_state_dict(torch.load("best_model_weights.pth", map_location=device))
-model.to(device).eval()
-`;
-
-  if (isMutationLoop) {
-    return (
-      <>
-        {showOpening && <CinematicSplash onComplete={completeOpening} />}
-        <MutationLoopPage
-          theme={theme}
-          onToggleTheme={toggleTheme}
-          scrollReady={scrollReady}
-          scrollProgress={scrollProgress}
-          navScrolled={navScrolled}
-          onReturn={() => { window.location.href = '/'; }}
-        />
-      </>
-    );
-  }
+  const steps = [
+    { id: 'step-data', t: 'Data', s: dataset ? `${dataset.num_classes} classes` : 'mount a dataset', done: !!dataset },
+    { id: 'step-evolve', t: 'Evolve', s: searchMatches ? `${history.history.length} designs` : 'run a search', done: searchMatches },
+    { id: 'step-train', t: 'Train', s: active?.ready && workspace.model_matches_dataset ? `${pct(active.test_metrics?.f1)} test F1` : 'train the winner', done: !!(active?.ready && workspace.model_matches_dataset) },
+    { id: 'step-test', t: 'Test', s: 'try samples', done: false },
+    { id: 'step-ship', t: 'Ship', s: active?.bundle_id ? 'bundle ready' : 'export', done: !!active?.bundle_id },
+  ];
+  const current = steps.findIndex((step) => !step.done);
 
   return (
-      <div className={`nf-atlas nf-theme-${theme} ${showOpening ? 'nf-is-loading' : 'nf-is-entered'} ${scrollReady ? 'nf-scroll-ready' : ''} min-h-screen selection:bg-[#d5ec42] selection:text-[#111315]`}>
-      <div className="nf-scroll-progress" aria-hidden="true"><span style={{ transform: `scaleX(${scrollProgress})` }} /></div>
-      {showOpening && <CinematicSplash onComplete={completeOpening} />}
-      <div className="nf-noise" aria-hidden="true" />
-
-      <header className={`nf-nav ${navScrolled ? 'nf-nav-scrolled' : ''}`}>
-        <a href="#top" className="nf-brand" aria-label="NEUROFORGE home">
-          <span className="nf-brand-mark">N</span>
-          <span className="nf-brand-name">NEUROFORGE</span>
-          <span className="nf-brand-note">model evolution studio</span>
-        </a>
-        <nav className="nf-nav-links" aria-label="Primary navigation">
-          <a href="#evolution">Family tree</a>
-          <a href="#coliseum">Coliseum</a>
-          <a href="#crucible">Live specimen</a>
-          <a href="#sequencer">DNA sequencer</a>
-          <a href="#ship">Champion card</a>
-        </nav>
-        <div className="nf-nav-actions">
-          <span className="nf-status-dot" />
-          <span>{String(status?.device || 'MPS').toUpperCase()}</span>
-          <button 
-            className="nf-sound-toggle" 
-            onClick={toggleSound} 
-            aria-label={`Switch sound ${soundEnabled ? 'off' : 'on'}`}
-            title={soundEnabled ? "Tactile Audio Active" : "Tactile Audio Muted"}
-          >
-            {soundEnabled ? (
-              <div className="nf-audio-bars" aria-hidden="true">
-                <span className="bar bar-1" />
-                <span className="bar bar-2" />
-                <span className="bar bar-3" />
-              </div>
-            ) : (
-              <VolumeX size={14} />
-            )}
-            <span>{soundEnabled ? 'Audio' : 'Muted'}</span>
-          </button>
-          <button className="nf-theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
-            {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
-            {theme === 'light' ? 'Dark' : 'Light'}
+    <div className="shell">
+      <header className="topbar">
+        <div className="wordmark"><Mark />NEUROFORGE</div>
+        <div className="meta">
+          {busy && <span className="job-pill"><span className="pulse" aria-hidden="true" />{status.job.label}</span>}
+          <span>Dataset <strong>{dataset ? datasetName(dataset) : 'none'}</strong></span>
+          <span>Device <strong>{status?.device || '…'}</strong></span>
+          <button type="button" className="btn small" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+            {theme === 'dark' ? <Sun size={14} aria-hidden="true" /> : <Moon size={14} aria-hidden="true" />}
+            {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
         </div>
       </header>
 
-      <main id="top" className="nf-main">
-         <section className="nf-hero nf-section-anchor" data-scroll-reveal="hero">
-          <div className="nf-hero-copy">
-            <div className="nf-kicker"><span className="nf-kicker-line" /> NEUROFORGE / a living search process</div>
-            <h1>Models are<br /><em>forged, not found.</em></h1>
-            <p className="nf-hero-lede">
-              A model-search instrument that lets architectures evolve in public—then lets you inspect the evidence behind the winner.
-            </p>
-            <div className="nf-hero-actions">
-               <button className="nf-primary-button nf-magnetic" onClick={() => { window.location.href = '/?view=loop'; }}>
-                <Play size={15} fill="currentColor" /> Enter the mutation loop
-              </button>
-               <button className="nf-text-button nf-magnetic" onClick={() => setShowDatasetDrawer(true)}>
-                Mount a dataset <ArrowUpRight size={15} />
-              </button>
-            </div>
-            <div className="nf-hero-footnote">
-              <span>Build / mutate / ship</span>
-              <span>Run {metadata.run_id || '—'}</span>
-              <span>{dataset.num_samples || '—'} samples · {dataset.num_classes || '—'} classes</span>
-            </div>
-          </div>
+      <nav className="rail" aria-label="Workflow">
+        {steps.map((step, i) => (
+          <button key={step.id} type="button" className={step.done ? 'done' : i === current ? 'current' : ''}
+            onClick={() => document.getElementById(step.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            aria-current={i === current ? 'step' : undefined}>
+            <span className="n">{i + 1}</span>
+            <span><span className="t">{step.t}</span><span className="s">{step.s}</span></span>
+          </button>
+        ))}
+      </nav>
 
-           <div className="nf-hero-specimen nf-physics-surface">
-            <NeuralCoreCanvas
-              generation={selectedGen}
-              accuracy={bestAcc}
-              mutating={mutating}
-              isInferring={isInferring}
-              activeConfig={selectedConfig}
-              numClasses={dataset.num_classes || 5}
-              latencyMs={latency}
-              lastInference={lastInference}
-            />
-            <div className="nf-specimen-explainer">
-              <span>Topology specimen</span>
-              <p>This is the current CNN blueprint made visible: each cluster is a layer, the connecting paths are feature flow, and the green head is the classifying output.</p>
-            </div>
-          </div>
-        </section>
+      {offline && (
+        <div className="notice error" role="alert" style={{ marginTop: 16 }}>
+          Can't reach the studio server. Start it with <code>./run_studio.sh</code> and reload.
+        </div>
+      )}
 
-         <section className="nf-metric-ribbon" aria-label="Current run summary" data-scroll-reveal="ribbon">
-          <div className="nf-ribbon-label">What the instrument currently knows</div>
-          <div className="nf-ribbon-stat"><strong>{bestAcc}%</strong><span>evaluation accuracy</span></div>
-          <div className="nf-ribbon-stat"><strong>{metrics.f1 ? `${metrics.f1.toFixed(1)}%` : '—'}</strong><span>macro F1</span></div>
-          <div className="nf-ribbon-stat"><strong>{baselineDelta}</strong><span>proxy gain vs baseline</span></div>
-          <div className="nf-ribbon-stat"><strong>{latency}</strong><span>per-sample latency</span></div>
-        </section>
-
-         <section className="nf-evidence-note" aria-label="Why the current score is modest" data-scroll-reveal="evidence">
-          <div className="nf-evidence-mark">read the number correctly</div>
-          <div>
-            <strong>Small, difficult specimen.</strong>
-            <p>Current run: {dataset.num_samples || '295'} images across {dataset.num_classes || '5'} classes, resized to 64×64. The saved architecture was selected with a short proxy budget; the current evaluation is evidence for this run, not a promise of generalization.</p>
-          </div>
-          <div className="nf-evidence-next"><span>Next lever</span><strong>more varied data · independent test · 128px comparison</strong></div>
-        </section>
-
-         <section id="evolution" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-           <div className="nf-chapter-intro nf-scroll-reveal nf-reveal-intro">
-            <span className="nf-chapter-number">01</span>
-            <div>
-              <p className="nf-kicker">The family tree</p>
-              <h2>Every strong model<br /><em>leaves a trace.</em></h2>
-            </div>
-            <p className="nf-chapter-copy">NEUROFORGE does not hide the search behind a spinner. It records parents, mutations, fitness and trade-offs so the architecture can be taught—not merely admired.</p>
-          </div>
-           <div className="nf-instrument-frame nf-physics-surface nf-scroll-reveal nf-reveal-instrument">
-            <KineticTrajectoryGraph
-              generations={generationData}
-              baselineAccuracy={baseline.accuracy}
-              currentGen={selectedGen}
-              onSelectGen={(g) => {
-                setSelectedGen(g);
-                setSpeech(`Generation ${String(g).padStart(2, '0')} selected. The specimen is morphing to its recorded topology.`);
-              }}
-            />
-          </div>
-        </section>
-
-        <section id="coliseum" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-          <ModelColiseum
-            championMetrics={{
-              accuracy: metrics.accuracy ? Number(metrics.accuracy.toFixed(1)) : 87.6,
-              f1: metrics.f1 ? Number(metrics.f1.toFixed(1)) : 77.2,
-              latency: metrics.inference_latency_per_sample_seconds ? Number((metrics.inference_latency_per_sample_seconds * 1000).toFixed(2)) : 1.83,
-              params: '269k'
-            }}
-            datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
-          />
-        </section>
-
-         <section id="crucible" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-           <div className="nf-chapter-intro nf-chapter-intro-reverse nf-scroll-reveal nf-reveal-intro">
-            <span className="nf-chapter-number">02</span>
-            <div>
-              <p className="nf-kicker">The live specimen</p>
-              <h2>Give the champion<br /><em>something real to see.</em></h2>
-            </div>
-            <p className="nf-chapter-copy">A one-click sample is a small act of theatre with a serious purpose: observe the forward pass, the class distribution and the latency as they happen.</p>
-          </div>
-           <div className="nf-instrument-frame nf-instrument-frame-warm nf-physics-surface nf-scroll-reveal nf-reveal-instrument">
-            <InteractiveCrucible
-              onSetSpeech={(s) => setSpeech(s)}
-              onInferStart={() => setIsInferring(true)}
-              onInferEnd={() => setIsInferring(false)}
-              onInferResult={(res) => setLastInference(res)}
-            />
-          </div>
-        </section>
-
-        <section id="sequencer" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-          <ArchitectureSequencer
-            initialConfig={selectedConfig}
-            numClasses={dataset.num_classes || 9}
-            championAcc={bestAcc !== '—' ? Number(bestAcc) : 84.3}
-          />
-        </section>
-
-         <section id="ship" className="nf-ship-section nf-physics-surface nf-section-anchor" data-scroll-reveal="ship">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7">
-              <p className="nf-kicker">03 / The handoff</p>
-              <h2>When the experiment<br /><em>earns a place in the world.</em></h2>
-              <p className="nf-chapter-copy">
-                Keep the weights, the blueprint and the receipt together. Every forged champion earns an authentic SSR Holographic Trading Card with verified Apple Silicon tensor benchmarks.
-              </p>
-              <div className="nf-ship-actions mt-6">
-                <button className="nf-primary-button nf-primary-button-dark nf-magnetic" onClick={() => setShowExportDrawer(true)}>
-                  <Download size={15} /> Open export bench
-                </button>
-                <button className="nf-text-button nf-text-button-dark nf-magnetic" onClick={() => setShowDatasetDrawer(true)}>
-                  Change specimen <FolderOpen size={15} />
-                </button>
-              </div>
-            </div>
-
-            <div className="lg:col-span-5 flex justify-center">
-              <HolographicSpecimenCard
-                modelName={checkpoint?.metadata?.run_id ? `NEURO-TITAN // ${checkpoint.metadata.run_id}` : 'NEURO-TITAN // G5-CHAMPION'}
-                accuracy={metrics.accuracy ? metrics.accuracy.toFixed(1) : bestAcc}
-                f1={metrics.f1 ? metrics.f1.toFixed(1) : 75.6}
-                latency={metrics.inference_latency_per_sample_seconds ? (metrics.inference_latency_per_sample_seconds * 1000).toFixed(2) : 1.83}
-                paramCount="269k"
-                datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
-                numClasses={dataset.num_classes || 9}
-                generation={selectedGen}
-                config={selectedConfig}
-              />
-            </div>
-          </div>
-        </section>
+      <main>
+        <DataSection dataset={dataset} mounted={workspace.dataset_mounted} busy={busy} onChange={refresh} />
+        <EvolveSection dataset={dataset} savedHistory={history.history || []} latestSearch={latestSearch}
+          manualBaseline={searchMatches ? history.manual_baseline : null} searchMatchesDataset={searchMatches}
+          busy={busy} theme={theme} onSearchFinished={refresh} onTrain={train} />
+        <TrainSection active={active} job={status?.job} matchesDataset={workspace.model_matches_dataset} trainError={trainError} />
+        <Scoreboard comparison={comparison} busy={busy} onStart={kick} onChange={refresh} />
+        <TestBench ready={active?.ready} modelKey={`${active?.bundle_id}|${dataset?.dataset_root}`} />
+        <ShipSection active={active} refreshKey={refreshKey} />
       </main>
-
-      {showDatasetDrawer && (
-        <div className="nf-drawer-backdrop" onClick={() => setShowDatasetDrawer(false)}>
-          <aside className="nf-drawer" onClick={(event) => event.stopPropagation()}>
-            <div>
-              <div className="nf-drawer-heading"><div><p className="nf-kicker">Chamber 01</p><h3>Dataset intake</h3></div><button className="nf-close" onClick={() => setShowDatasetDrawer(false)}><X size={18} /></button></div>
-              <div className="nf-drawer-specimen">
-                <span>Active specimen</span>
-                <strong>{dataset.modality === 'audio' ? 'Audio classification' : 'Crop pest classification'}</strong>
-                <p>{dataset.num_samples || '—'} samples · {dataset.num_classes || '—'} classes</p>
-                <small>{dataset.class_names?.join(' · ') || 'No dataset mounted'}</small>
-              </div>
-              <label className="nf-field-label">Mount a local directory</label>
-              <div className="nf-field-row"><input value={customPath} onChange={(e) => setCustomPath(e.target.value)} placeholder="/path/to/dataset" /><button className="nf-small-button" onClick={handleLoadDatasetPath} disabled={pathLoading}>{pathLoading ? 'Reading…' : 'Mount'}</button></div>
-              <p className="nf-drawer-note">The path is read by the local NEUROFORGE engine. Nothing leaves this machine.</p>
-            </div>
-            <div className="nf-drawer-footer">A dataset is not just input. It defines the search universe.</div>
-          </aside>
-        </div>
-      )}
-
-      {showExportDrawer && (
-        <div className="nf-drawer-backdrop" onClick={() => setShowExportDrawer(false)}>
-          <aside className="nf-drawer nf-drawer-wide" onClick={(event) => event.stopPropagation()}>
-            <div>
-              <div className="nf-drawer-heading"><div><p className="nf-kicker">Chamber 03</p><h3>Ship the evidence</h3></div><button className="nf-close" onClick={() => setShowExportDrawer(false)}><X size={18} /></button></div>
-              <div className="flex justify-center mb-6">
-                <HolographicSpecimenCard
-                  modelName={checkpoint?.metadata?.run_id ? `NEURO-TITAN // ${checkpoint.metadata.run_id}` : 'NEURO-TITAN // G5-CHAMPION'}
-                  accuracy={metrics.accuracy ? metrics.accuracy.toFixed(1) : bestAcc}
-                  f1={metrics.f1 ? metrics.f1.toFixed(1) : 75.6}
-                  latency={metrics.inference_latency_per_sample_seconds ? (metrics.inference_latency_per_sample_seconds * 1000).toFixed(2) : 1.83}
-                  paramCount="269k"
-                  datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
-                  numClasses={dataset.num_classes || 9}
-                  generation={selectedGen}
-                  config={selectedConfig}
-                />
-              </div>
-              <div className="nf-export-grid">
-                <a href="/api/download/weights" download><Download size={18} /><strong>Weights</strong><span>best_model_weights.pth</span></a>
-                <a href="/api/download/config" download><Layers size={18} /><strong>Blueprint</strong><span>best_model_config.json</span></a>
-              </div>
-              <div className="nf-code-heading"><span>Production inference snippet</span><button onClick={() => { navigator.clipboard.writeText(pyTorchInferenceCode); setCopiedCode(true); setTimeout(() => setCopiedCode(false), 2000); }}>{copiedCode ? <Check size={14} /> : <Copy size={14} />} {copiedCode ? 'Copied' : 'Copy code'}</button></div>
-              <pre className="nf-code-block">{pyTorchInferenceCode}</pre>
-            </div>
-            <div className="nf-drawer-footer">Configuration · weights · preprocessing · provenance</div>
-          </aside>
-        </div>
-      )}
-
-      <footer className="nf-footer"><span>NEUROFORGE / architecture search, made legible</span><span>Build · mutate · ship</span></footer>
     </div>
   );
 }
