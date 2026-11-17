@@ -282,6 +282,7 @@ def list_runs():
                 })
             runs.append({
                 "run_id": run_dir.name,
+                "kind": "search" if summary else "baseline",
                 "dataset_root": (summary.get("dataset") or {}).get("dataset_root"),
                 "best_candidate_id": summary.get("best_candidate_id"),
                 "best_metrics": summary.get("best_metrics"),

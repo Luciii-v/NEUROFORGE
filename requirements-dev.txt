@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest
+httpx
+# Only needed for the legacy Streamlit UI in app.py
+streamlit==1.64.0
