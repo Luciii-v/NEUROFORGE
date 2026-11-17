@@ -41,7 +41,8 @@ const STYLES = {
 
 const formatParams = (n) => (!n ? '—' : n >= 1e6 ? `${(n / 1e6).toFixed(2)}M` : `${Math.round(n / 1e3)}k`);
 
-export default function ModelColiseum({ models = [], datasetName = 'the active dataset' }) {
+export default function ModelColiseum({ models = [], datasetName = 'the active dataset', compact = false }) {
+  const [showDetails, setShowDetails] = useState(!compact);
   const [filter, setFilter] = useState('all'); // 'all' | 'edge' | 'heavy' | 'pareto'
   const [racing, setRacing] = useState(false);
   const [winnerAnnounced, setWinnerAnnounced] = useState(false);
@@ -375,8 +376,15 @@ export default function ModelColiseum({ models = [], datasetName = 'the active d
         <p className="font-mono text-xs text-zinc-400 mb-4">No trained models on this dataset yet. Run a search and train the winner to fill the arena.</p>
       )}
 
+      {compact && (
+        <button type="button" onClick={() => setShowDetails((v) => !v)}
+          className="mb-4 px-4 py-2 rounded-xl border border-white/10 text-zinc-300 hover:text-white hover:border-white/25 font-mono text-[11px] uppercase tracking-wider">
+          {showDetails ? 'Hide model details' : `Show details for all ${baseModels.length} models`}
+        </button>
+      )}
+
       {/* Metrics Comparison Cards Deck */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {showDetails && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredModels.map((m) => (
           <div
             key={m.id}
@@ -428,7 +436,7 @@ export default function ModelColiseum({ models = [], datasetName = 'the active d
             </div>
           </div>
         ))}
-      </div>
+      </div>}
     </div>
   );
 }

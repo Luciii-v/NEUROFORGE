@@ -1,4 +1,5 @@
 import { LineageBay, TrainingEvidenceBay } from '../evidence/EvidencePanels';
+import ArchitectureSequencer from './ArchitectureSequencer';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, BarChart3, Database, Download, Info, Moon, Play, RotateCcw, Save, Sun, Trash2, UploadCloud, Zap, Award, Check, Layers } from 'lucide-react';
 import soundEngine from '../utils/soundEngine';
@@ -110,6 +111,13 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
 
   useEffect(() => {
     refresh();
+  }, []);
+
+  // Deep links from the home page (e.g. #nf-loop-evidence) land after the data renders.
+  useEffect(() => {
+    if (!window.location.hash) return undefined;
+    const timer = setTimeout(() => document.querySelector(window.location.hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 1400);
+    return () => clearTimeout(timer);
   }, []);
 
   const workspace = status?.workspace || {};
@@ -691,7 +699,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
           </div>
         </section>
 
-        <section className="nf-loop-evidence" aria-label="Search lineage and training evidence" style={{ display: 'grid', gap: 18, marginTop: 28, marginBottom: 28 }}>
+        <section id="nf-loop-evidence" className="nf-loop-evidence" aria-label="Search lineage and training evidence" style={{ display: 'grid', gap: 18, marginTop: 28, marginBottom: 28 }}>
           <LineageBay
             history={hasSearchResults ? history : []}
             winnerId={liveCandidates.length ? null : (historyPayload.search?.best_candidate_id)}
@@ -801,6 +809,15 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
             })}
           </div>
           <div className="nf-comparison-footnote"><Info size={14} /> {comparison?.metric_definitions?.mse || 'MSE/RMSE are not regression targets here; they summarize probability-vector error.'}</div>
+        </section>
+
+        <section id="nf-loop-sequencer" style={{ marginBottom: 28 }}>
+          <ArchitectureSequencer
+            initialConfig={champion?.config || historyPayload.config}
+            numClasses={dataset?.num_classes || 5}
+            championAcc={historyPayload.search?.best_metrics?.accuracy || 0}
+            proxyEpochs={historyPayload.search?.proxy_epochs || 3}
+          />
         </section>
 
         <section className="nf-loop-panel nf-saved-runs" aria-labelledby="saved-runs-heading">

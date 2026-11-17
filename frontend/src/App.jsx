@@ -3,12 +3,10 @@ import NeuralCoreCanvas from './components/NeuralCoreCanvas';
 import KineticTrajectoryGraph from './components/KineticTrajectoryGraph';
 import InteractiveCrucible from './components/InteractiveCrucible';
 import ModelColiseum from './components/ModelColiseum';
-import ArchitectureSequencer from './components/ArchitectureSequencer';
 import HolographicSpecimenCard from './components/HolographicSpecimenCard';
 import CinematicSplash from './components/CinematicSplash';
 import MutationLoopPage from './components/MutationLoopPage';
 import soundEngine from './utils/soundEngine';
-import { LineageBay, TrainingEvidenceBay } from './evidence/EvidencePanels';
 import { 
   Play, 
   RotateCcw, 
@@ -393,11 +391,10 @@ print(labels[int(probs.argmax())], f"{float(probs.max()):.1%}")
         </a>
         <nav className="nf-nav-links" aria-label="Primary navigation">
           <a href="#evolution">Family tree</a>
-          <a href="#evidence">Evidence</a>
-          <a href="#coliseum">Coliseum</a>
+          <a href="#coliseum">Showdown</a>
           <a href="#crucible">Live specimen</a>
-          <a href="#sequencer">DNA sequencer</a>
-          <a href="#ship">Champion card</a>
+          <a href="#ship">Ship</a>
+          <a href="/?view=loop">Mutation loop</a>
         </nav>
         <div className="nf-nav-actions">
           <span className="nf-status-dot" />
@@ -475,15 +472,6 @@ print(labels[int(probs.argmax())], f"{float(probs.max()):.1%}")
           <div className="nf-ribbon-stat"><strong>{latency}</strong><span>per-sample latency</span></div>
         </section>
 
-         <section className="nf-evidence-note" aria-label="Why the current score is modest" data-scroll-reveal="evidence">
-          <div className="nf-evidence-mark">read the number correctly</div>
-          <div>
-            <strong>Small, difficult specimen.</strong>
-            <p>Current run: {dataset.num_samples || '—'} images across {dataset.num_classes || '—'} classes, scored on a sealed test split of {metrics.sample_count || '—'} images (one image ≈ {metrics.sample_count ? (100 / metrics.sample_count).toFixed(1) : '—'} points).{leader && leader.id !== 'dynamic_cnn' ? ` ${leader.label} currently leads at ${leader.metrics.accuracy.toFixed(1)}%: pretrained on 1.2M ImageNet photos, it needs far less data than a CNN evolved from scratch.` : ''}</p>
-          </div>
-          <div className="nf-evidence-next"><span>Next lever</span><strong>larger dataset · repeated seeds · random-search baseline</strong></div>
-        </section>
-
          <section id="evolution" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
            <div className="nf-chapter-intro nf-scroll-reveal nf-reveal-intro">
             <span className="nf-chapter-number">01</span>
@@ -504,33 +492,29 @@ print(labels[int(probs.argmax())], f"{float(probs.max()):.1%}")
               }}
             />
           </div>
-          <div className="nf-scroll-reveal nf-reveal-instrument" style={{ marginTop: 28 }}>
-            <LineageBay history={history} winnerId={search.best_candidate_id} manualBaseline={baseline.f1 !== undefined ? baseline : null}
-              numClasses={dataset.num_classes} />
-          </div>
-        </section>
-
-        <section id="evidence" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-          <div className="nf-chapter-intro nf-chapter-intro-reverse nf-scroll-reveal nf-reveal-intro">
-            <span className="nf-chapter-number">01·b</span>
-            <div>
-              <p className="nf-kicker">The evidence</p>
-              <h2>A score is only as good<br /><em>as the split behind it.</em></h2>
-            </div>
-            <p className="nf-chapter-copy">Validation chose the checkpoint; the sealed test split was opened once. The curve shows how the champion learned, the heatmap shows exactly which classes it confuses.</p>
-          </div>
-          <div className="nf-scroll-reveal nf-reveal-instrument">
-            <TrainingEvidenceBay active={activeModel} />
+          <div className="nf-home-more">
+            <a href="/?view=loop#nf-loop-evidence">See all {history.length || ''} designs, the learning curve and the confusion heatmap in the mutation loop <ArrowUpRight size={14} /></a>
           </div>
         </section>
 
         <section id="coliseum" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-          <ModelColiseum models={comparison?.models || []} datasetName={datasetLabel} />
+          <div className="nf-chapter-intro nf-scroll-reveal nf-reveal-intro">
+            <span className="nf-chapter-number">02</span>
+            <div>
+              <p className="nf-kicker">The showdown</p>
+              <h2>Same split, same rules,<br /><em>six contenders.</em></h2>
+            </div>
+            <p className="nf-chapter-copy">
+              Every model is scored once on the same sealed test split ({metrics.sample_count || '—'} images).
+              {leader && leader.id !== 'dynamic_cnn' ? ` ${leader.label} leads: pretrained on 1.2M photos, it needs far less data than a CNN evolved from scratch.` : ''}
+            </p>
+          </div>
+          <ModelColiseum models={comparison?.models || []} datasetName={datasetLabel} compact />
         </section>
 
          <section id="crucible" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
            <div className="nf-chapter-intro nf-chapter-intro-reverse nf-scroll-reveal nf-reveal-intro">
-            <span className="nf-chapter-number">02</span>
+            <span className="nf-chapter-number">03</span>
             <div>
               <p className="nf-kicker">The live specimen</p>
               <h2>Give the champion<br /><em>something real to see.</em></h2>
@@ -547,22 +531,13 @@ print(labels[int(probs.argmax())], f"{float(probs.max()):.1%}")
           </div>
         </section>
 
-        <section id="sequencer" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
-          <ArchitectureSequencer
-            initialConfig={selectedConfig}
-            numClasses={dataset.num_classes || 5}
-            championAcc={search.best_metrics?.accuracy || 0}
-            proxyEpochs={search.proxy_epochs || 3}
-          />
-        </section>
-
          <section id="ship" className="nf-ship-section nf-physics-surface nf-section-anchor" data-scroll-reveal="ship">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7">
-              <p className="nf-kicker">03 / The handoff</p>
+              <p className="nf-kicker">04 / The handoff</p>
               <h2>When the experiment<br /><em>earns a place in the world.</em></h2>
               <p className="nf-chapter-copy">
-                Keep the weights, the blueprint and the receipt together. Every forged champion earns an authentic SSR Holographic Trading Card with verified Apple Silicon tensor benchmarks.
+                Keep the weights, the blueprint and the receipt together: one bundle with the config, labels, preprocessing, split and lineage.
               </p>
               <div className="nf-ship-actions mt-6">
                 <button className="nf-primary-button nf-primary-button-dark nf-magnetic" onClick={() => setShowExportDrawer(true)}>
