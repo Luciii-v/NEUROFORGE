@@ -195,15 +195,16 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
     return Math.max(...history.map((c) => Number(c.accuracy || 0)));
   }, [history]);
 
+  const lastGeneration = history.reduce((max, c) => Math.max(max, Number(c.generation) || 0), 0);
   const filteredCandidates = useMemo(() => {
     if (candidateFilter === 'top') {
       return [...history].sort((a, b) => Number(b.accuracy || 0) - Number(a.accuracy || 0)).slice(0, 5);
     }
-    if (candidateFilter === 'gen4') {
-      return history.filter((c) => Number(c.generation) === 4);
+    if (candidateFilter === 'latest') {
+      return history.filter((c) => Number(c.generation) === lastGeneration);
     }
     return history;
-  }, [history, candidateFilter]);
+  }, [history, candidateFilter, lastGeneration]);
 
   const readResponse = async (response) => {
     const payload = await response.json();
@@ -567,9 +568,11 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
               <button className={candidateFilter === 'top' ? 'is-active' : ''} onClick={() => setCandidateFilter('top')}>
                 Top 5
               </button>
-              <button className={candidateFilter === 'gen4' ? 'is-active' : ''} onClick={() => setCandidateFilter('gen4')}>
-                Gen 4 Only
-              </button>
+              {lastGeneration > 1 && (
+                <button className={candidateFilter === 'latest' ? 'is-active' : ''} onClick={() => setCandidateFilter('latest')}>
+                  Gen {lastGeneration} only
+                </button>
+              )}
             </div>
 
             <div className="nf-candidate-list">
@@ -625,17 +628,17 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
             </p>
 
             {/* Active Blueprint Specification Box */}
-            {(historyPayload?.config || champion?.config) && (
+            {champion?.config && (
               <div className="nf-blueprint-receipt">
                 <div className="nf-blueprint-header">
                   <Layers size={13} />
-                  <span>SELECTED CHAMPION BLUEPRINT SPECIFICATION</span>
+                  <span>SEARCH WINNER BLUEPRINT · {champion.candidate_id?.split('-').slice(-2).join(' ')}</span>
                 </div>
                 <div className="nf-blueprint-grid">
-                  <div><span>Layers</span><strong>{(historyPayload?.config || champion?.config)?.num_layers || 3} Blocks</strong></div>
-                  <div><span>Filters</span><strong>{JSON.stringify((historyPayload?.config || champion?.config)?.filters || [32, 64, 128])}</strong></div>
-                  <div><span>Activation</span><strong>{(historyPayload?.config || champion?.config)?.activation || 'GELU'}</strong></div>
-                  <div><span>Params</span><strong>{formatParamCount(champion?.parameters || 270000)}</strong></div>
+                  <div><span>Layers</span><strong>{champion.config.num_layers} {champion.config.block_type && champion.config.block_type !== 'plain' ? `${champion.config.block_type} ` : ''}blocks</strong></div>
+                  <div><span>Filters</span><strong>{JSON.stringify(champion.config.filters)}</strong></div>
+                  <div><span>Activation</span><strong>{champion.config.activation}</strong></div>
+                  <div><span>Params</span><strong>{formatParamCount(champion.parameters)}</strong></div>
                 </div>
               </div>
             )}
@@ -720,7 +723,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
 
         <section className="nf-loop-panel nf-loop-comparison-panel nf-scroll-reveal" aria-labelledby="comparison-heading" data-scroll-reveal="loop-compare">
           <div className="nf-loop-panel-heading"><div><p className="nf-kicker">04 / compare</p><h2 id="comparison-heading">Put the models side by side.</h2></div><BarChart3 size={20} /></div>
-          <p className="nf-loop-muted">The mutated DynamicCNN, the fixed manual CNN, and ResNet-18 are separate evidence tracks. Accuracy, precision, recall and F1 are percentages; MSE and RMSE compare probability vectors with one-hot targets, so lower is better.</p>
+          <p className="nf-loop-muted">Every model below is trained with the same split, seed and protocol, and scored once on the sealed test split. The two CNNs learn from scratch; the other four start from ImageNet-pretrained weights. Accuracy, precision, recall and F1 are percentages; MSE and RMSE compare probability vectors with one-hot targets, so lower is better.</p>
           {comparisonError && <div className="nf-loop-error">{comparisonError}</div>}
           <div className="nf-comparison-table-wrap">
             <table className="nf-comparison-table">

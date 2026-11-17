@@ -1,7 +1,7 @@
 [
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C01",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G01-C01",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [],
@@ -22,24 +22,24 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 40.909090909090914,
-    "precision": 16.363635659217834,
+    "accuracy": 43.18181818181818,
+    "precision": 16.476190090179443,
     "recall": 28.666669130325317,
-    "f1": 20.641891658306122,
-    "f1_present_classes": 20.641891658306122,
-    "precision_present_classes": 16.363635659217834,
+    "f1": 20.777778327465057,
+    "f1_present_classes": 20.777778327465057,
+    "precision_present_classes": 16.476190090179443,
     "recall_present_classes": 28.666669130325317,
-    "mse": 0.15521645545959473,
-    "rmse": 0.3939751982688904,
+    "mse": 0.15667106211185455,
+    "rmse": 0.39581695199012756,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        7,
+        5,
         0,
         0,
-        3,
+        5,
         0
       ],
       [
@@ -57,35 +57,35 @@
         0
       ],
       [
-        4,
+        1,
         0,
         0,
-        11,
+        14,
         0
       ],
       [
-        8,
+        5,
         0,
         0,
-        4,
+        7,
         0
       ]
     ],
     "parameters": 94341,
-    "training_time_seconds": 1.7332696914672852,
-    "inference_latency_seconds": 0.07930302619934082,
-    "inference_latency_per_sample_seconds": 0.0018023415045304732,
+    "training_time_seconds": 0.841008186340332,
+    "inference_latency_seconds": 0.07179427146911621,
+    "inference_latency_per_sample_seconds": 0.0016316879879344594,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "9bc9edb2ed50856a",
     "evaluation_split": "valid",
-    "score": 28.41799217093416,
+    "score": 29.52668940380911,
     "status": "evaluated",
-    "rank": 4
+    "rank": 3
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C02",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G01-C02",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -123,14 +123,14 @@
       "dropout": 0.4
     },
     "accuracy": 43.18181818181818,
-    "precision": 18.93719881772995,
+    "precision": 18.611112236976624,
     "recall": 31.333333253860474,
-    "f1": 23.030300438404083,
-    "f1_present_classes": 23.030300438404083,
-    "precision_present_classes": 18.93719881772995,
+    "f1": 22.709445655345917,
+    "f1_present_classes": 22.709445655345917,
+    "precision_present_classes": 18.611112236976624,
     "recall_present_classes": 31.333333253860474,
-    "mse": 0.15455201268196106,
-    "rmse": 0.3931310474872589,
+    "mse": 0.15540318191051483,
+    "rmse": 0.39421209692955017,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
@@ -151,10 +151,10 @@
       ],
       [
         1,
+        1,
         0,
         0,
-        0,
-        1
+        0
       ],
       [
         5,
@@ -164,28 +164,28 @@
         0
       ],
       [
-        7,
+        8,
         0,
-        1,
+        0,
         4,
         0
       ]
     ],
     "parameters": 244805,
-    "training_time_seconds": 1.482428789138794,
-    "inference_latency_seconds": 0.08782601356506348,
-    "inference_latency_per_sample_seconds": 0.001996045762842352,
+    "training_time_seconds": 0.904292106628418,
+    "inference_latency_seconds": 0.07694697380065918,
+    "inference_latency_per_sample_seconds": 0.0017487948591058905,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "2b682fe945d7f199",
     "evaluation_split": "valid",
-    "score": 30.63079844148766,
+    "score": 30.47774545175552,
     "status": "evaluated",
     "rank": 2
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C03",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G01-C03",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -221,15 +221,15 @@
       "pooling": true,
       "dropout": 0.3
     },
-    "accuracy": 34.090909090909086,
-    "precision": 18.132182955741882,
-    "recall": 29.000002145767212,
-    "f1": 18.484847247600555,
-    "f1_present_classes": 18.484847247600555,
-    "precision_present_classes": 18.132182955741882,
-    "recall_present_classes": 29.000002145767212,
-    "mse": 0.15857243537902832,
-    "rmse": 0.3982115387916565,
+    "accuracy": 40.909090909090914,
+    "precision": 19.206349551677704,
+    "recall": 25.333333015441895,
+    "f1": 19.401445984840393,
+    "f1_present_classes": 19.401445984840393,
+    "precision_present_classes": 19.206349551677704,
+    "recall_present_classes": 25.333333015441895,
+    "mse": 0.15879133343696594,
+    "rmse": 0.39848631620407104,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
@@ -237,54 +237,54 @@
       [
         0,
         0,
-        3,
-        6,
+        0,
+        9,
         1
       ],
       [
-        1,
+        0,
         0,
         0,
         4,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
         0
       ],
       [
         0,
         0,
-        1,
-        1,
-        0
-      ],
-      [
         0,
-        0,
-        1,
-        13,
+        14,
         1
       ],
       [
-        3,
         0,
-        3,
-        5,
-        1
+        0,
+        1,
+        7,
+        4
       ]
     ],
     "parameters": 93893,
-    "training_time_seconds": 1.3077549934387207,
-    "inference_latency_seconds": 0.06998300552368164,
-    "inference_latency_per_sample_seconds": 0.0015905228528109465,
+    "training_time_seconds": 0.8537940979003906,
+    "inference_latency_seconds": 0.07550907135009766,
+    "inference_latency_per_sample_seconds": 0.001716115257956765,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "eba73fd0028fb24f",
     "evaluation_split": "valid",
-    "score": 25.16646371884363,
+    "score": 28.765607566666777,
     "status": "evaluated",
-    "rank": 5
+    "rank": 4
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C04",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G01-C04",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -310,459 +310,72 @@
       "pooling": false,
       "dropout": 0.2
     },
-    "accuracy": 40.909090909090914,
-    "precision": 31.130951642990112,
-    "recall": 28.333336114883423,
-    "f1": 24.477919936180115,
-    "f1_present_classes": 24.477919936180115,
-    "precision_present_classes": 31.130951642990112,
-    "recall_present_classes": 28.333336114883423,
-    "mse": 0.15525107085704803,
-    "rmse": 0.39401912689208984,
+    "accuracy": 43.18181818181818,
+    "precision": 25.043290853500366,
+    "recall": 35.66666543483734,
+    "f1": 28.788676857948303,
+    "f1_present_classes": 28.788676857948303,
+    "precision_present_classes": 25.043290853500366,
+    "recall_present_classes": 35.66666543483734,
+    "mse": 0.15774188935756683,
+    "rmse": 0.3971673250198364,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
+        0,
+        0,
         2,
-        2,
+        5,
+        3
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        13,
+        2
+      ],
+      [
+        1,
+        0,
         0,
         6,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        14,
-        1
-      ],
-      [
-        3,
-        0,
-        0,
-        8,
-        1
+        5
       ]
     ],
     "parameters": 94341,
-    "training_time_seconds": 1.899947166442871,
-    "inference_latency_seconds": 0.12056708335876465,
-    "inference_latency_per_sample_seconds": 0.0027401609854264693,
+    "training_time_seconds": 1.205132007598877,
+    "inference_latency_seconds": 0.10659289360046387,
+    "inference_latency_per_sample_seconds": 0.002422565763646906,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "551d75c2c9cf8547",
     "evaluation_split": "valid",
-    "score": 33.16684770214982,
+    "score": 33.992646376213074,
     "status": "evaluated",
     "rank": 1
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C05",
-    "generation": 1,
-    "parent_id": null,
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 3,
-        "to": 2
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "GELU"
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "depthwise"
-      }
-    ],
-    "config": {
-      "num_layers": 2,
-      "filters": [
-        32,
-        64
-      ],
-      "kernel_sizes": [
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "GELU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "depthwise"
-    },
-    "accuracy": 6.8181818181818175,
-    "precision": 10.952381044626236,
-    "recall": 24.000000953674316,
-    "f1": 7.532467693090439,
-    "f1_present_classes": 7.532467693090439,
-    "precision_present_classes": 10.952381044626236,
-    "recall_present_classes": 24.000000953674316,
-    "mse": 0.16364246606826782,
-    "rmse": 0.4045274555683136,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        0,
-        10,
-        0,
-        0
-      ],
-      [
-        0,
-        1,
-        4,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        2,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        15,
-        0,
-        0
-      ],
-      [
-        0,
-        1,
-        11,
-        0,
-        0
-      ]
-    ],
-    "parameters": 3107,
-    "training_time_seconds": 2.4017930030822754,
-    "inference_latency_seconds": 0.11459708213806152,
-    "inference_latency_per_sample_seconds": 0.002604479139501398,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "9023e73a56a07fcc",
-    "evaluation_split": "valid",
-    "score": 7.802462473315369,
-    "status": "evaluated",
-    "rank": 7
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C06",
-    "generation": 1,
-    "parent_id": null,
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 128
-      },
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 64
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.0
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "depthwise"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        128,
-        64,
-        64
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": true,
-      "dropout": 0.0,
-      "block_type": "depthwise"
-    },
-    "accuracy": 11.363636363636363,
-    "precision": 2.2727273404598236,
-    "recall": 20.000000298023224,
-    "f1": 4.0816329419612885,
-    "f1_present_classes": 4.0816329419612885,
-    "precision_present_classes": 2.2727273404598236,
-    "recall_present_classes": 20.000000298023224,
-    "mse": 0.15925319492816925,
-    "rmse": 0.39906540513038635,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        10,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        5,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        2,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        15,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        12,
-        0,
-        0,
-        0
-      ]
-    ],
-    "parameters": 15715,
-    "training_time_seconds": 1.9098727703094482,
-    "inference_latency_seconds": 0.1065220832824707,
-    "inference_latency_per_sample_seconds": 0.0024209564382379704,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "b5cd7ec2e5f9e7b2",
-    "evaluation_split": "valid",
-    "score": 6.648497437515909,
-    "status": "evaluated",
-    "rank": 8
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C07",
-    "generation": 1,
-    "parent_id": null,
-    "mutation_operations": [
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 32
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        64,
-        32
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": true,
-      "dropout": 0.2
-    },
-    "accuracy": 34.090909090909086,
-    "precision": 7.14285746216774,
-    "recall": 20.000000298023224,
-    "f1": 10.526315122842789,
-    "f1_present_classes": 10.526315122842789,
-    "precision_present_classes": 7.14285746216774,
-    "recall_present_classes": 20.000000298023224,
-    "mse": 0.155115008354187,
-    "rmse": 0.39384642243385315,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        1,
-        0,
-        9,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        5,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        15,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        12,
-        0
-      ]
-    ],
-    "parameters": 38277,
-    "training_time_seconds": 1.3735039234161377,
-    "inference_latency_seconds": 0.07402682304382324,
-    "inference_latency_per_sample_seconds": 0.0016824277964505282,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "850dcd49a5f0edd9",
-    "evaluation_split": "valid",
-    "score": 20.07799821365881,
-    "status": "evaluated",
-    "rank": 6
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G01-C08",
-    "generation": 1,
-    "parent_id": null,
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 3,
-        "to": 4
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        32,
-        64,
-        128,
-        16
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": true,
-      "dropout": 0.2
-    },
-    "accuracy": 40.909090909090914,
-    "precision": 16.819171607494354,
-    "recall": 30.666667222976685,
-    "f1": 20.81080973148346,
-    "f1_present_classes": 20.81080973148346,
-    "precision_present_classes": 16.819171607494354,
-    "recall_present_classes": 30.666667222976685,
-    "mse": 0.15388630330562592,
-    "rmse": 0.39228343963623047,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        10,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        7,
-        0,
-        0,
-        8,
-        0
-      ],
-      [
-        7,
-        0,
-        0,
-        5,
-        0
-      ]
-    ],
-    "parameters": 112261,
-    "training_time_seconds": 1.7176768779754639,
-    "inference_latency_seconds": 0.08393001556396484,
-    "inference_latency_per_sample_seconds": 0.0019075003537264738,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "31f31aff6820de61",
-    "evaluation_split": "valid",
-    "score": 28.554115695036888,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C01",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G02-C01",
     "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C04",
+    "parent_id": "20261117T174542Z-G01-C04",
     "mutation_operations": [
       {
         "field": "elite",
@@ -786,301 +399,181 @@
       "pooling": false,
       "dropout": 0.2
     },
-    "accuracy": 40.909090909090914,
-    "precision": 31.130951642990112,
-    "recall": 28.333336114883423,
-    "f1": 24.477919936180115,
-    "f1_present_classes": 24.477919936180115,
-    "precision_present_classes": 31.130951642990112,
-    "recall_present_classes": 28.333336114883423,
-    "mse": 0.15525107085704803,
-    "rmse": 0.39401912689208984,
+    "accuracy": 43.18181818181818,
+    "precision": 25.043290853500366,
+    "recall": 35.66666543483734,
+    "f1": 28.788676857948303,
+    "f1_present_classes": 28.788676857948303,
+    "precision_present_classes": 25.043290853500366,
+    "recall_present_classes": 35.66666543483734,
+    "mse": 0.15774188935756683,
+    "rmse": 0.3971673250198364,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
+        0,
+        0,
         2,
-        2,
+        5,
+        3
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        13,
+        2
+      ],
+      [
+        1,
+        0,
         0,
         6,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        14,
-        1
-      ],
-      [
-        3,
-        0,
-        0,
-        8,
-        1
+        5
       ]
     ],
     "parameters": 94341,
-    "training_time_seconds": 1.899947166442871,
-    "inference_latency_seconds": 0.12056708335876465,
-    "inference_latency_per_sample_seconds": 0.0027401609854264693,
+    "training_time_seconds": 1.205132007598877,
+    "inference_latency_seconds": 0.10659289360046387,
+    "inference_latency_per_sample_seconds": 0.002422565763646906,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "551d75c2c9cf8547",
     "evaluation_split": "valid",
-    "score": 33.16684770214982,
+    "score": 33.992646376213074,
     "status": "evaluated",
     "evaluation_reused": true,
     "rank": 1
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C02",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G02-C02",
     "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C08",
+    "parent_id": "20261117T174542Z-G01-C04",
     "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 4,
-        "to": 5
-      },
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 64
-      },
       {
         "field": "filters[2]",
         "from": 128,
         "to": 64
       },
       {
-        "field": "kernel_sizes[3]",
+        "field": "kernel_sizes[2]",
         "from": 3,
         "to": 5
       },
       {
         "field": "batch_norm",
         "to": false
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "residual"
-      }
-    ],
-    "config": {
-      "num_layers": 5,
-      "filters": [
-        64,
-        64,
-        64,
-        16,
-        32
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        5,
-        5
-      ],
-      "batch_norm": false,
-      "activation": "ReLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "residual"
-    },
-    "accuracy": 20.454545454545457,
-    "precision": 4.736842215061188,
-    "recall": 17.999999225139618,
-    "f1": 7.500000298023224,
-    "f1_present_classes": 7.500000298023224,
-    "precision_present_classes": 4.736842215061188,
-    "recall_present_classes": 17.999999225139618,
-    "mse": 0.15808571875095367,
-    "rmse": 0.3975999355316162,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        9,
-        0,
-        0,
-        0,
-        1
-      ],
-      [
-        4,
-        0,
-        0,
-        0,
-        1
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        11,
-        0,
-        0,
-        0,
-        4
-      ],
-      [
-        12,
-        0,
-        0,
-        0,
-        0
-      ]
-    ],
-    "parameters": 258933,
-    "training_time_seconds": 2.4429147243499756,
-    "inference_latency_seconds": 0.10947465896606445,
-    "inference_latency_per_sample_seconds": 0.0024880604310469193,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "6f06594e4b7653e1",
-    "evaluation_split": "valid",
-    "score": 12.131017054613027,
-    "status": "evaluated",
-    "rank": 7
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C03",
-    "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C08",
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 4,
-        "to": 3
-      },
-      {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 128
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "SiLU"
       }
     ],
     "config": {
       "num_layers": 3,
       "filters": [
         32,
-        128,
-        128
+        64,
+        64
       ],
       "kernel_sizes": [
         3,
         3,
-        3
+        5
       ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
+      "batch_norm": false,
+      "activation": "ReLU",
+      "pooling": false,
       "dropout": 0.2
     },
-    "accuracy": 13.636363636363635,
-    "precision": 18.10256540775299,
-    "recall": 18.666666746139526,
-    "f1": 10.67301630973816,
-    "f1_present_classes": 10.67301630973816,
-    "precision_present_classes": 18.10256540775299,
-    "recall_present_classes": 18.666666746139526,
-    "mse": 0.1598333865404129,
-    "rmse": 0.3997916877269745,
+    "accuracy": 34.090909090909086,
+    "precision": 14.599999785423279,
+    "recall": 20.999999344348907,
+    "f1": 17.000000178813934,
+    "f1_present_classes": 17.000000178813934,
+    "precision_present_classes": 14.599999785423279,
+    "recall_present_classes": 20.999999344348907,
+    "mse": 0.15712523460388184,
+    "rmse": 0.39639025926589966,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        3,
         0,
-        7,
         0,
-        0
+        0,
+        5,
+        5
       ],
       [
         1,
+        0,
         0,
         4,
-        0,
         0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2
       ],
       [
         1,
         0,
-        1,
         0,
-        0
+        12,
+        2
       ],
       [
         5,
         0,
-        8,
-        2,
-        0
-      ],
-      [
-        5,
         0,
-        6,
-        1,
-        0
+        4,
+        3
       ]
     ],
-    "parameters": 186693,
-    "training_time_seconds": 1.4927031993865967,
-    "inference_latency_seconds": 0.0821988582611084,
-    "inference_latency_per_sample_seconds": 0.0018681558695706453,
+    "parameters": 122181,
+    "training_time_seconds": 1.4001727104187012,
+    "inference_latency_seconds": 0.10198807716369629,
+    "inference_latency_per_sample_seconds": 0.0023179108446294613,
     "num_classes": 5,
     "seed": 42,
-    "config_hash": "2b17c52f5bab56fe",
+    "config_hash": "2089223ad24c517c",
     "evaluation_split": "valid",
-    "score": 13.490401294266267,
+    "score": 23.736937006446144,
     "status": "evaluated",
-    "rank": 6
+    "rank": 3
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C04",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G02-C03",
     "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C02",
+    "parent_id": "20261117T174542Z-G01-C02",
     "mutation_operations": [
+      {
+        "field": "dropout",
+        "from": 0.4,
+        "to": 0.2
+      },
       {
         "field": "pooling",
         "to": false
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "depthwise"
       }
     ],
     "config": {
@@ -1098,247 +591,149 @@
       "batch_norm": true,
       "activation": "ReLU",
       "pooling": false,
-      "dropout": 0.4,
-      "block_type": "depthwise"
+      "dropout": 0.2
     },
-    "accuracy": 34.090909090909086,
-    "precision": 6.818182021379471,
-    "recall": 20.000000298023224,
-    "f1": 10.169491916894913,
-    "f1_present_classes": 10.169491916894913,
-    "precision_present_classes": 6.818182021379471,
-    "recall_present_classes": 20.000000298023224,
-    "mse": 0.15838775038719177,
-    "rmse": 0.39797958731651306,
+    "accuracy": 36.36363636363637,
+    "precision": 16.58862829208374,
+    "recall": 24.000000953674316,
+    "f1": 19.588100910186768,
+    "f1_present_classes": 19.588100910186768,
+    "precision_present_classes": 16.58862829208374,
+    "recall_present_classes": 24.000000953674316,
+    "mse": 0.15475870668888092,
+    "rmse": 0.3933938443660736,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
+        4,
+        3,
+        0,
+        3,
+        0
+      ],
+      [
+        1,
         0,
         0,
-        0,
-        10,
+        4,
         0
       ],
       [
         0,
+        1,
         0,
         0,
-        5,
-        0
+        1
       ],
       [
-        0,
-        0,
-        0,
+        1,
         2,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        15,
-        0
-      ],
-      [
-        0,
-        0,
         0,
         12,
         0
+      ],
+      [
+        7,
+        1,
+        0,
+        4,
+        0
       ]
     ],
-    "parameters": 16227,
-    "training_time_seconds": 2.245974063873291,
-    "inference_latency_seconds": 0.1183161735534668,
-    "inference_latency_per_sample_seconds": 0.0026890039443969727,
+    "parameters": 244805,
+    "training_time_seconds": 1.682032823562622,
+    "inference_latency_seconds": 0.12953662872314453,
+    "inference_latency_per_sample_seconds": 0.002944014289162376,
     "num_classes": 5,
     "seed": 42,
-    "config_hash": "cbacbfcf84f9194f",
+    "config_hash": "a0bc0cd9203cd6d2",
     "evaluation_split": "valid",
-    "score": 19.811174776882734,
+    "score": 25.848017280797094,
     "status": "evaluated",
-    "rank": 5
+    "rank": 2
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C05",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G02-C04",
     "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C02",
+    "parent_id": "20261117T174542Z-G01-C02",
     "mutation_operations": [
       {
         "field": "num_layers",
         "from": 3,
-        "to": 2
+        "to": 4
       },
       {
         "field": "filters[0]",
         "from": 64,
-        "to": 16
+        "to": 32
       },
       {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 32
+        "field": "kernel_sizes[0]",
+        "from": 3,
+        "to": 5
       }
     ],
     "config": {
-      "num_layers": 2,
+      "num_layers": 4,
       "filters": [
-        16,
-        32
+        32,
+        64,
+        128,
+        128
       ],
       "kernel_sizes": [
+        5,
         3,
-        3
+        5,
+        5
       ],
       "batch_norm": true,
       "activation": "ReLU",
       "pooling": true,
       "dropout": 0.4
     },
-    "accuracy": 31.818181818181817,
-    "precision": 21.661290526390076,
-    "recall": 30.000001192092896,
-    "f1": 21.85179889202118,
-    "f1_present_classes": 21.85179889202118,
-    "precision_present_classes": 21.661290526390076,
-    "recall_present_classes": 30.000001192092896,
-    "mse": 0.15846751630306244,
-    "rmse": 0.3980797827243805,
+    "accuracy": 25.0,
+    "precision": 10.062111914157867,
+    "recall": 17.999999225139618,
+    "f1": 12.727272510528564,
+    "f1_present_classes": 12.727272510528564,
+    "precision_present_classes": 10.062111914157867,
+    "recall_present_classes": 17.999999225139618,
+    "mse": 0.15660816431045532,
+    "rmse": 0.39573749899864197,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        0,
-        0,
-        0,
-        1,
-        9
-      ],
-      [
-        0,
-        0,
-        0,
-        1,
-        4
-      ],
-      [
-        0,
-        0,
-        1,
-        0,
-        1
-      ],
-      [
-        0,
-        0,
-        1,
         5,
-        9
+        0,
+        0,
+        5,
+        0
       ],
       [
+        2,
         0,
         0,
         3,
-        1,
-        8
-      ]
-    ],
-    "parameters": 5349,
-    "training_time_seconds": 1.3813140392303467,
-    "inference_latency_seconds": 0.07939410209655762,
-    "inference_latency_per_sample_seconds": 0.0018044114112854004,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "5322eaef5b429f44",
-    "evaluation_split": "valid",
-    "score": 26.103253976257154,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C06",
-    "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C01",
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 16
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "SiLU"
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "residual"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        64,
-        128
+        0
       ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "residual"
-    },
-    "accuracy": 34.090909090909086,
-    "precision": 10.235293954610825,
-    "recall": 20.666666328907013,
-    "f1": 13.428571820259094,
-    "f1_present_classes": 13.428571820259094,
-    "precision_present_classes": 10.235293954610825,
-    "recall_present_classes": 20.666666328907013,
-    "mse": 0.15733911097049713,
-    "rmse": 0.3966599404811859,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
       [
         1,
         0,
         0,
+        1,
+        0
+      ],
+      [
         9,
-        0
-      ],
-      [
-        1,
         0,
         0,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        14,
+        6,
         0
       ],
       [
@@ -1349,215 +744,23 @@
         0
       ]
     ],
-    "parameters": 281781,
-    "training_time_seconds": 2.088576078414917,
-    "inference_latency_seconds": 0.0910499095916748,
-    "inference_latency_per_sample_seconds": 0.0020693161270835185,
+    "parameters": 636933,
+    "training_time_seconds": 1.0402801036834717,
+    "inference_latency_seconds": 0.08578300476074219,
+    "inference_latency_per_sample_seconds": 0.0019496137445623224,
     "num_classes": 5,
     "seed": 42,
-    "config_hash": "adc4aacbafcf40b0",
+    "config_hash": "85551ce95392efd1",
     "evaluation_split": "valid",
-    "score": 21.439591512931173,
+    "score": 16.751815357241806,
     "status": "evaluated",
     "rank": 4
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C07",
-    "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C08",
-    "mutation_operations": [
-      {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 16
-      },
-      {
-        "field": "filters[3]",
-        "from": 16,
-        "to": 128
-      },
-      {
-        "field": "pooling",
-        "to": false
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        32,
-        16,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 34.090909090909086,
-    "precision": 35.71428656578064,
-    "recall": 35.33333241939545,
-    "f1": 29.178744554519653,
-    "f1_present_classes": 29.178744554519653,
-    "precision_present_classes": 35.71428656578064,
-    "recall_present_classes": 35.33333241939545,
-    "mse": 0.15916642546653748,
-    "rmse": 0.39895665645599365,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        10,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        11,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        11,
-        0,
-        0,
-        1,
-        0
-      ]
-    ],
-    "parameters": 172917,
-    "training_time_seconds": 2.2343380451202393,
-    "inference_latency_seconds": 0.13714003562927246,
-    "inference_latency_per_sample_seconds": 0.003116818991574374,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "469b95c96e6301ad",
-    "evaluation_split": "valid",
-    "score": 32.538505199552716,
-    "status": "evaluated",
-    "rank": 2
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G02-C08",
-    "generation": 2,
-    "parent_id": "20261117T162226Z-G01-C01",
-    "mutation_operations": [
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "depthwise"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "depthwise"
-    },
-    "accuracy": 13.636363636363635,
-    "precision": 5.810526758432388,
-    "recall": 28.00000011920929,
-    "f1": 8.480204641819,
-    "f1_present_classes": 8.480204641819,
-    "precision_present_classes": 5.810526758432388,
-    "recall_present_classes": 28.00000011920929,
-    "mse": 0.16120469570159912,
-    "rmse": 0.4015030562877655,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        4,
-        0,
-        6,
-        0,
-        0
-      ],
-      [
-        1,
-        0,
-        4,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        2,
-        0,
-        0
-      ],
-      [
-        8,
-        0,
-        7,
-        0,
-        0
-      ],
-      [
-        6,
-        0,
-        6,
-        0,
-        0
-      ]
-    ],
-    "parameters": 12643,
-    "training_time_seconds": 1.274406909942627,
-    "inference_latency_seconds": 0.07026100158691406,
-    "inference_latency_per_sample_seconds": 0.0015968409451571379,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "335126f1cf5d8c84",
-    "evaluation_split": "valid",
-    "score": 9.96072962400172,
-    "status": "evaluated",
-    "rank": 8
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C01",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G03-C01",
     "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C01",
+    "parent_id": "20261117T174542Z-G02-C01",
     "mutation_operations": [
       {
         "field": "elite",
@@ -1581,2053 +784,116 @@
       "pooling": false,
       "dropout": 0.2
     },
-    "accuracy": 40.909090909090914,
-    "precision": 31.130951642990112,
-    "recall": 28.333336114883423,
-    "f1": 24.477919936180115,
-    "f1_present_classes": 24.477919936180115,
-    "precision_present_classes": 31.130951642990112,
-    "recall_present_classes": 28.333336114883423,
-    "mse": 0.15525107085704803,
-    "rmse": 0.39401912689208984,
+    "accuracy": 43.18181818181818,
+    "precision": 25.043290853500366,
+    "recall": 35.66666543483734,
+    "f1": 28.788676857948303,
+    "f1_present_classes": 28.788676857948303,
+    "precision_present_classes": 25.043290853500366,
+    "recall_present_classes": 35.66666543483734,
+    "mse": 0.15774188935756683,
+    "rmse": 0.3971673250198364,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
+        0,
+        0,
         2,
-        2,
+        5,
+        3
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        13,
+        2
+      ],
+      [
+        1,
+        0,
         0,
         6,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        14,
-        1
-      ],
-      [
-        3,
-        0,
-        0,
-        8,
-        1
+        5
       ]
     ],
     "parameters": 94341,
-    "training_time_seconds": 1.899947166442871,
-    "inference_latency_seconds": 0.12056708335876465,
-    "inference_latency_per_sample_seconds": 0.0027401609854264693,
+    "training_time_seconds": 1.205132007598877,
+    "inference_latency_seconds": 0.10659289360046387,
+    "inference_latency_per_sample_seconds": 0.002422565763646906,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "551d75c2c9cf8547",
     "evaluation_split": "valid",
-    "score": 33.16684770214982,
+    "score": 33.992646376213074,
     "status": "evaluated",
     "evaluation_reused": true,
-    "rank": 2
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C02",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C07",
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 4,
-        "to": 3
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.0
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        16,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.0
-    },
-    "accuracy": 22.727272727272727,
-    "precision": 13.928571343421936,
-    "recall": 24.666666984558105,
-    "f1": 15.899504721164703,
-    "f1_present_classes": 15.899504721164703,
-    "precision_present_classes": 13.928571343421936,
-    "recall_present_classes": 24.666666984558105,
-    "mse": 0.1585019826889038,
-    "rmse": 0.3981230854988098,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        3,
-        5,
-        2,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        2,
-        5,
-        8,
-        0
-      ],
-      [
-        5,
-        1,
-        3,
-        3,
-        0
-      ]
-    ],
-    "parameters": 25077,
-    "training_time_seconds": 1.4962959289550781,
-    "inference_latency_seconds": 0.09118509292602539,
-    "inference_latency_per_sample_seconds": 0.002072388475591486,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "398d4f2d41297ad6",
-    "evaluation_split": "valid",
-    "score": 18.246951131918472,
-    "status": "evaluated",
-    "rank": 4
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C03",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C07",
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 64
-      },
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 16
-      },
-      {
-        "field": "filters[3]",
-        "from": 128,
-        "to": 32
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "GELU"
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "depthwise"
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        64,
-        16,
-        16,
-        32
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "GELU",
-      "pooling": false,
-      "dropout": 0.2,
-      "block_type": "depthwise"
-    },
-    "accuracy": 22.727272727272727,
-    "precision": 4.545454680919647,
-    "recall": 20.000000298023224,
-    "f1": 7.407407462596893,
-    "f1_present_classes": 7.407407462596893,
-    "precision_present_classes": 4.545454680919647,
-    "recall_present_classes": 20.000000298023224,
-    "mse": 0.15844804048538208,
-    "rmse": 0.3980553150177002,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        10,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        5,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        15,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        12,
-        0,
-        0,
-        0,
-        0
-      ]
-    ],
-    "parameters": 3523,
-    "training_time_seconds": 1.888902187347412,
-    "inference_latency_seconds": 0.09059500694274902,
-    "inference_latency_per_sample_seconds": 0.002058977430517023,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "2a4ad95b0d0c7b25",
-    "evaluation_split": "valid",
-    "score": 13.376437893230005,
-    "status": "evaluated",
-    "rank": 7
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C04",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C01",
-    "mutation_operations": [
-      {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 32
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "GELU"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        32,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "GELU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 13.636363636363635,
-    "precision": 9.5238097012043,
-    "recall": 27.3333340883255,
-    "f1": 9.81089174747467,
-    "f1_present_classes": 9.81089174747467,
-    "precision_present_classes": 9.5238097012043,
-    "recall_present_classes": 27.3333340883255,
-    "mse": 0.15967029333114624,
-    "rmse": 0.3995876610279083,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        6,
-        3,
-        1,
-        0
-      ],
-      [
-        0,
-        4,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        10,
-        4,
-        1,
-        0
-      ],
-      [
-        0,
-        7,
-        3,
-        2,
-        0
-      ]
-    ],
-    "parameters": 48165,
-    "training_time_seconds": 1.7964591979980469,
-    "inference_latency_seconds": 0.1042182445526123,
-    "inference_latency_per_sample_seconds": 0.002368596467104825,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "b9714f23d199ca9d",
-    "evaluation_split": "valid",
-    "score": 11.17555893919663,
-    "status": "evaluated",
-    "rank": 8
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C05",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C06",
-    "mutation_operations": [
-      {
-        "field": "kernel_sizes[0]",
-        "from": 3,
-        "to": 5
-      },
-      {
-        "field": "kernel_sizes[1]",
-        "from": 3,
-        "to": 5
-      },
-      {
-        "field": "block_type",
-        "from": "residual",
-        "to": "plain"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        5,
-        5,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "plain"
-    },
-    "accuracy": 27.27272727272727,
-    "precision": 23.523810505867004,
-    "recall": 36.666667461395264,
-    "f1": 23.22639971971512,
-    "f1_present_classes": 23.22639971971512,
-    "precision_present_classes": 23.523810505867004,
-    "recall_present_classes": 36.666667461395264,
-    "mse": 0.15939323604106903,
-    "rmse": 0.3992408215999603,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        6,
-        2,
-        2,
-        0,
-        0
-      ],
-      [
-        1,
-        3,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        5,
-        7,
-        1,
-        2,
-        0
-      ],
-      [
-        5,
-        3,
-        3,
-        1,
-        0
-      ]
-    ],
-    "parameters": 101797,
-    "training_time_seconds": 1.7084431648254395,
-    "inference_latency_seconds": 0.09121894836425781,
-    "inference_latency_per_sample_seconds": 0.002073157917369496,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "7d0a92c6b657585a",
-    "evaluation_split": "valid",
-    "score": 24.81248702337161,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C06",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C07",
-    "mutation_operations": [
-      {
-        "field": "filters[1]",
-        "from": 16,
-        "to": 32
-      },
-      {
-        "field": "kernel_sizes[1]",
-        "from": 3,
-        "to": 5
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.0
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        32,
-        32,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        5,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.0
-    },
-    "accuracy": 38.63636363636363,
-    "precision": 40.888890624046326,
-    "recall": 35.999998450279236,
-    "f1": 34.928569197654724,
-    "f1_present_classes": 34.928569197654724,
-    "precision_present_classes": 40.888890624046326,
-    "recall_present_classes": 35.999998450279236,
-    "mse": 0.15455316007137299,
-    "rmse": 0.3931325078010559,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        3,
-        3,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        1,
-        2,
-        0,
-        12,
-        0
-      ],
-      [
-        1,
-        4,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 212389,
-    "training_time_seconds": 2.5225789546966553,
-    "inference_latency_seconds": 0.14342093467712402,
-    "inference_latency_per_sample_seconds": 0.003259566697207364,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "59d9318c3e5e9dc4",
-    "evaluation_split": "valid",
-    "score": 37.5488113819509,
-    "status": "evaluated",
     "rank": 1
   },
   {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C07",
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G03-C02",
     "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C07",
+    "parent_id": "20261117T174542Z-G02-C03",
     "mutation_operations": [
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 64
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.1
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        32,
-        16,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.1
-    },
-    "accuracy": 27.27272727272727,
-    "precision": 8.970588445663452,
-    "recall": 24.666666984558105,
-    "f1": 12.979592382907867,
-    "f1_present_classes": 12.979592382907867,
-    "precision_present_classes": 8.970588445663452,
-    "recall_present_classes": 24.666666984558105,
-    "mse": 0.15996137261390686,
-    "rmse": 0.3999517261981964,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        0,
-        3,
-        7,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        5,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        4,
-        11,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        11,
-        0
-      ]
-    ],
-    "parameters": 89781,
-    "training_time_seconds": 1.9282081127166748,
-    "inference_latency_seconds": 0.11461901664733887,
-    "inference_latency_per_sample_seconds": 0.0026049776510758834,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "7e435c1e9b21e87b",
-    "evaluation_split": "valid",
-    "score": 18.05897333390791,
-    "status": "evaluated",
-    "rank": 5
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G03-C08",
-    "generation": 3,
-    "parent_id": "20261117T162226Z-G02-C07",
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 4,
-        "to": 5
-      },
-      {
-        "field": "filters[1]",
-        "from": 16,
-        "to": 32
-      },
       {
         "field": "filters[2]",
         "from": 128,
         "to": 16
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "GELU"
-      },
-      {
-        "field": "batch_norm",
-        "to": false
-      }
-    ],
-    "config": {
-      "num_layers": 5,
-      "filters": [
-        32,
-        32,
-        16,
-        128,
-        64
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3,
-        3,
-        5
-      ],
-      "batch_norm": false,
-      "activation": "GELU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 25.0,
-    "precision": 10.53140014410019,
-    "recall": 17.33333319425583,
-    "f1": 13.082706928253174,
-    "f1_present_classes": 13.082706928253174,
-    "precision_present_classes": 10.53140014410019,
-    "recall_present_classes": 17.33333319425583,
-    "mse": 0.15825554728507996,
-    "rmse": 0.39781346917152405,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        4,
-        0,
-        0,
-        6,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        7,
-        0,
-        1,
-        7,
-        0
-      ],
-      [
-        5,
-        0,
-        2,
-        5,
-        0
-      ]
-    ],
-    "parameters": 238517,
-    "training_time_seconds": 3.0163559913635254,
-    "inference_latency_seconds": 0.1497499942779541,
-    "inference_latency_per_sample_seconds": 0.003403408960862593,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "333e6e2db004fa30",
-    "evaluation_split": "valid",
-    "score": 17.228804218414737,
-    "status": "evaluated",
-    "rank": 6
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C01",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C06",
-    "mutation_operations": [
-      {
-        "field": "elite",
-        "to": "preserved"
-      }
-    ],
-    "config": {
-      "num_layers": 4,
-      "filters": [
-        32,
-        32,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        5,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.0
-    },
-    "accuracy": 38.63636363636363,
-    "precision": 40.888890624046326,
-    "recall": 35.999998450279236,
-    "f1": 34.928569197654724,
-    "f1_present_classes": 34.928569197654724,
-    "precision_present_classes": 40.888890624046326,
-    "recall_present_classes": 35.999998450279236,
-    "mse": 0.15455316007137299,
-    "rmse": 0.3931325078010559,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        3,
-        3,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        1,
-        2,
-        0,
-        12,
-        0
-      ],
-      [
-        1,
-        4,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 212389,
-    "training_time_seconds": 2.5225789546966553,
-    "inference_latency_seconds": 0.14342093467712402,
-    "inference_latency_per_sample_seconds": 0.003259566697207364,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "59d9318c3e5e9dc4",
-    "evaluation_split": "valid",
-    "score": 37.5488113819509,
-    "status": "evaluated",
-    "evaluation_reused": true,
-    "rank": 2
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C02",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C02",
-    "mutation_operations": [
-      {
-        "field": "dropout",
-        "from": 0.0,
-        "to": 0.2
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "residual"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        16,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2,
-      "block_type": "residual"
-    },
-    "accuracy": 36.36363636363637,
-    "precision": 35.4061633348465,
-    "recall": 33.33333432674408,
-    "f1": 31.85184895992279,
-    "f1_present_classes": 31.85184895992279,
-    "precision_present_classes": 35.4061633348465,
-    "recall_present_classes": 33.33333432674408,
-    "mse": 0.15693946182727814,
-    "rmse": 0.39615586400032043,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        5,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        4,
-        1,
-        0,
-        10,
-        0
-      ],
-      [
-        5,
-        3,
-        0,
-        4,
-        0
-      ]
-    ],
-    "parameters": 187765,
-    "training_time_seconds": 2.754657030105591,
-    "inference_latency_seconds": 0.15310883522033691,
-    "inference_latency_per_sample_seconds": 0.003479746255007657,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "35ad66de7526cc20",
-    "evaluation_split": "valid",
-    "score": 34.23499225982406,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C03",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C02",
-    "mutation_operations": [
-      {
-        "field": "filters[1]",
-        "from": 16,
-        "to": 128
-      },
-      {
-        "field": "batch_norm",
-        "to": false
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": false,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.0
-    },
-    "accuracy": 40.909090909090914,
-    "precision": 16.753247380256653,
-    "recall": 30.000001192092896,
-    "f1": 21.250000596046448,
-    "f1_present_classes": 21.250000596046448,
-    "precision_present_classes": 16.753247380256653,
-    "recall_present_classes": 30.000001192092896,
-    "mse": 0.157883420586586,
-    "rmse": 0.3973454535007477,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        9,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        5,
-        0,
-        0,
-        9,
-        1
-      ],
-      [
-        5,
-        0,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 186117,
-    "training_time_seconds": 1.8764879703521729,
-    "inference_latency_seconds": 0.1253650188446045,
-    "inference_latency_per_sample_seconds": 0.002849204973741011,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "d4d0316b7bc7986c",
-    "evaluation_split": "valid",
-    "score": 28.501365435594906,
-    "status": "evaluated",
-    "rank": 5
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C04",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C05",
-    "mutation_operations": [
-      {
-        "field": "pooling",
-        "to": false
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        5,
-        5,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": false,
-      "dropout": 0.2,
-      "block_type": "plain"
-    },
-    "accuracy": 27.27272727272727,
-    "precision": 12.222222238779068,
-    "recall": 24.666666984558105,
-    "f1": 15.528255701065063,
-    "f1_present_classes": 15.528255701065063,
-    "precision_present_classes": 12.222222238779068,
-    "recall_present_classes": 24.666666984558105,
-    "mse": 0.1575201153755188,
-    "rmse": 0.39688804745674133,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        4,
-        4,
-        2,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        3,
-        1,
-        11,
-        0
-      ],
-      [
-        3,
-        1,
-        3,
-        5,
-        0
-      ]
-    ],
-    "parameters": 101797,
-    "training_time_seconds": 2.374393939971924,
-    "inference_latency_seconds": 0.12080597877502441,
-    "inference_latency_per_sample_seconds": 0.0027455904267051005,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "cca05020fefdd2c8",
-    "evaluation_split": "valid",
-    "score": 19.610403500071047,
-    "status": "evaluated",
-    "rank": 7
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C05",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C05",
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 3,
-        "to": 2
-      }
-    ],
-    "config": {
-      "num_layers": 2,
-      "filters": [
-        16,
-        64
-      ],
-      "kernel_sizes": [
-        5,
-        5
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "plain"
-    },
-    "accuracy": 38.63636363636363,
-    "precision": 28.457143902778625,
-    "recall": 32.66666829586029,
-    "f1": 25.85621178150177,
-    "f1_present_classes": 25.85621178150177,
-    "precision_present_classes": 28.457143902778625,
-    "recall_present_classes": 32.66666829586029,
-    "mse": 0.15603359043598175,
-    "rmse": 0.39501088857650757,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        3,
-        2,
-        5,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        4,
-        1
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        2,
-        1,
-        12,
-        0
-      ],
-      [
-        0,
-        1,
-        3,
-        4,
-        4
-      ]
-    ],
-    "parameters": 27365,
-    "training_time_seconds": 1.5205588340759277,
-    "inference_latency_seconds": 0.07754087448120117,
-    "inference_latency_per_sample_seconds": 0.0017622926018454812,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "4400f1099aead4d4",
-    "evaluation_split": "valid",
-    "score": 32.053918886324276,
-    "status": "evaluated",
-    "rank": 4
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C06",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C01",
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 16
-      },
-      {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 128
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 45.45454545454545,
-    "precision": 49.05555248260498,
-    "recall": 43.33333373069763,
-    "f1": 43.33950579166412,
-    "f1_present_classes": 43.33950579166412,
-    "precision_present_classes": 49.05555248260498,
-    "recall_present_classes": 43.33333373069763,
-    "mse": 0.15410621464252472,
-    "rmse": 0.3925636410713196,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        6,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        5,
-        1,
-        0,
-        8,
-        1
-      ],
-      [
-        3,
-        0,
-        1,
-        4,
-        4
-      ]
-    ],
-    "parameters": 167781,
-    "training_time_seconds": 2.062138795852661,
-    "inference_latency_seconds": 0.13019490242004395,
-    "inference_latency_per_sample_seconds": 0.002958975055000999,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "2050694f99060488",
-    "evaluation_split": "valid",
-    "score": 45.25660680719584,
-    "status": "evaluated",
-    "rank": 1
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C07",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C02",
-    "mutation_operations": [
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 32
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        16,
-        32
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.0
-    },
-    "accuracy": 31.818181818181817,
-    "precision": 9.94318202137947,
-    "recall": 21.33333384990692,
-    "f1": 13.56382966041565,
-    "f1_present_classes": 13.56382966041565,
-    "precision_present_classes": 9.94318202137947,
-    "recall_present_classes": 21.33333384990692,
-    "mse": 0.15657220780849457,
-    "rmse": 0.39569205045700073,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        3,
-        0,
-        7,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        2,
-        0,
-        13,
-        0
-      ],
-      [
-        1,
-        4,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 10485,
-    "training_time_seconds": 1.4783120155334473,
-    "inference_latency_seconds": 0.08391094207763672,
-    "inference_latency_per_sample_seconds": 0.0019070668654008346,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "166a1c2871321c3e",
-    "evaluation_split": "valid",
-    "score": 20.6719345351113,
-    "status": "evaluated",
-    "rank": 6
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G04-C08",
-    "generation": 4,
-    "parent_id": "20261117T162226Z-G03-C01",
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 16
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.3
-      },
-      {
-        "field": "input_size",
-        "from": 64,
-        "to": 128
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.3,
-      "input_size": 128
-    },
-    "accuracy": 18.181818181818183,
-    "precision": 12.52380907535553,
-    "recall": 27.3333340883255,
-    "f1": 13.872528076171875,
-    "f1_present_classes": 13.872528076171875,
-    "precision_present_classes": 12.52380907535553,
-    "recall_present_classes": 27.3333340883255,
-    "mse": 0.15864057838916779,
-    "rmse": 0.39829710125923157,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        3,
-        3,
-        4,
-        0
-      ],
-      [
-        0,
-        3,
-        1,
-        1,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        7,
-        4,
-        4,
-        0
-      ],
-      [
-        1,
-        7,
-        3,
-        1,
-        0
-      ]
-    ],
-    "parameters": 84645,
-    "training_time_seconds": 6.639096975326538,
-    "inference_latency_seconds": 0.2405869960784912,
-    "inference_latency_per_sample_seconds": 0.005467886274511164,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "06de6e9322a7eb52",
-    "evaluation_split": "valid",
-    "score": 14.843095246057512,
-    "status": "evaluated",
-    "rank": 8
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C01",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C06",
-    "mutation_operations": [
-      {
-        "field": "elite",
-        "to": "preserved"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 45.45454545454545,
-    "precision": 49.05555248260498,
-    "recall": 43.33333373069763,
-    "f1": 43.33950579166412,
-    "f1_present_classes": 43.33950579166412,
-    "precision_present_classes": 49.05555248260498,
-    "recall_present_classes": 43.33333373069763,
-    "mse": 0.15410621464252472,
-    "rmse": 0.3925636410713196,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        6,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        3,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        5,
-        1,
-        0,
-        8,
-        1
-      ],
-      [
-        3,
-        0,
-        1,
-        4,
-        4
-      ]
-    ],
-    "parameters": 167781,
-    "training_time_seconds": 2.062138795852661,
-    "inference_latency_seconds": 0.13019490242004395,
-    "inference_latency_per_sample_seconds": 0.002958975055000999,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "2050694f99060488",
-    "evaluation_split": "valid",
-    "score": 45.25660680719584,
-    "status": "evaluated",
-    "evaluation_reused": true,
-    "rank": 2
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C02",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C05",
-    "mutation_operations": [
-      {
-        "field": "filters[1]",
-        "from": 64,
-        "to": 32
-      }
-    ],
-    "config": {
-      "num_layers": 2,
-      "filters": [
-        16,
-        32
-      ],
-      "kernel_sizes": [
-        5,
-        5
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
-      "dropout": 0.2,
-      "block_type": "plain"
-    },
-    "accuracy": 29.545454545454547,
-    "precision": 20.000000298023224,
-    "recall": 24.000000953674316,
-    "f1": 14.315789937973022,
-    "f1_present_classes": 14.315789937973022,
-    "precision_present_classes": 20.000000298023224,
-    "recall_present_classes": 24.000000953674316,
-    "mse": 0.155813530087471,
-    "rmse": 0.3947322368621826,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        10,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        5,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        12,
-        0,
-        0,
-        3,
-        0
-      ],
-      [
-        11,
-        0,
-        0,
-        1,
-        0
-      ]
-    ],
-    "parameters": 14309,
-    "training_time_seconds": 1.4622750282287598,
-    "inference_latency_seconds": 0.08915996551513672,
-    "inference_latency_per_sample_seconds": 0.0020263628526167436,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "7e9b018fc8c272dc",
-    "evaluation_split": "valid",
-    "score": 22.373246316090583,
-    "status": "evaluated",
-    "rank": 4
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C03",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C05",
-    "mutation_operations": [
-      {
-        "field": "num_layers",
-        "from": 2,
-        "to": 3
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.3
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "residual"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        5,
-        5,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": true,
-      "dropout": 0.3,
-      "block_type": "residual"
-    },
-    "accuracy": 34.090909090909086,
-    "precision": 10.90090125799179,
-    "recall": 22.6666659116745,
-    "f1": 14.405593276023865,
-    "f1_present_classes": 14.405593276023865,
-    "precision_present_classes": 10.90090125799179,
-    "recall_present_classes": 22.6666659116745,
-    "mse": 0.15696904063224792,
-    "rmse": 0.39619317650794983,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        0,
-        0,
-        10,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        2,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        14,
-        0
-      ],
-      [
-        1,
-        4,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 368565,
-    "training_time_seconds": 2.0219838619232178,
-    "inference_latency_seconds": 0.10219812393188477,
-    "inference_latency_per_sample_seconds": 0.0023226846348155627,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "829451ca2fc44c71",
-    "evaluation_split": "valid",
-    "score": 21.78697892473264,
-    "status": "evaluated",
-    "rank": 5
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C04",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C05",
-    "mutation_operations": [
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.0
-      },
-      {
-        "field": "pooling",
-        "to": false
-      }
-    ],
-    "config": {
-      "num_layers": 2,
-      "filters": [
-        16,
-        64
-      ],
-      "kernel_sizes": [
-        5,
-        5
-      ],
-      "batch_norm": true,
-      "activation": "SiLU",
-      "pooling": false,
-      "dropout": 0.0,
-      "block_type": "plain"
-    },
-    "accuracy": 27.27272727272727,
-    "precision": 13.461539149284363,
-    "recall": 24.666666984558105,
-    "f1": 17.398373782634735,
-    "f1_present_classes": 17.398373782634735,
-    "precision_present_classes": 13.461539149284363,
-    "recall_present_classes": 24.666666984558105,
-    "mse": 0.15447063744068146,
-    "rmse": 0.39302751421928406,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        0,
-        3,
-        2,
-        5,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        4,
-        0,
-        11,
-        0
-      ],
-      [
-        1,
-        4,
-        1,
-        6,
-        0
-      ]
-    ],
-    "parameters": 27365,
-    "training_time_seconds": 1.8992021083831787,
-    "inference_latency_seconds": 0.09079504013061523,
-    "inference_latency_per_sample_seconds": 0.0020635236393321643,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "279152d62ffb453a",
-    "evaluation_split": "valid",
-    "score": 20.623906830905568,
-    "status": "evaluated",
-    "rank": 7
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C05",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C06",
-    "mutation_operations": [
-      {
-        "field": "kernel_sizes[2]",
-        "from": 3,
-        "to": 5
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        5
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 34.090909090909086,
-    "precision": 19.692309200763702,
-    "recall": 31.333333253860474,
-    "f1": 23.470385372638702,
-    "f1_present_classes": 23.470385372638702,
-    "precision_present_classes": 19.692309200763702,
-    "recall_present_classes": 31.333333253860474,
-    "mse": 0.15291842818260193,
-    "rmse": 0.391047865152359,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        4,
-        1,
-        1,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        4,
-        0
-      ],
-      [
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        2,
-        2,
-        1,
-        10,
-        0
-      ],
-      [
-        2,
-        0,
-        2,
-        8,
-        0
-      ]
-    ],
-    "parameters": 429925,
-    "training_time_seconds": 4.653426885604858,
-    "inference_latency_seconds": 0.28093409538269043,
-    "inference_latency_per_sample_seconds": 0.006384865804152055,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "92ac43504fd297ef",
-    "evaluation_split": "valid",
-    "score": 26.23669042247642,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C06",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C06",
-    "mutation_operations": [
-      {
-        "field": "filters[0]",
-        "from": 16,
-        "to": 64
-      },
-      {
-        "field": "dropout",
-        "from": 0.2,
-        "to": 0.4
-      },
-      {
-        "field": "block_type",
-        "from": "plain",
-        "to": "residual"
       }
     ],
     "config": {
       "num_layers": 3,
       "filters": [
         64,
-        128,
-        128
+        64,
+        16
       ],
       "kernel_sizes": [
         3,
         3,
-        3
+        5
       ],
       "batch_norm": true,
       "activation": "ReLU",
       "pooling": false,
-      "dropout": 0.4,
-      "block_type": "residual"
+      "dropout": 0.2
     },
-    "accuracy": 45.45454545454545,
-    "precision": 59.333336353302,
-    "recall": 37.99999952316284,
-    "f1": 41.58186912536621,
-    "f1_present_classes": 41.58186912536621,
-    "precision_present_classes": 59.333336353302,
-    "recall_present_classes": 37.99999952316284,
-    "mse": 0.1479758769273758,
-    "rmse": 0.38467633724212646,
+    "accuracy": 43.18181818181818,
+    "precision": 17.432713508605957,
+    "recall": 28.00000309944153,
+    "f1": 21.365079283714294,
+    "f1_present_classes": 21.365079283714294,
+    "precision_present_classes": 17.432713508605957,
+    "recall_present_classes": 28.00000309944153,
+    "mse": 0.1532444804906845,
+    "rmse": 0.3914645314216614,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        2,
-        5,
         0,
-        3,
-        0
+        0,
+        0,
+        2,
+        8
       ],
       [
         0,
@@ -3638,208 +904,17 @@
       ],
       [
         0,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        2,
-        0,
-        13,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        6,
-        4
-      ]
-    ],
-    "parameters": 566213,
-    "training_time_seconds": 5.290281057357788,
-    "inference_latency_seconds": 0.24178600311279297,
-    "inference_latency_per_sample_seconds": 0.0054951364343816585,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "183bfe9009d5fdc3",
-    "evaluation_split": "valid",
-    "score": 46.64671363704265,
-    "status": "evaluated",
-    "rank": 1
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C07",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C06",
-    "mutation_operations": [
-      {
-        "field": "kernel_sizes[0]",
-        "from": 3,
-        "to": 5
-      },
-      {
-        "field": "kernel_sizes[1]",
-        "from": 3,
-        "to": 5
-      },
-      {
-        "field": "activation",
-        "from": "ReLU",
-        "to": "GELU"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        16,
-        128,
-        128
-      ],
-      "kernel_sizes": [
-        5,
-        5,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "GELU",
-      "pooling": false,
-      "dropout": 0.2
-    },
-    "accuracy": 29.545454545454547,
-    "precision": 16.716666519641876,
-    "recall": 20.666666328907013,
-    "f1": 15.981683135032654,
-    "f1_present_classes": 15.981683135032654,
-    "precision_present_classes": 16.716666519641876,
-    "recall_present_classes": 20.666666328907013,
-    "mse": 0.1536201536655426,
-    "rmse": 0.3919440805912018,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        1,
-        6,
-        0,
-        3,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        4,
-        0
-      ],
-      [
-        1,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        4,
-        0,
-        11,
-        0
-      ],
-      [
-        1,
-        4,
-        0,
-        7,
-        0
-      ]
-    ],
-    "parameters": 201317,
-    "training_time_seconds": 2.7918288707733154,
-    "inference_latency_seconds": 0.15174508094787598,
-    "inference_latency_per_sample_seconds": 0.003448751839724454,
-    "num_classes": 5,
-    "seed": 42,
-    "config_hash": "e8f3dbd6cd36a4cf",
-    "evaluation_split": "valid",
-    "score": 21.722933931902368,
-    "status": "evaluated",
-    "rank": 6
-  },
-  {
-    "run_id": "20261117T162226Z",
-    "candidate_id": "20261117T162226Z-G05-C08",
-    "generation": 5,
-    "parent_id": "20261117T162226Z-G04-C02",
-    "mutation_operations": [
-      {
-        "field": "filters[2]",
-        "from": 128,
-        "to": 32
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        16,
-        32
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "ReLU",
-      "pooling": false,
-      "dropout": 0.2,
-      "block_type": "residual"
-    },
-    "accuracy": 29.545454545454547,
-    "precision": 11.663158237934113,
-    "recall": 20.000000298023224,
-    "f1": 14.531001448631287,
-    "f1_present_classes": 14.531001448631287,
-    "precision_present_classes": 11.663158237934113,
-    "recall_present_classes": 20.000000298023224,
-    "mse": 0.15622809529304504,
-    "rmse": 0.39525699615478516,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
         0,
         0,
         0,
-        8,
         2
       ],
       [
         0,
         0,
         0,
-        1,
+        11,
         4
-      ],
-      [
-        0,
-        0,
-        0,
-        1,
-        1
-      ],
-      [
-        0,
-        0,
-        0,
-        5,
-        10
       ],
       [
         0,
@@ -3849,16 +924,197 @@
         8
       ]
     ],
-    "parameters": 32821,
-    "training_time_seconds": 2.093552827835083,
-    "inference_latency_seconds": 0.1082770824432373,
-    "inference_latency_per_sample_seconds": 0.002460842782800848,
+    "parameters": 64709,
+    "training_time_seconds": 1.1303517818450928,
+    "inference_latency_seconds": 0.08599400520324707,
+    "inference_latency_per_sample_seconds": 0.0019544092091647062,
     "num_classes": 5,
     "seed": 42,
-    "config_hash": "e207df5c14eacaac",
+    "config_hash": "b5be77f4165a0211",
     "evaluation_split": "valid",
-    "score": 20.29163926124738,
+    "score": 29.939370423167485,
     "status": "evaluated",
-    "rank": 8
+    "rank": 2
+  },
+  {
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G03-C03",
+    "generation": 3,
+    "parent_id": "20261117T174542Z-G02-C03",
+    "mutation_operations": [
+      {
+        "field": "block_type",
+        "from": "plain",
+        "to": "residual"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2,
+      "block_type": "residual"
+    },
+    "accuracy": 25.0,
+    "precision": 14.75113183259964,
+    "recall": 18.666668236255646,
+    "f1": 16.031746566295624,
+    "f1_present_classes": 16.031746566295624,
+    "precision_present_classes": 14.75113183259964,
+    "recall_present_classes": 18.666668236255646,
+    "mse": 0.15570366382598877,
+    "rmse": 0.3945930302143097,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        6,
+        3,
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        8,
+        0,
+        5,
+        0
+      ],
+      [
+        6,
+        3,
+        0,
+        3,
+        0
+      ]
+    ],
+    "parameters": 737861,
+    "training_time_seconds": 4.081357955932617,
+    "inference_latency_seconds": 0.2664759159088135,
+    "inference_latency_per_sample_seconds": 0.006056270816109397,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "87c943198f923e8e",
+    "evaluation_split": "valid",
+    "score": 18.403818846427658,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261117T174542Z",
+    "candidate_id": "20261117T174542Z-G03-C04",
+    "generation": 3,
+    "parent_id": "20261117T174542Z-G02-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 16
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": false,
+      "dropout": 0.2
+    },
+    "accuracy": 18.181818181818183,
+    "precision": 9.41176488995552,
+    "recall": 19.333334267139435,
+    "f1": 10.855263471603394,
+    "f1_present_classes": 10.855263471603394,
+    "precision_present_classes": 9.41176488995552,
+    "recall_present_classes": 19.333334267139435,
+    "mse": 0.16003727912902832,
+    "rmse": 0.40004658699035645,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        1,
+        7,
+        2,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        6,
+        7,
+        0
+      ],
+      [
+        4,
+        1,
+        3,
+        4,
+        0
+      ]
+    ],
+    "parameters": 25077,
+    "training_time_seconds": 1.0031509399414062,
+    "inference_latency_seconds": 0.09545588493347168,
+    "inference_latency_per_sample_seconds": 0.0021694519303061747,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "1b49bc2a2330b561",
+    "evaluation_split": "valid",
+    "score": 13.549316252757464,
+    "status": "evaluated",
+    "rank": 4
   }
 ]

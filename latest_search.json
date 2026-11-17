@@ -1,15 +1,15 @@
 {
   "schema_version": 2,
-  "run_id": "20261117T162226Z",
-  "run_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T162226Z",
+  "run_id": "20261117T174542Z",
+  "run_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T174542Z",
   "seed": 42,
-  "generations": 5,
-  "generations_completed": 5,
+  "generations": 3,
+  "generations_completed": 3,
   "stopped_early": false,
-  "population_size": 8,
-  "proxy_epochs": 3,
-  "unique_evaluations": 37,
-  "reused_evaluations": 4,
+  "population_size": 4,
+  "proxy_epochs": 2,
+  "unique_evaluations": 11,
+  "reused_evaluations": 2,
   "dataset": {
     "format": "imagefolder_classification",
     "modality": "image",
@@ -46,12 +46,12 @@
   "split_strategy": "stratified_imagefolder",
   "evaluation_split": "valid",
   "objective": "0.45*accuracy + 0.25*precision + 0.30*f1 - params/1e6 - latency_per_sample*100 (validation split)",
-  "best_candidate_id": "20261117T162226Z-G05-C06",
+  "best_candidate_id": "20261117T174542Z-G01-C04",
   "best_config": {
     "num_layers": 3,
     "filters": [
+      32,
       64,
-      128,
       128
     ],
     "kernel_sizes": [
@@ -62,22 +62,21 @@
     "batch_norm": true,
     "activation": "ReLU",
     "pooling": false,
-    "dropout": 0.4,
-    "block_type": "residual"
+    "dropout": 0.2
   },
   "best_metrics": {
-    "accuracy": 45.45454545454545,
-    "precision": 59.333336353302,
-    "recall": 37.99999952316284,
-    "f1": 41.58186912536621,
-    "parameters": 566213,
-    "score": 46.64671363704265
+    "accuracy": 43.18181818181818,
+    "precision": 25.043290853500366,
+    "recall": 35.66666543483734,
+    "f1": 28.788676857948303,
+    "parameters": 94341,
+    "score": 33.992646376213074
   },
-  "best_config_hash": "183bfe9009d5fdc3",
+  "best_config_hash": "551d75c2c9cf8547",
   "manual_baseline": {
     "model_type": "manual_baseline",
-    "run_id": "20261117T162226Z",
-    "budget": "3 proxy epochs",
+    "run_id": "20261117T174542Z",
+    "budget": "2 proxy epochs",
     "evaluation_split": "valid",
     "config": {
       "num_layers": 2,
@@ -94,71 +93,71 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 11.363636363636363,
-    "precision": 13.015873730182648,
-    "recall": 20.666666328907013,
-    "f1": 9.287450462579727,
-    "f1_present_classes": 9.287450462579727,
-    "precision_present_classes": 13.015873730182648,
-    "recall_present_classes": 20.666666328907013,
-    "mse": 0.15991254150867462,
-    "rmse": 0.399890661239624,
+    "accuracy": 13.636363636363635,
+    "precision": 5.559845641255379,
+    "recall": 30.000001192092896,
+    "f1": 9.206349402666092,
+    "f1_present_classes": 9.206349402666092,
+    "precision_present_classes": 5.559845641255379,
+    "recall_present_classes": 30.000001192092896,
+    "mse": 0.1607745885848999,
+    "rmse": 0.4009670615196228,
     "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
         0,
-        6,
-        4,
-        0,
-        0
-      ],
-      [
-        0,
+        8,
         2,
-        2,
-        1,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
         0,
         0
       ],
       [
         0,
-        7,
-        6,
-        2,
-        0
-      ],
-      [
-        1,
         5,
-        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
         1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        14,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        3,
+        0,
         0
       ]
     ],
     "parameters": 19909,
-    "training_time_seconds": 2.16853404045105,
-    "inference_latency_seconds": 0.10228419303894043,
-    "inference_latency_per_sample_seconds": 0.0023246407508850098,
+    "training_time_seconds": 0.8935658931732178,
+    "inference_latency_seconds": 0.07266783714294434,
+    "inference_latency_per_sample_seconds": 0.001651541753248735,
     "num_classes": 5,
     "seed": 42,
     "config_hash": "e446a9d0cdeab3aa",
-    "score": 10.901466859867442,
+    "score": 10.103166692152435,
     "status": "evaluated"
   },
   "comparison": {
-    "accuracy_delta": 34.09090909090909,
-    "precision_delta": 46.317462623119354,
-    "recall_delta": 17.33333319425583,
-    "f1_delta": 32.294418662786484,
-    "parameter_delta": 546304
+    "accuracy_delta": 29.545454545454547,
+    "precision_delta": 19.483445212244987,
+    "recall_delta": 5.666664242744446,
+    "f1_delta": 19.58232745528221,
+    "parameter_delta": 74432
   },
   "training_mode": "dynamic_cnn_proxy_search"
 }

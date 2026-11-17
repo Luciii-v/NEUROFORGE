@@ -1,8 +1,8 @@
 {
   "num_layers": 3,
   "filters": [
+    32,
     64,
-    128,
     128
   ],
   "kernel_sizes": [
@@ -13,6 +13,5 @@
   "batch_norm": true,
   "activation": "ReLU",
   "pooling": false,
-  "dropout": 0.4,
-  "block_type": "residual"
+  "dropout": 0.2
 }

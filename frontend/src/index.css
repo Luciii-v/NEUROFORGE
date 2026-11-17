@@ -1390,6 +1390,9 @@ input:focus-visible {
   gap: 0.5rem;
 }
 .nf-leader-pill-left strong {
+  color: var(--nf-ink, #111315);
+}
+.nf-theme-dark .nf-leader-pill-left strong {
   color: #ffffff;
 }
 .nf-leader-score {
@@ -1616,6 +1619,7 @@ input:focus-visible {
 .nf-comparison-table th,
 .nf-comparison-table td { padding: 0.9rem 0.75rem; border-bottom: 1px solid var(--nf-line); text-align: right; white-space: nowrap; }
 .nf-comparison-table thead th { background: rgba(36, 72, 218, 0.08); color: var(--nf-cobalt); font-size: 0.6rem; letter-spacing: 0.08em; }
+.nf-comparison-table thead th:first-child { text-align: left; }
 .nf-comparison-table tbody th { min-width: 17rem; text-align: left; font-weight: 500; }
 .nf-comparison-table tbody th strong { display: block; color: var(--nf-ink); font-size: 0.72rem; }
 .nf-comparison-table tbody th small { display: block; margin-top: 0.35rem; color: var(--nf-muted); font-size: 0.58rem; line-height: 1.45; }
