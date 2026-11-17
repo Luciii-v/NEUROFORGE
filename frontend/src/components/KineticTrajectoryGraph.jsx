@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Award, Layers, Zap } from 'lucide-react';
 
-const fallbackGenerations = [
-  { gen: 1, acc: 32.8, f1: 24.7, name: 'Seed generation', desc: 'First population around the default blueprint', params: '244.8k', champion: false },
-  { gen: 2, acc: 41.0, f1: 34.1, name: 'Filter mutation', desc: 'A wider second layer enters the family tree', params: '84.6k', champion: false },
-  { gen: 3, acc: 41.0, f1: 34.1, name: 'Elite preserved', desc: 'The strongest parent survives unchanged', params: '19.9k', champion: false },
-  { gen: 4, acc: 39.3, f1: 31.8, name: 'Dropout shift', desc: 'A more regularized branch is tested', params: '19.9k', champion: false },
-  { gen: 5, acc: 42.6, f1: 33.8, name: 'Current best', desc: 'Selected candidate under the proxy budget', params: '19.9k', champion: true },
-];
 
 export default function KineticTrajectoryGraph({ 
-  generations = fallbackGenerations,
+  generations = [],
   baselineAccuracy = 31.1,
   onSelectGen,
   currentGen = 5
 }) {
   const [hoveredIdx, setHoveredIdx] = useState(null);
-  const activeGenerations = generations?.length > 1 ? generations : fallbackGenerations;
+  if (!(generations?.length > 1)) {
+    return (
+      <div style={{ padding: '48px 24px', textAlign: 'center', fontFamily: '"IBM Plex Mono", monospace', fontSize: 13, opacity: 0.75 }}>
+        The trajectory appears after a search with at least two generations on this dataset. Open the mutation loop to run one.
+      </div>
+    );
+  }
+  const activeGenerations = generations;
 
   // Normalization for SVG curve
   const width = 840;

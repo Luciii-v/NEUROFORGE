@@ -42,3 +42,9 @@ hybrid_optical_bench.jpg
 .archify/
 brag-output/
 
+
+# Comparison checkpoints (regenerable, large)
+*_comparison_weights.pth
+
+# Immutable run bundles (local experiment output)
+runs/

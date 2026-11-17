@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { Layers, Activity, Cpu, Sparkles, Maximize2 } from 'lucide-react';
+import { Layers, Activity, Cpu, Sparkles, Zap, Award } from 'lucide-react';
+import soundEngine from '../utils/soundEngine';
 
 export default function NeuralCoreCanvas({
   generation = 5,
@@ -10,62 +11,107 @@ export default function NeuralCoreCanvas({
   activeConfig = null,
   numClasses = 5,
   latencyMs = null,
+  lastInference = null,
 }) {
   const containerRef = useRef(null);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [waveActive, setWaveActive] = useState(false);
+  const [winnerInfo, setWinnerInfo] = useState(null);
   const configSignature = JSON.stringify(activeConfig || {});
+
+  // Refs to decouple Three.js render loop from React state updates
+  const triggerPulseRef = useRef(null);
+  const isInferringRef = useRef(isInferring);
+  const mutatingRef = useRef(mutating);
+  const lastInferenceRef = useRef(lastInference);
+
+  useEffect(() => {
+    isInferringRef.current = isInferring;
+    if (isInferring && triggerPulseRef.current) {
+      triggerPulseRef.current();
+    }
+  }, [isInferring]);
+
+  useEffect(() => {
+    mutatingRef.current = mutating;
+    if (mutating) {
+      soundEngine.mutate();
+    }
+  }, [mutating]);
+
+  useEffect(() => {
+    lastInferenceRef.current = lastInference;
+    if (lastInference) {
+      setWinnerInfo({
+        prediction: lastInference.prediction,
+        percentage: lastInference.percentage,
+        latency: lastInference.latency_ms,
+        modality: lastInference.modality,
+      });
+      if (triggerPulseRef.current) {
+        triggerPulseRef.current(lastInference);
+      }
+    }
+  }, [lastInference]);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     // --- Scene Setup ---
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const width = containerRef.current.clientWidth || 860;
+    const height = containerRef.current.clientHeight || 520;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x050608, 0.025);
+    scene.fog = new THREE.FogExp2(0x050608, 0.006);
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 11.5);
+    camera.position.set(0, 0, 10.2);
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance',
-    });
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+    } catch (error) {
+      // No WebGL (old GPU, remote desktop, locked-down browser): keep the rest of the studio alive.
+      console.warn('3D specimen disabled:', error.message);
+      containerRef.current.dataset.webgl = 'unavailable';
+      return undefined;
+    }
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.35;
     containerRef.current.appendChild(renderer.domElement);
 
-    // --- Studio High-Key Lighting (Awwwards/Lusion style) ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // --- Studio High-Key Directional Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.2);
     scene.add(ambientLight);
 
-    // Key Light (Overhead directional)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
     keyLight.position.set(6, 12, 10);
     scene.add(keyLight);
 
-    // Cyan Rim Light
-    const cyanLight = new THREE.PointLight(0x00f0ff, 3.5, 30);
+    const cyanLight = new THREE.PointLight(0x00f0ff, 4.0, 35);
     cyanLight.position.set(-8, 4, 6);
     scene.add(cyanLight);
 
-    // Soft Lavender Fill Light
-    const fillLight = new THREE.PointLight(0xa78bfa, 2.2, 30);
+    const fillLight = new THREE.PointLight(0xa78bfa, 2.8, 35);
     fillLight.position.set(8, -6, -4);
     scene.add(fillLight);
+
+    // Dynamic wave-glow light that travels through the network
+    const waveLight = new THREE.PointLight(0x00f5a0, 0, 15);
+    scene.add(waveLight);
 
     // Specimen Group
     const specimenGroup = new THREE.Group();
     scene.add(specimenGroup);
 
     // --- Dynamic Architecture Topology Builder ---
-    // Prefer the recorded candidate config. The generation fallback keeps the
-    // specimen useful while the history endpoint is still loading.
     const hasRecordedConfig = Array.isArray(activeConfig?.filters) && activeConfig.filters.length > 0;
     let layerSpecs = [];
     if (hasRecordedConfig) {
@@ -78,10 +124,10 @@ export default function NeuralCoreCanvas({
         label: `L${index + 1} // ${filters} CH`,
       }));
       layerSpecs.push({
-        name: 'Classifier',
+        name: 'Classifier Head',
         filters: numClasses,
         kernel: 1,
-        act: 'Linear',
+        act: 'Softmax',
         nodeCount: Math.max(3, Math.min(6, numClasses)),
         label: `HEAD // ${numClasses} CLS`,
       });
@@ -89,26 +135,26 @@ export default function NeuralCoreCanvas({
       layerSpecs = [
         { name: 'Stem Conv', filters: 16, kernel: 3, act: 'ReLU', nodeCount: 4, label: 'L1 // 16 CH' },
         { name: 'Feature Conv', filters: 32, kernel: 3, act: 'ReLU', nodeCount: 5, label: 'L2 // 32 CH' },
-        { name: 'Classifier', filters: numClasses, kernel: 1, act: 'Linear', nodeCount: 3, label: `HEAD // ${numClasses} CLS` },
+        { name: 'Classifier Head', filters: numClasses, kernel: 1, act: 'Softmax', nodeCount: 3, label: `HEAD // ${numClasses} CLS` },
       ];
     } else if (generation === 2) {
       layerSpecs = [
         { name: 'Stem Conv', filters: 32, kernel: 3, act: 'ReLU', nodeCount: 5, label: 'L1 // 32 CH' },
         { name: 'Feature Conv', filters: 64, kernel: 3, act: 'ReLU', nodeCount: 6, label: 'L2 // 64 CH' },
-        { name: 'Classifier', filters: numClasses, kernel: 1, act: 'Linear', nodeCount: 3, label: `HEAD // ${numClasses} CLS` },
+        { name: 'Classifier Head', filters: numClasses, kernel: 1, act: 'Softmax', nodeCount: 3, label: `HEAD // ${numClasses} CLS` },
       ];
     } else if (generation === 3) {
       layerSpecs = [
         { name: 'Stem Conv', filters: 32, kernel: 3, act: 'ReLU', nodeCount: 5, label: 'L1 // 32 CH' },
         { name: 'Conv Block 2', filters: 64, kernel: 3, act: 'ReLU', nodeCount: 7, label: 'L2 // 64 CH' },
         { name: 'Conv Block 3', filters: 128, kernel: 3, act: 'ReLU', nodeCount: 8, label: 'L3 // 128 CH' },
-        { name: 'Classifier', filters: numClasses, kernel: 1, act: 'Linear', nodeCount: 3, label: `HEAD // ${numClasses} CLS` },
+        { name: 'Classifier Head', filters: numClasses, kernel: 1, act: 'Softmax', nodeCount: 4, label: `HEAD // ${numClasses} CLS` },
       ];
     } else {
       layerSpecs = [
         { name: 'Stem Conv', filters: 16, kernel: 3, act: 'ReLU', nodeCount: 5, label: 'L1 // 16 CH' },
-        { name: 'Bottleneck Conv', filters: 128, kernel: 3, act: 'ReLU', nodeCount: 9, label: 'L2 // 128 CH' },
-        { name: 'Dense Classifier', filters: numClasses, kernel: 1, act: 'Linear', nodeCount: 4, label: `HEAD // ${numClasses} CLS` },
+        { name: 'Bottleneck Conv', filters: 128, kernel: 3, act: 'ReLU', nodeCount: 8, label: 'L2 // 128 CH' },
+        { name: 'Classifier Head', filters: numClasses, kernel: 1, act: 'Softmax', nodeCount: 4, label: `HEAD // ${numClasses} CLS` },
       ];
     }
 
@@ -117,51 +163,49 @@ export default function NeuralCoreCanvas({
     const layerNodeMeshes = [];
     const plinthMeshes = [];
 
-    // PBR Frosted Pearl Titanium Material
+    // Base Materials - PBR Frosted Pearl Titanium with emissive core (Safari & WebGL cross-compatible)
     const defaultMat = new THREE.MeshPhysicalMaterial({
-      color: 0xecf0f8,
-      emissive: 0x182438,
-      roughness: 0.18,
-      metalness: 0.35,
+      color: 0xf1f5f9,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.55,
+      roughness: 0.15,
+      metalness: 0.45,
       clearcoat: 1.0,
       clearcoatRoughness: 0.1,
-      transmission: 0.25,
-      ior: 1.45,
     });
 
     const activeMat = new THREE.MeshPhysicalMaterial({
       color: 0x00f0ff,
-      emissive: 0x00a8cc,
-      emissiveIntensity: 1.4,
-      roughness: 0.1,
-      metalness: 0.5,
-      clearcoat: 1.0,
-    });
-
-    const championMat = new THREE.MeshPhysicalMaterial({
-      color: 0x00f5a0,
-      emissive: 0x00cc7a,
-      emissiveIntensity: 1.6,
+      emissive: 0x00d4ff,
+      emissiveIntensity: 1.8,
       roughness: 0.1,
       metalness: 0.6,
       clearcoat: 1.0,
     });
 
-    // Layer Plinth (Frosted crystal floor pedestals - lying flat under each layer)
-    const plinthGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.03, 32);
-    const plinthMat = new THREE.MeshPhysicalMaterial({
-      color: 0x334e68,
-      emissive: 0x102a43,
-      emissiveIntensity: 0.4,
-      roughness: 0.3,
-      metalness: 0.2,
-      transmission: 0.6,
-      transparent: true,
-      opacity: 0.4,
+    const championMat = new THREE.MeshPhysicalMaterial({
+      color: 0x10b981,
+      emissive: 0x059669,
+      emissiveIntensity: 2.2,
+      roughness: 0.1,
+      metalness: 0.6,
       clearcoat: 1.0,
     });
 
-    const sphereGeo = new THREE.SphereGeometry(0.24, 32, 32);
+    // Layer Plinth (Frosted crystal floor pedestals)
+    const plinthGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.03, 32);
+    const plinthMat = new THREE.MeshPhysicalMaterial({
+      color: 0x1e293b,
+      emissive: 0x0f172a,
+      emissiveIntensity: 0.5,
+      roughness: 0.25,
+      metalness: 0.3,
+      transparent: true,
+      opacity: 0.6,
+      clearcoat: 1.0,
+    });
+
+    const sphereGeo = new THREE.SphereGeometry(0.36, 32, 32);
 
     // Build 3D Specimen Lattice
     layerSpecs.forEach((spec, lIdx) => {
@@ -169,7 +213,6 @@ export default function NeuralCoreCanvas({
       const count = spec.nodeCount;
       const currentLayerNodes = [];
 
-      // Layer Plinth Disc (Flat on ground)
       const plinth = new THREE.Mesh(plinthGeo, plinthMat.clone());
       plinth.position.set(x, -2.5, 0);
       specimenGroup.add(plinth);
@@ -196,6 +239,8 @@ export default function NeuralCoreCanvas({
           offset: new THREE.Vector3(),
           velocity: new THREE.Vector3(),
           fieldStrength: 0,
+          pulseBoost: 0, // dynamic energy spike
+          baseEmissive: isChampionLayer ? 1.6 : isCoreActive ? 1.4 : 0.35,
         };
 
         specimenGroup.add(mesh);
@@ -208,15 +253,15 @@ export default function NeuralCoreCanvas({
     // Synaptic Fiber-Optic Splines
     const synapseLines = [];
     const synapseMat = new THREE.LineBasicMaterial({
-      color: 0x283e60,
+      color: 0x38bdf8,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.5,
     });
 
     const activeSynapseMat = new THREE.LineBasicMaterial({
       color: 0x00f0ff,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.95,
     });
 
     for (let l = 0; l < layerNodeMeshes.length - 1; l++) {
@@ -230,13 +275,13 @@ export default function NeuralCoreCanvas({
           const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
           const line = new THREE.Line(lineGeo, isActive ? activeSynapseMat : synapseMat);
           specimenGroup.add(line);
-          synapseLines.push({ line, from: currL[i], to: nextL[j] });
+          synapseLines.push({ line, from: currL[i], to: nextL[j], layerIndex: l });
         }
       }
     }
 
-    // Floating Ambient Micro-Photons (Tensor Particle Cloud)
-    const photonCount = 140;
+    // Ambient Micro-Photons (Background floating tensor cloud)
+    const photonCount = 120;
     const photonGeo = new THREE.BufferGeometry();
     const photonPositions = new Float32Array(photonCount * 3);
     for (let p = 0; p < photonCount * 3; p += 3) {
@@ -249,40 +294,40 @@ export default function NeuralCoreCanvas({
       color: 0x648bb5,
       size: 0.05,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.45,
     });
     const photonSystem = new THREE.Points(photonGeo, photonMat);
     specimenGroup.add(photonSystem);
 
-    // Traveling Energy Pulses (Photons along Synapses)
-    const pulseCount = 16;
-    const pulseGeo = new THREE.SphereGeometry(0.06, 12, 12);
-    const pulseMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
-    const pulseMeshes = [];
+    // --- HIGH-ENERGY SYNAPTIC LIGHT PULSE SYSTEM ---
+    // High-speed photons that cascade through the network during forward passes
+    const cascadePhotonCount = 36;
+    const cascadeGeo = new THREE.SphereGeometry(0.08, 16, 16);
+    const cascadeMat = new THREE.MeshBasicMaterial({
+      color: 0x00f5a0,
+      transparent: true,
+      opacity: 0,
+    });
+    const cascadePhotons = [];
 
-    for (let i = 0; i < pulseCount; i++) {
-      const pMesh = new THREE.Mesh(pulseGeo, pulseMat);
-      // pick a random synapse
-      const fromLayer = Math.floor(Math.random() * (layerNodeMeshes.length - 1));
-      const fromNodes = layerNodeMeshes[fromLayer];
-      const toNodes = layerNodeMeshes[fromLayer + 1];
-      const startNode = fromNodes[Math.floor(Math.random() * fromNodes.length)];
-      const endNode = toNodes[Math.floor(Math.random() * toNodes.length)];
-
-      pMesh.userData = {
-        startNode,
-        endNode,
-        progress: Math.random(),
-        speed: 0.008 + Math.random() * 0.012,
+    for (let i = 0; i < cascadePhotonCount; i++) {
+      const cMesh = new THREE.Mesh(cascadeGeo, cascadeMat.clone());
+      cMesh.visible = false;
+      cMesh.userData = {
+        layerIndex: 0,
+        fromNode: null,
+        toNode: null,
+        progress: 0,
+        speed: 1.4,
+        active: false,
       };
-      specimenGroup.add(pMesh);
-      pulseMeshes.push(pMesh);
+      specimenGroup.add(cMesh);
+      cascadePhotons.push(cMesh);
     }
 
-    // A small impact ring makes pointer-down feel like contact with a real
-    // instrument surface instead of a purely decorative hover state.
+    // Interactive pointer shockwave ring
     const shockwaveMesh = new THREE.Mesh(
-      new THREE.RingGeometry(0.24, 0.29, 48),
+      new THREE.RingGeometry(0.24, 0.32, 48),
       new THREE.MeshBasicMaterial({
         color: 0x00f0ff,
         transparent: true,
@@ -295,6 +340,67 @@ export default function NeuralCoreCanvas({
     specimenGroup.add(shockwaveMesh);
     const shockwaveOrigin = new THREE.Vector3();
     let shockwaveEnergy = 0;
+
+    // Champion Output Shockwave Ring (fires at winning classification head node)
+    const winnerShockwave = new THREE.Mesh(
+      new THREE.RingGeometry(0.28, 0.38, 48),
+      new THREE.MeshBasicMaterial({
+        color: 0x00f5a0,
+        transparent: true,
+        opacity: 0,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+      }),
+    );
+    winnerShockwave.visible = false;
+    specimenGroup.add(winnerShockwave);
+    let winnerShockwaveEnergy = 0;
+    const winnerShockwaveOrigin = new THREE.Vector3();
+
+    // Wave Progression State
+    const waveState = {
+      active: false,
+      progress: 0,
+      duration: 1.15, // seconds for full forward pass
+      lastSoundLayer: -1,
+      targetClassIdx: 0,
+    };
+
+    // Public method to trigger the synaptic light cascade
+    const triggerSynapticWave = (inferenceData = null) => {
+      waveState.active = true;
+      waveState.progress = 0;
+      waveState.lastSoundLayer = -1;
+      setWaveActive(true);
+
+      // Determine target winning node on the classifier head
+      const headNodes = layerNodeMeshes[layerNodeMeshes.length - 1] || [];
+      if (inferenceData?.all_classes && inferenceData?.prediction) {
+        const idx = inferenceData.all_classes.indexOf(inferenceData.prediction);
+        waveState.targetClassIdx = idx >= 0 ? idx % headNodes.length : 0;
+      } else {
+        waveState.targetClassIdx = Math.floor(Math.random() * Math.max(1, headNodes.length));
+      }
+
+      // Initial sound sweep
+      soundEngine.inferStart();
+
+      // Spawn cascading photons along synapses from input layer
+      cascadePhotons.forEach((p, idx) => {
+        const fromLayer = idx % (layerNodeMeshes.length - 1);
+        const fromNodes = layerNodeMeshes[fromLayer];
+        const toNodes = layerNodeMeshes[fromLayer + 1];
+        p.userData.fromNode = fromNodes[Math.floor(Math.random() * fromNodes.length)];
+        p.userData.toNode = toNodes[Math.floor(Math.random() * toNodes.length)];
+        p.userData.layerIndex = fromLayer;
+        p.userData.progress = (idx % 4) * 0.1;
+        p.userData.active = true;
+        p.visible = true;
+        p.material.opacity = 0.9;
+      });
+    };
+
+    triggerPulseRef.current = triggerSynapticWave;
 
     // --- Interactive Mouse Physics & Raycasting ---
     let mouseX = 0;
@@ -354,6 +460,7 @@ export default function NeuralCoreCanvas({
       shockwaveEnergy = reducedMotion ? 0.35 : 1;
       shockwaveMesh.visible = true;
       shockwaveMesh.scale.setScalar(0.22);
+      soundEngine.tick(900, 0.015);
       if (e.pointerId !== undefined) domElement.setPointerCapture?.(e.pointerId);
     };
 
@@ -376,7 +483,7 @@ export default function NeuralCoreCanvas({
     domElement.addEventListener('pointerleave', onPointerLeave);
     window.addEventListener('pointerup', onPointerUp);
 
-    // --- High-Performance Animation Loop ---
+    // --- High-Performance 60FPS Animation Loop ---
     let animationId;
     let lastTime = performance.now();
 
@@ -395,13 +502,79 @@ export default function NeuralCoreCanvas({
       specimenGroup.rotation.x += (targetRotationX - specimenGroup.rotation.x) * 0.08;
 
       const pointerIsActive = updatePointerLocal();
-
-      // Gentle organic hover float
       const timeSec = currentTime * 0.001;
       specimenGroup.position.y = Math.sin(timeSec * 1.2) * 0.12 * (reducedMotion ? 0.15 : 1);
 
-      // Elastic local gravity: nearby nodes are pushed away from the pointer,
-      // then spring back to their recorded topology with damped momentum.
+      // --- SYNAPTIC FORWARD PASS WAVE PROPAGATION ---
+      if (waveState.active) {
+        waveState.progress += delta / waveState.duration;
+        const totalL = layerNodeMeshes.length;
+        const currentLayerIdx = Math.floor(waveState.progress * totalL);
+
+        // Position dynamic point light along the forward pass
+        const startX = -((totalL - 1) / 2) * layerSpacing;
+        const currentWaveX = startX + waveState.progress * (totalL - 1) * layerSpacing;
+        waveLight.position.set(currentWaveX, 0, 1.5);
+        waveLight.intensity = Math.sin(waveState.progress * Math.PI) * 4.5;
+
+        // Sound trigger and node ignition as wave crosses each layer
+        if (currentLayerIdx !== waveState.lastSoundLayer && currentLayerIdx < totalL) {
+          waveState.lastSoundLayer = currentLayerIdx;
+          soundEngine.synapsePulse(currentLayerIdx, totalL);
+
+          // Ignite nodes in the reached layer
+          const layerNodes = layerNodeMeshes[currentLayerIdx] || [];
+          layerNodes.forEach((node) => {
+            node.userData.pulseBoost = 1.0;
+          });
+        }
+
+        // Animate cascade photons along active forward path
+        cascadePhotons.forEach((pMesh) => {
+          if (!pMesh.userData.active || !pMesh.userData.fromNode || !pMesh.userData.toNode) return;
+          pMesh.userData.progress += delta * pMesh.userData.speed;
+          if (pMesh.userData.progress <= 1.0) {
+            pMesh.position.lerpVectors(
+              pMesh.userData.fromNode.position,
+              pMesh.userData.toNode.position,
+              pMesh.userData.progress
+            );
+          } else {
+            pMesh.userData.progress = 1.0;
+            pMesh.material.opacity = Math.max(0, pMesh.material.opacity - delta * 3);
+          }
+        });
+
+        // Wave resolution at Classifier Head
+        if (waveState.progress >= 1.0) {
+          waveState.active = false;
+          setWaveActive(false);
+
+          const headNodes = layerNodeMeshes[layerNodeMeshes.length - 1] || [];
+          const winnerNode = headNodes[waveState.targetClassIdx % headNodes.length] || headNodes[0];
+
+          if (winnerNode) {
+            winnerNode.userData.pulseBoost = 2.2;
+            winnerShockwaveOrigin.copy(winnerNode.position);
+            winnerShockwave.position.copy(winnerNode.position);
+            winnerShockwaveEnergy = 1.0;
+            winnerShockwave.visible = true;
+          }
+
+          soundEngine.championChord(true);
+        }
+      }
+
+      // Fade out champion shockwave ring
+      if (winnerShockwaveEnergy > 0) {
+        winnerShockwaveEnergy = Math.max(0, winnerShockwaveEnergy - delta * 1.8);
+        winnerShockwave.scale.setScalar(0.24 + (1 - winnerShockwaveEnergy) * 2.4);
+        winnerShockwave.material.opacity = winnerShockwaveEnergy * 0.9;
+      } else {
+        winnerShockwave.visible = false;
+      }
+
+      // Elastic local gravity & dynamic emissive dissipation on nodes
       nodeSpheres.forEach((node, idx) => {
         const base = node.userData.basePos;
         const offset = node.userData.offset;
@@ -432,12 +605,22 @@ export default function NeuralCoreCanvas({
         offset.addScaledVector(velocity, 60 * frameDelta);
         node.userData.fieldStrength = fieldStrength;
 
-        const wave = Math.sin(timeSec * (mutating ? 6 : isInferring ? 8 : 1.8) + idx * 0.3) * 0.04;
+        // Wave motion
+        const isCurrentlyInferring = isInferringRef.current || waveState.active;
+        const wave = Math.sin(timeSec * (mutatingRef.current ? 6 : isCurrentlyInferring ? 7 : 1.8) + idx * 0.3) * 0.04;
         node.position.set(base.x + offset.x, base.y + offset.y + wave, base.z + offset.z);
+
+        // Exponential energy dissipation after synaptic pulse
+        if (node.userData.pulseBoost > 0) {
+          node.userData.pulseBoost = Math.max(0, node.userData.pulseBoost - delta * 2.2);
+        }
+
+        // Apply dynamic emissive intensity spike
+        const extraEmissive = node.userData.pulseBoost * 3.2;
+        node.material.emissiveIntensity = node.userData.baseEmissive + extraEmissive;
       });
 
-      // The network flexes with the nodes instead of leaving rigid, detached
-      // wires behind them.
+      // Update synapse lines to track moving nodes
       synapseLines.forEach(({ line, from, to }) => {
         const positions = line.geometry.attributes.position.array;
         positions[0] = from.position.x;
@@ -449,6 +632,7 @@ export default function NeuralCoreCanvas({
         line.geometry.attributes.position.needsUpdate = true;
       });
 
+      // Interactive pointer shockwave dissipation
       if (shockwaveEnergy > 0) {
         shockwaveEnergy = Math.max(0, shockwaveEnergy - delta * (reducedMotion ? 4 : 1.8));
         shockwaveMesh.position.copy(shockwaveOrigin);
@@ -458,27 +642,21 @@ export default function NeuralCoreCanvas({
         shockwaveMesh.visible = false;
       }
 
-      // Pulse Photons along synapses
-      const pulseSpeedMultiplier = isInferring || mutating ? 3.5 : 1.0;
-      pulseMeshes.forEach((pMesh) => {
-        pMesh.userData.progress += pMesh.userData.speed * pulseSpeedMultiplier;
-        if (pMesh.userData.progress > 1.0) {
-          pMesh.userData.progress = 0;
-        }
-        pMesh.position.lerpVectors(pMesh.userData.startNode.position, pMesh.userData.endNode.position, pMesh.userData.progress);
-      });
-
       // Raycasting for Node Hover
       raycaster.setFromCamera(mouseNorm, camera);
       const intersects = raycaster.intersectObjects(nodeSpheres);
-
       const hit = intersects[0]?.object || null;
+
       nodeSpheres.forEach((node) => {
-        const fieldScale = 1 + node.userData.fieldStrength * 0.12;
+        const fieldScale = 1 + node.userData.fieldStrength * 0.12 + (node.userData.pulseBoost || 0) * 0.28;
         const hoverScale = node === hit ? 1.35 : fieldScale;
         node.scale.lerp(new THREE.Vector3(hoverScale, hoverScale, hoverScale), 0.15);
       });
+
       if (hit !== lastHoveredNode) {
+        if (hit && !lastHoveredNode) {
+          soundEngine.hover();
+        }
         lastHoveredNode = hit;
         setHoveredNode(hit?.userData || null);
       }
@@ -488,19 +666,36 @@ export default function NeuralCoreCanvas({
 
     animationId = requestAnimationFrame(animate);
 
-    // --- Handle Resize ---
+    // --- Handle Resize & Container Sizing ---
     const handleResize = () => {
       if (!containerRef.current) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      if (w > 0 && h > 0) {
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      }
     };
 
     window.addEventListener('resize', handleResize);
 
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width: w, height: h } = entry.contentRect;
+        if (w > 0 && h > 0) {
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        }
+      }
+    });
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('pointerup', onPointerUp);
       domElement.removeEventListener('pointermove', onPointerMove);
@@ -512,16 +707,16 @@ export default function NeuralCoreCanvas({
       }
       renderer.dispose();
     };
-  }, [generation, mutating, isInferring, configSignature, numClasses]);
+  }, [generation, configSignature, numClasses]);
 
   return (
     <div className="relative w-full h-[460px] md:h-[540px] cursor-grab active:cursor-grabbing select-none overflow-hidden rounded-3xl bg-radial from-[#0e1320]/60 via-[#06080d] to-[#040507] border border-white/[0.08] shadow-[0_25px_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
       {/* 3D WebGL Canvas Mounting Point */}
       <div ref={containerRef} className="w-full h-full" />
 
-      {/* Floating Micro-HUD Coordinates (Oryzo.ai Clean Aesthetic) */}
+      {/* Floating Micro-HUD Coordinates */}
       <div className="absolute top-5 left-6 pointer-events-none flex items-center gap-3 font-mono text-[11px] text-zinc-400">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_#10b981] animate-pulse" />
+        <span className={`w-2.5 h-2.5 rounded-full ${waveActive ? 'bg-cyan-400 shadow-[0_0_12px_#00f0ff] animate-ping' : 'bg-emerald-400 shadow-[0_0_10px_#10b981]'}`} />
         <span className="text-zinc-200 font-semibold tracking-wider uppercase">
           TOPOLOGY SPECIMEN // GEN {generation}
         </span>
@@ -531,11 +726,24 @@ export default function NeuralCoreCanvas({
         </span>
       </div>
 
-      {/* Tactile Controls Micro-Tag */}
-      <div className="absolute top-5 right-6 pointer-events-none flex items-center gap-2 font-mono text-[10px] text-zinc-500 uppercase tracking-widest hidden sm:flex bg-white/[0.03] px-3 py-1 rounded-full border border-white/[0.06] backdrop-blur-md">
-        <span>KINETIC DRAG</span>
-        <span className="text-zinc-700">·</span>
-        <span>MOMENTUM INERTIA 60 FPS</span>
+      {/* Manual Pulse Tensor Trigger Button */}
+      <div className="absolute top-5 right-6 z-20 flex items-center gap-2">
+        <button
+          onClick={() => {
+            if (triggerPulseRef.current) {
+              triggerPulseRef.current();
+            }
+          }}
+          className={`flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase px-3 py-1.5 rounded-full border transition-all duration-300 ${
+            waveActive
+              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40 shadow-[0_0_15px_rgba(0,240,255,0.3)]'
+              : 'bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border-white/[0.1] hover:border-white/[0.25]'
+          }`}
+          title="Simulate Synaptic Forward Pass Wave"
+        >
+          <Zap size={11} className={waveActive ? 'text-cyan-400 fill-cyan-400 animate-bounce' : 'text-zinc-400'} />
+          <span>{waveActive ? 'SYNAPSE WAVING...' : 'PULSE TENSOR'}</span>
+        </button>
       </div>
 
       {/* Floating Interactive Hover Tooltip */}
@@ -558,6 +766,21 @@ export default function NeuralCoreCanvas({
         </div>
       )}
 
+      {/* Champion Output Toast Banner (Fires when inference completes) */}
+      {winnerInfo && (
+        <div className="absolute top-16 left-6 z-20 pointer-events-none animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-2.5 bg-emerald-950/60 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl backdrop-blur-xl shadow-lg">
+            <Award size={14} className="text-emerald-400" />
+            <span className="font-mono text-[10px] text-emerald-200 uppercase tracking-wider">
+              RESOLVED CLASSIFIER: <strong className="text-white font-semibold">{winnerInfo.prediction}</strong> ({winnerInfo.percentage}%)
+            </span>
+            <span className="font-mono text-[10px] text-emerald-400/80">
+              · {winnerInfo.latency}ms
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Bottom Layer Status & Telemetry Bar */}
       <div className="absolute bottom-4 left-6 right-6 pointer-events-none flex flex-wrap items-center justify-between gap-3 font-mono text-[11px]">
         <div className="flex flex-wrap items-center gap-4 text-zinc-400">
@@ -566,7 +789,7 @@ export default function NeuralCoreCanvas({
             <span className="text-zinc-300">Conv2D Plinth</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#00f0ff]" />
+            <span className={`w-2 h-2 rounded-full ${waveActive ? 'bg-cyan-300 shadow-[0_0_12px_#00f0ff]' : 'bg-cyan-400 shadow-[0_0_8px_#00f0ff]'}`} />
             <span className="text-cyan-300">Active Synapse</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -576,7 +799,7 @@ export default function NeuralCoreCanvas({
         </div>
 
         <div className="text-zinc-500 font-mono text-[11px] shrink-0">
-          TENSOR LATENCY: <span className="text-cyan-400 font-bold">{latencyMs ? `${latencyMs}` : '2.05ms'}</span> (APPLE M5 MPS)
+          TENSOR LATENCY: <span className="text-cyan-400 font-bold">{latencyMs || '—'}</span> (MPS)
         </div>
       </div>
     </div>

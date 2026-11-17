@@ -1,4 +1,8 @@
-streamlit==1.64.0
+# NEUROFORGE studio runtime (Python 3.12; versions verified on Apple Silicon / MPS)
 torch==2.14.0
 torchvision==0.29.0
+numpy==2.5.3
 Pillow==12.3.0
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.32
