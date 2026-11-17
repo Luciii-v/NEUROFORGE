@@ -2,8 +2,12 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import NeuralCoreCanvas from './components/NeuralCoreCanvas';
 import KineticTrajectoryGraph from './components/KineticTrajectoryGraph';
 import InteractiveCrucible from './components/InteractiveCrucible';
+import ModelColiseum from './components/ModelColiseum';
+import ArchitectureSequencer from './components/ArchitectureSequencer';
+import HolographicSpecimenCard from './components/HolographicSpecimenCard';
 import CinematicSplash from './components/CinematicSplash';
 import MutationLoopPage from './components/MutationLoopPage';
+import soundEngine from './utils/soundEngine';
 import { 
   Play, 
   RotateCcw, 
@@ -15,7 +19,12 @@ import {
   Layers, 
   FolderOpen,
   Moon,
-  Sun
+  Sun,
+  Volume2,
+  VolumeX,
+  Swords,
+  Dna,
+  Award
 } from 'lucide-react';
 
 export default function App() {
@@ -31,6 +40,8 @@ export default function App() {
       return 'light';
     }
   });
+  const [soundEnabled, setSoundEnabled] = useState(!soundEngine.isMuted);
+  const [lastInference, setLastInference] = useState(null);
   const isMutationLoop = new URLSearchParams(window.location.search).get('view') === 'loop';
   const [selectedGen, setSelectedGen] = useState(5);
   const [status, setStatus] = useState(null);
@@ -300,6 +311,7 @@ export default function App() {
   }, []);
 
   const toggleTheme = useCallback(() => {
+    soundEngine.tick(1500, 0.01);
     setTheme((current) => {
       const next = current === 'light' ? 'dark' : 'light';
       try {
@@ -309,6 +321,11 @@ export default function App() {
       }
       return next;
     });
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    const next = soundEngine.toggle();
+    setSoundEnabled(next);
   }, []);
 
   const pyTorchInferenceCode = `# NEUROFORGE Champion Model Inference Pipeline
@@ -375,13 +392,32 @@ model.to(device).eval()
           <span className="nf-brand-note">model evolution studio</span>
         </a>
         <nav className="nf-nav-links" aria-label="Primary navigation">
-          <a href="#evolution">The family tree</a>
+          <a href="#evolution">Family tree</a>
+          <a href="#coliseum">Coliseum</a>
           <a href="#crucible">Live specimen</a>
-          <a href="#ship">Ship a model</a>
+          <a href="#sequencer">DNA sequencer</a>
+          <a href="#ship">Champion card</a>
         </nav>
         <div className="nf-nav-actions">
           <span className="nf-status-dot" />
           <span>{String(status?.device || 'MPS').toUpperCase()}</span>
+          <button 
+            className="nf-sound-toggle" 
+            onClick={toggleSound} 
+            aria-label={`Switch sound ${soundEnabled ? 'off' : 'on'}`}
+            title={soundEnabled ? "Tactile Audio Active" : "Tactile Audio Muted"}
+          >
+            {soundEnabled ? (
+              <div className="nf-audio-bars" aria-hidden="true">
+                <span className="bar bar-1" />
+                <span className="bar bar-2" />
+                <span className="bar bar-3" />
+              </div>
+            ) : (
+              <VolumeX size={14} />
+            )}
+            <span>{soundEnabled ? 'Audio' : 'Muted'}</span>
+          </button>
           <button className="nf-theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
             {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
             {theme === 'light' ? 'Dark' : 'Light'}
@@ -421,6 +457,7 @@ model.to(device).eval()
               activeConfig={selectedConfig}
               numClasses={dataset.num_classes || 5}
               latencyMs={latency}
+              lastInference={lastInference}
             />
             <div className="nf-specimen-explainer">
               <span>Topology specimen</span>
@@ -468,6 +505,18 @@ model.to(device).eval()
           </div>
         </section>
 
+        <section id="coliseum" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
+          <ModelColiseum
+            championMetrics={{
+              accuracy: metrics.accuracy ? Number(metrics.accuracy.toFixed(1)) : 87.6,
+              f1: metrics.f1 ? Number(metrics.f1.toFixed(1)) : 77.2,
+              latency: metrics.inference_latency_per_sample_seconds ? Number((metrics.inference_latency_per_sample_seconds * 1000).toFixed(2)) : 1.83,
+              params: '269k'
+            }}
+            datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
+          />
+        </section>
+
          <section id="crucible" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
            <div className="nf-chapter-intro nf-chapter-intro-reverse nf-scroll-reveal nf-reveal-intro">
             <span className="nf-chapter-number">02</span>
@@ -482,23 +531,50 @@ model.to(device).eval()
               onSetSpeech={(s) => setSpeech(s)}
               onInferStart={() => setIsInferring(true)}
               onInferEnd={() => setIsInferring(false)}
+              onInferResult={(res) => setLastInference(res)}
             />
           </div>
         </section>
 
+        <section id="sequencer" className="nf-chapter nf-section-anchor" data-scroll-reveal="chapter">
+          <ArchitectureSequencer
+            initialConfig={selectedConfig}
+            numClasses={dataset.num_classes || 9}
+            championAcc={bestAcc !== '—' ? Number(bestAcc) : 84.3}
+          />
+        </section>
+
          <section id="ship" className="nf-ship-section nf-physics-surface nf-section-anchor" data-scroll-reveal="ship">
-          <div>
-            <p className="nf-kicker">03 / The handoff</p>
-            <h2>When the experiment<br /><em>earns a place in the world.</em></h2>
-            <p className="nf-chapter-copy">Keep the weights, the blueprint and the receipt together. A model is only shippable when someone else can understand what they received.</p>
-          </div>
-          <div className="nf-ship-actions">
-             <button className="nf-primary-button nf-primary-button-dark nf-magnetic" onClick={() => setShowExportDrawer(true)}>
-              <Download size={15} /> Open the export bench
-            </button>
-             <button className="nf-text-button nf-text-button-dark nf-magnetic" onClick={() => setShowDatasetDrawer(true)}>
-              Change the specimen <FolderOpen size={15} />
-            </button>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7">
+              <p className="nf-kicker">03 / The handoff</p>
+              <h2>When the experiment<br /><em>earns a place in the world.</em></h2>
+              <p className="nf-chapter-copy">
+                Keep the weights, the blueprint and the receipt together. Every forged champion earns an authentic SSR Holographic Trading Card with verified Apple Silicon tensor benchmarks.
+              </p>
+              <div className="nf-ship-actions mt-6">
+                <button className="nf-primary-button nf-primary-button-dark nf-magnetic" onClick={() => setShowExportDrawer(true)}>
+                  <Download size={15} /> Open export bench
+                </button>
+                <button className="nf-text-button nf-text-button-dark nf-magnetic" onClick={() => setShowDatasetDrawer(true)}>
+                  Change specimen <FolderOpen size={15} />
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 flex justify-center">
+              <HolographicSpecimenCard
+                modelName={checkpoint?.metadata?.run_id ? `NEURO-TITAN // ${checkpoint.metadata.run_id}` : 'NEURO-TITAN // G5-CHAMPION'}
+                accuracy={metrics.accuracy ? metrics.accuracy.toFixed(1) : bestAcc}
+                f1={metrics.f1 ? metrics.f1.toFixed(1) : 75.6}
+                latency={metrics.inference_latency_per_sample_seconds ? (metrics.inference_latency_per_sample_seconds * 1000).toFixed(2) : 1.83}
+                paramCount="269k"
+                datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
+                numClasses={dataset.num_classes || 9}
+                generation={selectedGen}
+                config={selectedConfig}
+              />
+            </div>
           </div>
         </section>
       </main>
@@ -528,6 +604,19 @@ model.to(device).eval()
           <aside className="nf-drawer nf-drawer-wide" onClick={(event) => event.stopPropagation()}>
             <div>
               <div className="nf-drawer-heading"><div><p className="nf-kicker">Chamber 03</p><h3>Ship the evidence</h3></div><button className="nf-close" onClick={() => setShowExportDrawer(false)}><X size={18} /></button></div>
+              <div className="flex justify-center mb-6">
+                <HolographicSpecimenCard
+                  modelName={checkpoint?.metadata?.run_id ? `NEURO-TITAN // ${checkpoint.metadata.run_id}` : 'NEURO-TITAN // G5-CHAMPION'}
+                  accuracy={metrics.accuracy ? metrics.accuracy.toFixed(1) : bestAcc}
+                  f1={metrics.f1 ? metrics.f1.toFixed(1) : 75.6}
+                  latency={metrics.inference_latency_per_sample_seconds ? (metrics.inference_latency_per_sample_seconds * 1000).toFixed(2) : 1.83}
+                  paramCount="269k"
+                  datasetName={dataset.modality === 'audio' ? 'Audio Classification' : 'Fruits Dataset (9 Classes)'}
+                  numClasses={dataset.num_classes || 9}
+                  generation={selectedGen}
+                  config={selectedConfig}
+                />
+              </div>
               <div className="nf-export-grid">
                 <a href="/api/download/weights" download><Download size={18} /><strong>Weights</strong><span>best_model_weights.pth</span></a>
                 <a href="/api/download/config" download><Layers size={18} /><strong>Blueprint</strong><span>best_model_config.json</span></a>

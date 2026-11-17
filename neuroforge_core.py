@@ -1,4 +1,5 @@
 import hashlib
+import copy
 import csv
 import json
 import os
@@ -493,17 +494,48 @@ def _dataset_modality(dataset_dir=None):
     return "image"
 
 
-def _build_model(config, num_classes, dataset_dir=None, use_transfer_learning=False, pretrained=False):
+def _build_transfer_model(transfer_model, num_classes, pretrained=False):
+    t_model = (transfer_model or "resnet18").lower()
+    if "mobilenet" in t_model:
+        weights = torchvision.models.MobileNet_V3_Small_Weights.DEFAULT if pretrained else None
+        model = torchvision.models.mobilenet_v3_small(weights=weights)
+        for p in model.parameters():
+            p.requires_grad = False
+        in_feat = model.classifier[3].in_features
+        model.classifier[3] = nn.Linear(in_feat, num_classes)
+        return model
+    elif "shuffle" in t_model:
+        weights = torchvision.models.ShuffleNet_V2_X0_5_Weights.DEFAULT if pretrained else None
+        model = torchvision.models.shufflenet_v2_x0_5(weights=weights)
+        for p in model.parameters():
+            p.requires_grad = False
+        in_feat = model.fc.in_features
+        model.fc = nn.Linear(in_feat, num_classes)
+        return model
+    elif "efficient" in t_model:
+        weights = torchvision.models.EfficientNet_B0_Weights.DEFAULT if pretrained else None
+        model = torchvision.models.efficientnet_b0(weights=weights)
+        for p in model.parameters():
+            p.requires_grad = False
+        in_feat = model.classifier[1].in_features
+        model.classifier[1] = nn.Linear(in_feat, num_classes)
+        return model
+    else:  # default to resnet18
+        weights = torchvision.models.ResNet18_Weights.DEFAULT if pretrained else None
+        model = torchvision.models.resnet18(weights=weights)
+        for p in model.parameters():
+            p.requires_grad = False
+        in_feat = model.fc.in_features
+        model.fc = nn.Linear(in_feat, num_classes)
+        return model
+
+
+def _build_model(config, num_classes, dataset_dir=None, use_transfer_learning=False, transfer_model="resnet18", pretrained=False):
     modality = _dataset_modality(dataset_dir)
     if use_transfer_learning:
         if modality != "image":
-            raise ValueError("The ResNet-18 baseline is available for image datasets only")
-        weights = torchvision.models.ResNet18_Weights.DEFAULT if pretrained else None
-        model = torchvision.models.resnet18(weights=weights)
-        for parameter in model.parameters():
-            parameter.requires_grad = False
-        model.fc = nn.Linear(model.fc.in_features, num_classes)
-        return model
+            raise ValueError(f"The transfer learning baselines are available for image datasets only")
+        return _build_transfer_model(transfer_model, num_classes, pretrained=pretrained)
     return DynamicCNN(config, num_classes=num_classes, in_channels=1 if modality == "audio" else 3)
 
 # 4. Proxy Trainer & Judge
@@ -637,6 +669,7 @@ def full_train(
     st_callback=None,
     dataset_dir=None,
     use_transfer_learning=False,
+    transfer_model="resnet18",
     seed=42,
     weights_path="best_model_weights.pth",
     metadata_path="best_model_metadata.json",
@@ -650,12 +683,13 @@ def full_train(
     )
     
     if use_transfer_learning:
-        print("Using Pretrained ResNet18 for Transfer Learning...")
+        print(f"Using Pretrained {transfer_model} for Transfer Learning...")
         model = _build_model(
             config,
             num_classes,
             dataset_dir=dataset_dir,
             use_transfer_learning=True,
+            transfer_model=transfer_model,
             pretrained=True,
         ).to(device)
     else:
@@ -665,7 +699,8 @@ def full_train(
         weight=_class_weights(trainloader.dataset, num_classes).to(device),
     )
     # Using AdamW with weight decay for better regularization
-    optimizer = optim.AdamW(model.parameters(), lr=0.003, weight_decay=1e-4)
+    trainable_params = [p for p in model.parameters() if p.requires_grad]
+    optimizer = optim.AdamW(trainable_params if trainable_params else model.parameters(), lr=0.003, weight_decay=1e-4)
     # Cosine Annealing Learning Rate Scheduler helps push accuracy in later epochs
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
     
@@ -752,6 +787,8 @@ def full_train(
                 "schema_version": 1,
                 "num_classes": num_classes,
                 "class_names": get_dataset_metadata(dataset_dir)["class_names"],
+                "config": copy.deepcopy(config),
+                "trained_config": copy.deepcopy(config),
                 "config_hash": config_hash(config),
                 "training_mode": "transfer_learning_resnet18" if use_transfer_learning else "dynamic_cnn",
                 "seed": seed,
@@ -765,6 +802,11 @@ def full_train(
             })
             with open(metadata_path, "w") as handle:
                 json.dump(existing_metadata, handle, indent=2)
+
+            if not use_transfer_learning and "best_model_weights.pth" in str(weights_path):
+                config_out = os.path.join(os.path.dirname(weights_path) or ".", "best_model_config.json")
+                with open(config_out, "w") as ch:
+                    json.dump(config, ch, indent=2)
             
     print(f"\n✅ Full Training Complete. Best Validation Accuracy: {best_accuracy:.2f}%")
 
@@ -776,6 +818,7 @@ def full_train(
         dataset_dir=dataset_dir,
         evaluation_split="test",
         use_transfer_learning=use_transfer_learning,
+        transfer_model=transfer_model,
         weights_path=weights_path,
         seed=seed,
     )
@@ -797,6 +840,7 @@ def evaluate_checkpoint(
     dataset_dir=None,
     evaluation_split="test",
     use_transfer_learning=False,
+    transfer_model="resnet18",
     weights_path="best_model_weights.pth",
     seed=42,
 ):
@@ -807,18 +851,13 @@ def evaluate_checkpoint(
             num_classes,
             dataset_dir=dataset_dir,
             use_transfer_learning=True,
+            transfer_model=transfer_model,
             pretrained=False,
         )
-        expected_key = "fc.weight"
     else:
         model = _build_model(config, num_classes, dataset_dir=dataset_dir)
-        expected_key = "classifier.weight"
 
     state_dict = torch.load(weights_path, map_location=device, weights_only=True)
-    if expected_key not in state_dict:
-        raise ValueError(f"Checkpoint is incompatible with the selected model in {weights_path}")
-    if state_dict[expected_key].shape[0] != num_classes:
-        raise ValueError(f"Checkpoint output classes do not match num_classes={num_classes}")
     model.load_state_dict(state_dict)
     model = model.to(device)
     model.eval()

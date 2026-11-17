@@ -1,7 +1,7 @@
 [
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G01-C01",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G01-C01",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [],
@@ -22,133 +22,69 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 56.451612903225815,
-    "precision": 60.51638126373291,
-    "recall": 55.00592589378357,
-    "f1": 52.33266353607178,
-    "f1_present_classes": 52.33266353607178,
-    "precision_present_classes": 60.51638126373291,
-    "recall_present_classes": 55.00592589378357,
-    "mse": 0.06817713379859924,
-    "rmse": 0.26110750436782837,
-    "evaluated_class_count": 9,
+    "accuracy": 31.147540983606557,
+    "precision": 24.686507880687714,
+    "recall": 30.92857003211975,
+    "f1": 24.304166436195374,
+    "f1_present_classes": 24.304166436195374,
+    "precision_present_classes": 24.686507880687714,
+    "recall_present_classes": 30.92857003211975,
+    "mse": 0.15424895286560059,
+    "rmse": 0.39274540543556213,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
+        8,
         0,
         1,
-        0,
-        0
-      ],
-      [
-        0,
-        22,
-        0,
-        0,
-        4,
-        1,
-        0,
-        0,
-        0
+        3,
+        2
       ],
       [
         1,
-        1,
-        10,
-        2,
-        0,
-        0,
-        2,
-        9,
-        0
-      ],
-      [
         0,
         3,
-        0,
-        17,
-        0,
-        0,
-        0,
-        1,
+        3,
         0
       ],
       [
+        1,
+        0,
         2,
-        5,
-        0,
-        0,
-        7,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        0,
-        7,
-        17,
-        0,
         0,
         1
       ],
       [
         3,
-        5,
         0,
-        5,
-        2,
-        1,
-        9,
-        3,
+        8,
+        7,
         2
       ],
       [
+        7,
         0,
-        0,
-        0,
+        4,
         3,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        9,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        5,
-        7
+        2
       ]
     ],
-    "parameters": 94857,
-    "training_time_seconds": 7.689180850982666,
-    "inference_latency_seconds": 0.26928019523620605,
-    "inference_latency_per_sample_seconds": 0.0014477429851408928,
-    "num_classes": 9,
+    "parameters": 94341,
+    "training_time_seconds": 2.662597179412842,
+    "inference_latency_seconds": 0.15117192268371582,
+    "inference_latency_per_sample_seconds": 0.0024782282407166526,
+    "num_classes": 5,
     "seed": 42,
     "config_hash": "9bc9edb2ed50856a",
-    "score": 55.99248888469229,
+    "score": 27.137106519581824,
     "status": "evaluated",
-    "rank": 2
+    "rank": 3
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G01-C02",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G01-C02",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -185,133 +121,69 @@
       "pooling": true,
       "dropout": 0.4
     },
-    "accuracy": 50.0,
-    "precision": 57.8885018825531,
-    "recall": 48.7202525138855,
-    "f1": 46.48908078670502,
-    "f1_present_classes": 46.48908078670502,
-    "precision_present_classes": 57.8885018825531,
-    "recall_present_classes": 48.7202525138855,
-    "mse": 0.0730968713760376,
-    "rmse": 0.27036434412002563,
-    "evaluated_class_count": 9,
+    "accuracy": 36.0655737704918,
+    "precision": 44.879087805747986,
+    "recall": 34.00000035762787,
+    "f1": 32.346633076667786,
+    "f1_present_classes": 32.346633076667786,
+    "precision_present_classes": 44.879087805747986,
+    "recall_present_classes": 34.00000035762787,
+    "mse": 0.14953437447547913,
+    "rmse": 0.3866967558860779,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        14,
-        0,
-        1,
-        11,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        2,
-        1,
         10,
+        1,
+        0,
         3,
-        0,
-        0,
-        0,
-        8,
-        1
-      ],
-      [
-        0,
-        2,
-        1,
-        16,
-        1,
-        0,
-        0,
-        1,
         0
       ],
       [
         2,
         2,
+        0,
+        3,
+        0
+      ],
+      [
+        3,
+        0,
         1,
         0,
+        0
+      ],
+      [
         10,
+        1,
         0,
-        0,
-        0,
+        9,
         0
       ],
       [
-        0,
-        0,
-        0,
-        0,
-        8,
-        16,
-        0,
-        1,
-        1
-      ],
-      [
-        3,
-        3,
-        0,
-        6,
-        6,
-        0,
-        5,
-        4,
-        3
-      ],
-      [
-        0,
+        12,
         0,
         0,
         4,
-        0,
-        0,
-        0,
-        0,
         0
-      ],
-      [
-        10,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        5,
-        7
       ]
     ],
-    "parameters": 245321,
-    "training_time_seconds": 8.558468103408813,
-    "inference_latency_seconds": 0.28163695335388184,
-    "inference_latency_per_sample_seconds": 0.001514177168569257,
-    "num_classes": 9,
+    "parameters": 244805,
+    "training_time_seconds": 2.8317010402679443,
+    "inference_latency_seconds": 0.19105100631713867,
+    "inference_latency_per_sample_seconds": 0.0031319837101170273,
+    "num_classes": 5,
     "seed": 42,
     "config_hash": "2b682fe945d7f199",
-    "score": 50.52211098979286,
+    "score": 36.595266700146944,
     "status": "evaluated",
-    "rank": 3
+    "rank": 2
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G01-C03",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G01-C03",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -338,133 +210,69 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 59.67741935483871,
-    "precision": 62.851113080978394,
-    "recall": 57.872474193573,
-    "f1": 55.35972714424133,
-    "f1_present_classes": 55.35972714424133,
-    "precision_present_classes": 62.851113080978394,
-    "recall_present_classes": 57.872474193573,
-    "mse": 0.06564690172672272,
-    "rmse": 0.25621652603149414,
-    "evaluated_class_count": 9,
+    "accuracy": 31.147540983606557,
+    "precision": 19.597069919109344,
+    "recall": 31.285715103149414,
+    "f1": 21.435293555259705,
+    "f1_present_classes": 21.435293555259705,
+    "precision_present_classes": 19.597069919109344,
+    "recall_present_classes": 31.285715103149414,
+    "mse": 0.15645107626914978,
+    "rmse": 0.39553895592689514,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
+        10,
         0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        23,
-        0,
-        0,
-        4,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        11,
         3,
-        0,
-        0,
-        2,
-        7,
-        0
-      ],
-      [
-        0,
-        2,
-        0,
-        18,
-        0,
-        0,
-        0,
         1,
         0
       ],
       [
         1,
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
         5,
         0,
-        0,
+        8,
+        7,
+        0
+      ],
+      [
         8,
         0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        7,
-        17,
-        0,
-        1,
-        1
-      ],
-      [
-        2,
-        4,
-        0,
-        4,
-        2,
-        1,
-        11,
-        4,
-        2
-      ],
-      [
-        0,
-        0,
-        0,
+        5,
         3,
-        0,
-        0,
-        0,
-        1,
         0
-      ],
-      [
-        9,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        4,
-        7
       ]
     ],
-    "parameters": 94857,
-    "training_time_seconds": 7.764600992202759,
-    "inference_latency_seconds": 0.2630000114440918,
-    "inference_latency_per_sample_seconds": 0.0014139785561510312,
-    "num_classes": 9,
+    "parameters": 94341,
+    "training_time_seconds": 2.613682270050049,
+    "inference_latency_seconds": 0.1566169261932373,
+    "inference_latency_per_sample_seconds": 0.002567490593331759,
+    "num_classes": 5,
     "seed": 42,
     "config_hash": "f23762e52409e9b9",
-    "score": 58.93928026757932,
+    "score": 24.99515892964502,
     "status": "evaluated",
-    "rank": 1
+    "rank": 4
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G01-C04",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G01-C04",
     "generation": 1,
     "parent_id": null,
     "mutation_operations": [
@@ -491,288 +299,71 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 41.935483870967744,
-    "precision": 51.18844509124756,
-    "recall": 44.43945586681366,
-    "f1": 39.03700411319733,
-    "f1_present_classes": 39.03700411319733,
-    "precision_present_classes": 51.18844509124756,
-    "recall_present_classes": 44.43945586681366,
-    "mse": 0.07461239397525787,
-    "rmse": 0.2731526792049408,
-    "evaluated_class_count": 9,
+    "accuracy": 27.86885245901639,
+    "precision": 13.460317254066467,
+    "recall": 21.714286506175995,
+    "f1": 14.516451954841614,
+    "f1_present_classes": 14.516451954841614,
+    "precision_present_classes": 13.460317254066467,
+    "recall_present_classes": 21.714286506175995,
+    "mse": 0.15474680066108704,
+    "rmse": 0.39337870478630066,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1
-      ],
-      [
-        0,
-        13,
-        1,
-        3,
-        10,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        5,
-        4,
-        0,
-        0,
-        4,
-        10,
-        0
-      ],
-      [
-        0,
-        1,
-        1,
-        18,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        3,
-        0,
-        1,
-        9,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        15,
-        9,
-        0,
-        2,
-        0
-      ],
-      [
-        2,
-        3,
-        0,
-        9,
-        5,
-        1,
-        3,
-        6,
-        1
-      ],
-      [
-        0,
-        0,
-        0,
-        3,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
         11,
         0,
         0,
-        1,
+        2,
+        1
+      ],
+      [
+        2,
+        0,
+        0,
+        4,
+        1
+      ],
+      [
+        4,
         0,
         0,
         0,
-        5,
-        5
+        0
+      ],
+      [
+        14,
+        0,
+        0,
+        6,
+        0
+      ],
+      [
+        14,
+        0,
+        0,
+        2,
+        0
       ]
     ],
-    "parameters": 85161,
-    "training_time_seconds": 7.941407918930054,
-    "inference_latency_seconds": 0.2569539546966553,
-    "inference_latency_per_sample_seconds": 0.0013814728747132004,
-    "num_classes": 9,
+    "parameters": 84645,
+    "training_time_seconds": 2.4704108238220215,
+    "inference_latency_seconds": 0.15102791786193848,
+    "inference_latency_per_sample_seconds": 0.0024758675059334176,
+    "num_classes": 5,
     "seed": 42,
     "config_hash": "5c931b19bfde783d",
-    "score": 43.155871961235256,
+    "score": 19.928766755933136,
     "status": "evaluated",
-    "rank": 4
+    "rank": 5
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G02-C01",
-    "generation": 2,
-    "parent_id": "20261103T112330Z-G01-C03",
-    "mutation_operations": [
-      {
-        "field": "elite",
-        "to": "preserved"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        3,
-        3
-      ],
-      "batch_norm": true,
-      "activation": "GELU",
-      "pooling": true,
-      "dropout": 0.2
-    },
-    "accuracy": 59.67741935483871,
-    "precision": 62.851113080978394,
-    "recall": 57.872474193573,
-    "f1": 55.35972714424133,
-    "f1_present_classes": 55.35972714424133,
-    "precision_present_classes": 62.851113080978394,
-    "recall_present_classes": 57.872474193573,
-    "mse": 0.06564690172672272,
-    "rmse": 0.25621652603149414,
-    "evaluated_class_count": 9,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        23,
-        0,
-        0,
-        4,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        11,
-        3,
-        0,
-        0,
-        2,
-        7,
-        0
-      ],
-      [
-        0,
-        2,
-        0,
-        18,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        5,
-        0,
-        0,
-        8,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        7,
-        17,
-        0,
-        1,
-        1
-      ],
-      [
-        2,
-        4,
-        0,
-        4,
-        2,
-        1,
-        11,
-        4,
-        2
-      ],
-      [
-        0,
-        0,
-        0,
-        3,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        9,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        4,
-        7
-      ]
-    ],
-    "parameters": 94857,
-    "training_time_seconds": 7.764600992202759,
-    "inference_latency_seconds": 0.2630000114440918,
-    "inference_latency_per_sample_seconds": 0.0014139785561510312,
-    "num_classes": 9,
-    "seed": 42,
-    "config_hash": "f23762e52409e9b9",
-    "score": 58.93928026757932,
-    "status": "evaluated",
-    "evaluation_reused": true,
-    "rank": 2
-  },
-  {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G02-C02",
-    "generation": 2,
-    "parent_id": "20261103T112330Z-G01-C01",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G01-C05",
+    "generation": 1,
+    "parent_id": null,
     "mutation_operations": [
       {
         "field": "filters[1]",
@@ -797,152 +388,87 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 52.68817204301075,
-    "precision": 58.10965299606323,
-    "recall": 55.698639154434204,
-    "f1": 51.74388885498047,
-    "f1_present_classes": 51.74388885498047,
-    "precision_present_classes": 58.10965299606323,
-    "recall_present_classes": 55.698639154434204,
-    "mse": 0.07437595725059509,
-    "rmse": 0.2727195620536804,
-    "evaluated_class_count": 9,
+    "accuracy": 37.704918032786885,
+    "precision": 39.308807253837585,
+    "recall": 37.60714530944824,
+    "f1": 34.56226587295532,
+    "f1_present_classes": 34.56226587295532,
+    "precision_present_classes": 39.308807253837585,
+    "recall_present_classes": 37.60714530944824,
+    "mse": 0.15490928292274475,
+    "rmse": 0.3935851752758026,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        14,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        1
-      ],
-      [
-        0,
-        12,
-        0,
-        1,
-        13,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        9,
-        2,
-        0,
-        0,
-        2,
-        9,
-        1
-      ],
-      [
-        0,
-        2,
-        1,
-        12,
-        1,
-        0,
-        0,
         5,
-        0
+        1,
+        2,
+        4,
+        2
       ],
       [
         1,
-        1,
-        1,
-        0,
-        11,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        6,
-        18,
-        1,
-        0,
-        1
-      ],
-      [
+        2,
         1,
         3,
-        0,
-        4,
-        5,
-        2,
-        6,
-        6,
-        3
+        0
       ],
       [
-        0,
-        0,
-        0,
-        2,
-        0,
-        0,
+        1,
         0,
         2,
+        1,
         0
       ],
       [
         2,
-        0,
-        0,
         1,
-        0,
-        0,
-        0,
         5,
-        14
+        11,
+        1
+      ],
+      [
+        6,
+        0,
+        3,
+        4,
+        3
       ]
     ],
-    "parameters": 25593,
-    "training_time_seconds": 8.016345024108887,
-    "inference_latency_seconds": 0.25400280952453613,
-    "inference_latency_per_sample_seconds": 0.0013656065028200867,
-    "num_classes": 9,
+    "parameters": 25077,
+    "training_time_seconds": 2.4729318618774414,
+    "inference_latency_seconds": 0.16063570976257324,
+    "inference_latency_per_sample_seconds": 0.0026333722911897253,
+    "num_classes": 5,
     "seed": 42,
     "config_hash": "065180eb5511bee6",
-    "score": 53.59810367458278,
+    "score": 36.87468046098112,
     "status": "evaluated",
-    "rank": 4
+    "rank": 1
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G02-C03",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G02-C01",
     "generation": 2,
-    "parent_id": "20261103T112330Z-G01-C01",
+    "parent_id": "20261110T193208Z-G01-C05",
     "mutation_operations": [
       {
-        "field": "kernel_sizes[1]",
-        "from": 3,
-        "to": 5
+        "field": "elite",
+        "to": "preserved"
       }
     ],
     "config": {
       "num_layers": 3,
       "filters": [
         32,
-        64,
+        16,
         128
       ],
       "kernel_sizes": [
         3,
-        5,
+        3,
         3
       ],
       "batch_norm": true,
@@ -950,140 +476,171 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 64.51612903225806,
-    "precision": 62.922877073287964,
-    "recall": 60.78382730484009,
-    "f1": 60.02798080444336,
-    "f1_present_classes": 60.02798080444336,
-    "precision_present_classes": 62.922877073287964,
-    "recall_present_classes": 60.78382730484009,
-    "mse": 0.06499814242124557,
-    "rmse": 0.25494733452796936,
-    "evaluated_class_count": 9,
+    "accuracy": 37.704918032786885,
+    "precision": 39.308807253837585,
+    "recall": 37.60714530944824,
+    "f1": 34.56226587295532,
+    "f1_present_classes": 34.56226587295532,
+    "precision_present_classes": 39.308807253837585,
+    "recall_present_classes": 37.60714530944824,
+    "mse": 0.15490928292274475,
+    "rmse": 0.3935851752758026,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
+        5,
         1,
-        0,
-        0
-      ],
-      [
-        0,
-        19,
-        0,
-        0,
-        6,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        13,
         2,
-        0,
-        0,
+        4,
+        2
+      ],
+      [
         1,
-        7,
+        2,
+        1,
+        3,
         0
       ],
       [
+        1,
+        0,
+        2,
+        1,
+        0
+      ],
+      [
+        2,
+        1,
+        5,
+        11,
+        1
+      ],
+      [
+        6,
         0,
         3,
-        1,
-        16,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        2,
         4,
-        1,
-        0,
-        6,
-        2,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        4,
-        19,
-        1,
-        2,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        20,
-        2,
-        4
-      ],
-      [
-        0,
-        0,
-        0,
-        2,
-        0,
-        0,
-        1,
-        1,
-        0
-      ],
-      [
-        5,
-        0,
-        0,
-        1,
-        0,
-        0,
-        1,
-        4,
-        11
+        3
       ]
     ],
-    "parameters": 127625,
-    "training_time_seconds": 8.188650131225586,
-    "inference_latency_seconds": 0.2533869743347168,
-    "inference_latency_per_sample_seconds": 0.0013622955609393376,
-    "num_classes": 9,
+    "parameters": 25077,
+    "training_time_seconds": 2.4729318618774414,
+    "inference_latency_seconds": 0.16063570976257324,
+    "inference_latency_per_sample_seconds": 0.0026333722911897253,
+    "num_classes": 5,
     "seed": 42,
-    "config_hash": "332890cf2b78e390",
-    "score": 62.50751701807719,
+    "config_hash": "065180eb5511bee6",
+    "score": 36.87468046098112,
     "status": "evaluated",
+    "evaluation_reused": true,
     "rank": 1
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G02-C04",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G02-C02",
     "generation": 2,
-    "parent_id": "20261103T112330Z-G01-C03",
+    "parent_id": "20261110T193208Z-G01-C02",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        64,
+        32
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 24.59016393442623,
+    "precision": 19.208212196826935,
+    "recall": 30.42857050895691,
+    "f1": 18.03174465894699,
+    "f1_present_classes": 18.03174465894699,
+    "precision_present_classes": 19.208212196826935,
+    "recall_present_classes": 30.42857050895691,
+    "mse": 0.1575549840927124,
+    "rmse": 0.3969319760799408,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        5,
+        1,
+        0
+      ],
+      [
+        2,
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        1,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        13,
+        4,
+        0
+      ],
+      [
+        8,
+        0,
+        6,
+        2,
+        0
+      ]
+    ],
+    "parameters": 90437,
+    "training_time_seconds": 2.915142774581909,
+    "inference_latency_seconds": 0.17203783988952637,
+    "inference_latency_per_sample_seconds": 0.0028202924572053503,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "557a3612476329ef",
+    "score": 20.9046839716621,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G02-C03",
+    "generation": 2,
+    "parent_id": "20261110T193208Z-G01-C05",
     "mutation_operations": [
       {
         "field": "num_layers",
         "from": 3,
         "to": 2
+      },
+      {
+        "field": "filters[1]",
+        "from": 16,
+        "to": 64
       },
       {
         "field": "kernel_sizes[1]",
@@ -1102,292 +659,75 @@
         5
       ],
       "batch_norm": true,
-      "activation": "GELU",
-      "pooling": true,
-      "dropout": 0.2
-    },
-    "accuracy": 55.376344086021504,
-    "precision": 58.54540467262268,
-    "recall": 50.97827911376953,
-    "f1": 50.95177888870239,
-    "f1_present_classes": 50.95177888870239,
-    "precision_present_classes": 58.54540467262268,
-    "recall_present_classes": 50.97827911376953,
-    "mse": 0.07651622593402863,
-    "rmse": 0.2766156792640686,
-    "evaluated_class_count": 9,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        21,
-        0,
-        0,
-        5,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        11,
-        2,
-        0,
-        0,
-        1,
-        8,
-        1
-      ],
-      [
-        0,
-        1,
-        2,
-        16,
-        0,
-        0,
-        0,
-        2,
-        0
-      ],
-      [
-        1,
-        5,
-        0,
-        1,
-        6,
-        1,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
-        1,
-        0,
-        0,
-        8,
-        15,
-        0,
-        2,
-        0
-      ],
-      [
-        1,
-        3,
-        0,
-        2,
-        3,
-        2,
-        14,
-        4,
-        1
-      ],
-      [
-        0,
-        0,
-        0,
-        3,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        12,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        5,
-        5
-      ]
-    ],
-    "parameters": 52937,
-    "training_time_seconds": 7.891587972640991,
-    "inference_latency_seconds": 0.2467179298400879,
-    "inference_latency_per_sample_seconds": 0.0013264404830112251,
-    "num_classes": 9,
-    "seed": 42,
-    "config_hash": "d77535afa8170215",
-    "score": 54.655658625174944,
-    "status": "evaluated",
-    "rank": 3
-  },
-  {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G03-C01",
-    "generation": 3,
-    "parent_id": "20261103T112330Z-G02-C03",
-    "mutation_operations": [
-      {
-        "field": "elite",
-        "to": "preserved"
-      }
-    ],
-    "config": {
-      "num_layers": 3,
-      "filters": [
-        32,
-        64,
-        128
-      ],
-      "kernel_sizes": [
-        3,
-        5,
-        3
-      ],
-      "batch_norm": true,
       "activation": "ReLU",
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 64.51612903225806,
-    "precision": 62.922877073287964,
-    "recall": 60.78382730484009,
-    "f1": 60.02798080444336,
-    "f1_present_classes": 60.02798080444336,
-    "precision_present_classes": 62.922877073287964,
-    "recall_present_classes": 60.78382730484009,
-    "mse": 0.06499814242124557,
-    "rmse": 0.25494733452796936,
-    "evaluated_class_count": 9,
+    "accuracy": 29.508196721311474,
+    "precision": 24.502165615558624,
+    "recall": 30.571430921554565,
+    "f1": 19.373171031475067,
+    "f1_present_classes": 19.373171031475067,
+    "precision_present_classes": 24.502165615558624,
+    "recall_present_classes": 30.571430921554565,
+    "mse": 0.15404973924160004,
+    "rmse": 0.3924916982650757,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        19,
-        0,
-        0,
-        6,
-        1,
-        1,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        13,
+        12,
         2,
         0,
         0,
-        1,
-        7,
         0
       ],
       [
-        0,
         3,
-        1,
-        16,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        2,
         4,
-        1,
-        0,
-        6,
-        2,
         0,
         0,
         0
       ],
       [
-        0,
-        0,
-        0,
-        0,
         4,
-        19,
-        1,
-        2,
+        0,
+        0,
+        0,
         0
       ],
       [
-        1,
-        0,
-        0,
-        1,
-        1,
-        1,
-        20,
-        2,
-        4
-      ],
-      [
-        0,
-        0,
-        0,
-        2,
-        0,
-        0,
-        1,
-        1,
-        0
-      ],
-      [
+        13,
         5,
         0,
+        2,
+        0
+      ],
+      [
+        12,
+        3,
         0,
         1,
-        0,
-        0,
-        1,
-        4,
-        11
+        0
       ]
     ],
-    "parameters": 127625,
-    "training_time_seconds": 8.188650131225586,
-    "inference_latency_seconds": 0.2533869743347168,
-    "inference_latency_per_sample_seconds": 0.0013622955609393376,
-    "num_classes": 9,
+    "parameters": 52677,
+    "training_time_seconds": 2.824147939682007,
+    "inference_latency_seconds": 0.1970679759979248,
+    "inference_latency_per_sample_seconds": 0.0032306225573430296,
+    "num_classes": 5,
     "seed": 42,
-    "config_hash": "332890cf2b78e390",
-    "score": 62.50751701807719,
+    "config_hash": "5af7e927ff736e24",
+    "score": 24.84044198218804,
     "status": "evaluated",
-    "evaluation_reused": true,
-    "rank": 3
+    "rank": 2
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G03-C02",
-    "generation": 3,
-    "parent_id": "20261103T112330Z-G02-C03",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G02-C04",
+    "generation": 2,
+    "parent_id": "20261110T193208Z-G01-C05",
     "mutation_operations": [
       {
         "field": "activation",
@@ -1404,12 +744,12 @@
       "num_layers": 3,
       "filters": [
         32,
-        64,
+        16,
         128
       ],
       "kernel_sizes": [
         3,
-        5,
+        3,
         3
       ],
       "batch_norm": true,
@@ -1417,135 +757,71 @@
       "pooling": true,
       "dropout": 0.0
     },
-    "accuracy": 74.19354838709677,
-    "precision": 71.07175588607788,
-    "recall": 69.94653344154358,
-    "f1": 67.47093796730042,
-    "f1_present_classes": 67.47093796730042,
-    "precision_present_classes": 71.07175588607788,
-    "recall_present_classes": 69.94653344154358,
-    "mse": 0.04172529652714729,
-    "rmse": 0.2042677104473114,
-    "evaluated_class_count": 9,
+    "accuracy": 31.147540983606557,
+    "precision": 17.88235306739807,
+    "recall": 27.285712957382202,
+    "f1": 20.079365372657776,
+    "f1_present_classes": 20.079365372657776,
+    "precision_present_classes": 17.88235306739807,
+    "recall_present_classes": 27.285712957382202,
+    "mse": 0.15500935912132263,
+    "rmse": 0.39371228218078613,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        25,
-        0,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        14,
-        2,
-        0,
-        0,
-        3,
-        6,
-        0
-      ],
-      [
+        10,
         0,
         1,
         2,
-        17,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        7,
-        1,
-        1,
-        5,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        3,
-        21,
-        1,
-        0,
         1
       ],
       [
-        0,
-        0,
-        0,
         1,
         0,
+        3,
+        3,
+        0
+      ],
+      [
+        3,
         0,
-        29,
+        1,
         0,
         0
       ],
       [
+        9,
         0,
+        3,
+        8,
+        0
+      ],
+      [
+        11,
         0,
-        0,
-        1,
-        0,
-        0,
-        1,
         2,
+        3,
         0
-      ],
-      [
-        7,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        4,
-        10
       ]
     ],
-    "parameters": 127625,
-    "training_time_seconds": 8.005447149276733,
-    "inference_latency_seconds": 0.2499408721923828,
-    "inference_latency_per_sample_seconds": 0.0013437681300665742,
-    "num_classes": 9,
+    "parameters": 25077,
+    "training_time_seconds": 2.4738221168518066,
+    "inference_latency_seconds": 0.16723299026489258,
+    "inference_latency_per_sample_seconds": 0.0027415244305720094,
+    "num_classes": 5,
     "seed": 42,
-    "config_hash": "fadb6bc03d4c4b1a",
-    "score": 71.13431532289648,
+    "config_hash": "b412c5c8241bf8ea",
+    "score": 24.2115618782126,
     "status": "evaluated",
-    "rank": 1
+    "rank": 3
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G03-C03",
-    "generation": 3,
-    "parent_id": "20261103T112330Z-G02-C03",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G02-C05",
+    "generation": 2,
+    "parent_id": "20261110T193208Z-G01-C05",
     "mutation_operations": [
       {
         "field": "kernel_sizes[0]",
@@ -1567,12 +843,12 @@
       "num_layers": 3,
       "filters": [
         32,
-        64,
+        16,
         16
       ],
       "kernel_sizes": [
         5,
-        5,
+        3,
         3
       ],
       "batch_norm": true,
@@ -1580,147 +856,82 @@
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 35.483870967741936,
-    "precision": 39.10561800003052,
-    "recall": 44.597938656806946,
-    "f1": 31.421932578086853,
-    "f1_present_classes": 31.421932578086853,
-    "precision_present_classes": 39.10561800003052,
-    "recall_present_classes": 44.597938656806946,
-    "mse": 0.08411695808172226,
-    "rmse": 0.29002922773361206,
-    "evaluated_class_count": 9,
+    "accuracy": 21.311475409836063,
+    "precision": 16.637806594371796,
+    "recall": 30.000001192092896,
+    "f1": 15.808279812335968,
+    "f1_present_classes": 15.808279812335968,
+    "precision_present_classes": 16.637806594371796,
+    "recall_present_classes": 30.000001192092896,
+    "mse": 0.1592884659767151,
+    "rmse": 0.3991096019744873,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        14,
         0,
         0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        20,
         7,
-        0,
-        0,
-        0
-      ],
-      [
         2,
-        1,
-        8,
-        0,
-        2,
-        0,
-        0,
-        8,
-        4
+        5
       ],
       [
         0,
         0,
-        0,
-        6,
         3,
-        1,
-        0,
-        11,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        7,
-        5,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        0,
-        0,
-        23,
-        0,
-        2,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        0,
-        5,
-        5,
-        0,
-        12,
-        6
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
         4,
         0
       ],
       [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
         13,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
         5,
+        2
+      ],
+      [
+        0,
+        0,
+        9,
+        3,
         4
       ]
     ],
-    "parameters": 63305,
-    "training_time_seconds": 9.171186923980713,
-    "inference_latency_seconds": 0.268326997756958,
-    "inference_latency_per_sample_seconds": 0.0014426182675105269,
-    "num_classes": 9,
+    "parameters": 9589,
+    "training_time_seconds": 3.0722110271453857,
+    "inference_latency_seconds": 0.18405604362487793,
+    "inference_latency_per_sample_seconds": 0.003017312190571769,
+    "num_classes": 5,
     "seed": 42,
-    "config_hash": "68751fa62abe7f70",
-    "score": 34.9631593821665,
+    "config_hash": "73778ab8e0ab1719",
+    "score": 18.180779307662792,
     "status": "evaluated",
-    "rank": 4
+    "rank": 5
   },
   {
-    "run_id": "20261103T112330Z",
-    "candidate_id": "20261103T112330Z-G03-C04",
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G03-C01",
     "generation": 3,
-    "parent_id": "20261103T112330Z-G02-C01",
+    "parent_id": "20261110T193208Z-G02-C01",
     "mutation_operations": [
       {
-        "field": "filters[0]",
-        "from": 32,
-        "to": 64
+        "field": "elite",
+        "to": "preserved"
       }
     ],
     "config": {
       "num_layers": 3,
       "filters": [
-        64,
-        64,
+        32,
+        16,
         128
       ],
       "kernel_sizes": [
@@ -1729,132 +940,1389 @@
         3
       ],
       "batch_norm": true,
-      "activation": "GELU",
+      "activation": "ReLU",
       "pooling": true,
       "dropout": 0.2
     },
-    "accuracy": 67.20430107526882,
-    "precision": 66.05961322784424,
-    "recall": 63.68393301963806,
-    "f1": 62.32798099517822,
-    "f1_present_classes": 62.32798099517822,
-    "precision_present_classes": 66.05961322784424,
-    "recall_present_classes": 63.68393301963806,
-    "mse": 0.059471067041158676,
-    "rmse": 0.2438669055700302,
-    "evaluated_class_count": 9,
+    "accuracy": 37.704918032786885,
+    "precision": 39.308807253837585,
+    "recall": 37.60714530944824,
+    "f1": 34.56226587295532,
+    "f1_present_classes": 34.56226587295532,
+    "precision_present_classes": 39.308807253837585,
+    "recall_present_classes": 37.60714530944824,
+    "mse": 0.15490928292274475,
+    "rmse": 0.3935851752758026,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        15,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        24,
-        0,
+        5,
         1,
         2,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        1,
-        13,
-        2,
-        0,
-        0,
-        2,
-        6,
-        0
-      ],
-      [
-        0,
-        1,
-        2,
-        17,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        1,
         4,
+        2
+      ],
+      [
+        1,
+        2,
+        1,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        1,
+        0
+      ],
+      [
+        2,
+        1,
+        5,
+        11,
+        1
+      ],
+      [
+        6,
+        0,
+        3,
+        4,
+        3
+      ]
+    ],
+    "parameters": 25077,
+    "training_time_seconds": 2.4729318618774414,
+    "inference_latency_seconds": 0.16063570976257324,
+    "inference_latency_per_sample_seconds": 0.0026333722911897253,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "065180eb5511bee6",
+    "score": 36.87468046098112,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 2
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G03-C02",
+    "generation": 3,
+    "parent_id": "20261110T193208Z-G02-C03",
+    "mutation_operations": [
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.0
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        32,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.0
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 23.73524159193039,
+    "recall": 31.57142996788025,
+    "f1": 21.22105360031128,
+    "f1_present_classes": 21.22105360031128,
+    "precision_present_classes": 23.73524159193039,
+    "recall_present_classes": 31.57142996788025,
+    "mse": 0.1536513715982437,
+    "rmse": 0.39198389649391174,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        12,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        13,
+        4,
+        0,
+        3,
+        0
+      ],
+      [
+        11,
+        3,
+        0,
+        2,
+        0
+      ]
+    ],
+    "parameters": 52677,
+    "training_time_seconds": 2.836124897003174,
+    "inference_latency_seconds": 0.16773200035095215,
+    "inference_latency_per_sample_seconds": 0.002749704923786101,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "b907146b8bd4c6ad",
+    "score": 25.98887242832032,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G03-C03",
+    "generation": 3,
+    "parent_id": "20261110T193208Z-G02-C04",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 64
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "dropout",
+        "from": 0.0,
+        "to": 0.2
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 44.114771485328674,
+    "recall": 39.46428596973419,
+    "f1": 38.01643252372742,
+    "f1_present_classes": 38.01643252372742,
+    "precision_present_classes": 44.114771485328674,
+    "recall_present_classes": 39.46428596973419,
+    "mse": 0.15374402701854706,
+    "rmse": 0.39210206270217896,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        2,
+        2,
+        3
+      ],
+      [
+        2,
+        2,
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        7,
         1,
         1,
+        10,
+        1
+      ],
+      [
         8,
         0,
-        0,
-        0,
-        0
+        1,
+        4,
+        3
+      ]
+    ],
+    "parameters": 63413,
+    "training_time_seconds": 2.791639804840088,
+    "inference_latency_seconds": 0.17516183853149414,
+    "inference_latency_per_sample_seconds": 0.0028715055496966253,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "440d8f366fa2503b",
+    "score": 39.78797710626762,
+    "status": "evaluated",
+    "rank": 1
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G03-C04",
+    "generation": 3,
+    "parent_id": "20261110T193208Z-G02-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[1]",
+        "from": 64,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        32,
+        128
       ],
+      "kernel_sizes": [
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "ReLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 34.42622950819672,
+    "precision": 38.45161497592926,
+    "recall": 36.96428835391998,
+    "f1": 30.76479136943817,
+    "f1_present_classes": 30.76479136943817,
+    "precision_present_classes": 38.45161497592926,
+    "recall_present_classes": 36.96428835391998,
+    "mse": 0.1519641876220703,
+    "rmse": 0.38982585072517395,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
       [
-        0,
-        0,
-        0,
-        0,
-        6,
-        18,
+        10,
+        2,
         0,
         1,
         1
       ],
       [
-        1,
         2,
-        0,
         4,
-        2,
-        2,
-        18,
+        0,
         1,
+        0
+      ],
+      [
+        2,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        8,
+        7,
+        0,
+        5,
+        0
+      ],
+      [
+        9,
+        1,
+        2,
+        3,
+        1
+      ]
+    ],
+    "parameters": 104389,
+    "training_time_seconds": 3.2417242527008057,
+    "inference_latency_seconds": 0.19816017150878906,
+    "inference_latency_per_sample_seconds": 0.0032485274017834275,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "f367cce36d6340ee",
+    "score": 33.90490269332395,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G03-C05",
+    "generation": 3,
+    "parent_id": "20261110T193208Z-G02-C04",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      },
+      {
+        "field": "filters[3]",
+        "from": 32,
+        "to": 16
+      },
+      {
+        "field": "dropout",
+        "from": 0.0,
+        "to": 0.1
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        32,
+        16,
+        128,
+        16
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "batch_norm": false,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.1
+    },
+    "accuracy": 36.0655737704918,
+    "precision": 18.470588326454163,
+    "recall": 29.000002145767212,
+    "f1": 22.259771823883057,
+    "f1_present_classes": 22.259771823883057,
+    "precision_present_classes": 18.470588326454163,
+    "recall_present_classes": 29.000002145767212,
+    "mse": 0.1556321680545807,
+    "rmse": 0.3945024311542511,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        1,
+        6,
         0
       ],
       [
         0,
         0,
         0,
+        7,
+        0
+      ],
+      [
+        1,
+        0,
+        1,
+        2,
+        0
+      ],
+      [
         2,
         0,
+        4,
+        14,
+        0
+      ],
+      [
+        7,
+        0,
+        4,
+        5,
+        0
+      ]
+    ],
+    "parameters": 42613,
+    "training_time_seconds": 2.5589849948883057,
+    "inference_latency_seconds": 0.16023015975952148,
+    "inference_latency_per_sample_seconds": 0.0026267239304839586,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "a55fe395ee5e2980",
+    "score": 27.219801432451376,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G04-C01",
+    "generation": 4,
+    "parent_id": "20261110T193208Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 44.114771485328674,
+    "recall": 39.46428596973419,
+    "f1": 38.01643252372742,
+    "f1_present_classes": 38.01643252372742,
+    "precision_present_classes": 44.114771485328674,
+    "recall_present_classes": 39.46428596973419,
+    "mse": 0.15374402701854706,
+    "rmse": 0.39210206270217896,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        2,
+        2,
+        3
+      ],
+      [
+        2,
+        2,
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        7,
+        1,
+        1,
+        10,
+        1
+      ],
+      [
+        8,
         0,
         1,
+        4,
+        3
+      ]
+    ],
+    "parameters": 63413,
+    "training_time_seconds": 2.791639804840088,
+    "inference_latency_seconds": 0.17516183853149414,
+    "inference_latency_per_sample_seconds": 0.0028715055496966253,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "440d8f366fa2503b",
+    "score": 39.78797710626762,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 1
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G04-C02",
+    "generation": 4,
+    "parent_id": "20261110T193208Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 2
+      },
+      {
+        "field": "filters[1]",
+        "from": 16,
+        "to": 128
+      }
+    ],
+    "config": {
+      "num_layers": 2,
+      "filters": [
+        64,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 21.12381011247635,
+    "recall": 26.249998807907104,
+    "f1": 21.69748991727829,
+    "f1_present_classes": 21.69748991727829,
+    "precision_present_classes": 21.12381011247635,
+    "recall_present_classes": 26.249998807907104,
+    "mse": 0.15389515459537506,
+    "rmse": 0.3922947347164154,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
         1,
+        3,
+        3
+      ],
+      [
+        0,
+        0,
+        3,
+        4,
+        0
+      ],
+      [
+        3,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        7,
+        0,
+        2,
+        10,
+        1
+      ],
+      [
+        8,
+        0,
+        3,
+        4,
+        1
+      ]
+    ],
+    "parameters": 76677,
+    "training_time_seconds": 3.111086845397949,
+    "inference_latency_seconds": 0.18461990356445312,
+    "inference_latency_per_sample_seconds": 0.003026555796138576,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ee8c4348d0b02165",
+    "score": 25.427260366311664,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G04-C03",
+    "generation": 4,
+    "parent_id": "20261110T193208Z-G03-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 32,
+        "to": 16
+      },
+      {
+        "field": "activation",
+        "from": "ReLU",
+        "to": "SiLU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        16,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "SiLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 36.0655737704918,
+    "precision": 43.5757577419281,
+    "recall": 26.678571105003357,
+    "f1": 22.73859530687332,
+    "f1_present_classes": 22.73859530687332,
+    "precision_present_classes": 43.5757577419281,
+    "recall_present_classes": 26.678571105003357,
+    "mse": 0.15350525081157684,
+    "rmse": 0.3917974531650543,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        1,
+        0,
+        0,
+        12,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        7,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        19,
+        1
+      ],
+      [
+        1,
+        0,
+        0,
+        14,
+        1
+      ]
+    ],
+    "parameters": 22293,
+    "training_time_seconds": 2.5466201305389404,
+    "inference_latency_seconds": 0.1581881046295166,
+    "inference_latency_per_sample_seconds": 0.0025932476168773213,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ff3b1145ece60ebd",
+    "score": 33.66340846257761,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G04-C04",
+    "generation": 4,
+    "parent_id": "20261110T193208Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      },
+      {
+        "field": "activation",
+        "from": "GELU",
+        "to": "SiLU"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "SiLU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 19.672131147540984,
+    "precision": 25.951218605041504,
+    "recall": 36.28571629524231,
+    "f1": 20.37784606218338,
+    "f1_present_classes": 20.37784606218338,
+    "precision_present_classes": 25.951218605041504,
+    "recall_present_classes": 36.28571629524231,
+    "mse": 0.1609313189983368,
+    "rmse": 0.40116244554519653,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        2,
+        2,
+        9,
+        1,
+        0
+      ],
+      [
+        0,
+        4,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        1,
+        3,
+        14,
+        2,
+        0
+      ],
+      [
+        2,
+        1,
+        11,
+        2,
+        0
+      ]
+    ],
+    "parameters": 57845,
+    "training_time_seconds": 2.800604820251465,
+    "inference_latency_seconds": 0.1812748908996582,
+    "inference_latency_per_sample_seconds": 0.0029717195229452165,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "e14d21f24097af7c",
+    "score": 21.09860053401431,
+    "status": "evaluated",
+    "rank": 5
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G04-C05",
+    "generation": 4,
+    "parent_id": "20261110T193208Z-G03-C03",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        64,
+        16,
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 28.798702359199524,
+    "recall": 30.750000476837158,
+    "f1": 25.232258439064026,
+    "f1_present_classes": 25.232258439064026,
+    "precision_present_classes": 28.798702359199524,
+    "recall_present_classes": 30.750000476837158,
+    "mse": 0.152176171541214,
+    "rmse": 0.39009764790534973,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        3,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        5,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        7,
+        7,
+        1
+      ],
+      [
+        7,
+        0,
+        4,
+        2,
+        3
+      ]
+    ],
+    "parameters": 211253,
+    "training_time_seconds": 3.54508900642395,
+    "inference_latency_seconds": 0.262253999710083,
+    "inference_latency_per_sample_seconds": 0.004299245896886607,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "2dec4d906cd7e982",
+    "score": 28.144568974453378,
+    "status": "evaluated",
+    "rank": 3
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G05-C01",
+    "generation": 5,
+    "parent_id": "20261110T193208Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "elite",
+        "to": "preserved"
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 39.34426229508197,
+    "precision": 44.114771485328674,
+    "recall": 39.46428596973419,
+    "f1": 38.01643252372742,
+    "f1_present_classes": 38.01643252372742,
+    "precision_present_classes": 44.114771485328674,
+    "recall_present_classes": 39.46428596973419,
+    "mse": 0.15374402701854706,
+    "rmse": 0.39210206270217896,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        2,
+        2,
+        3
+      ],
+      [
+        2,
+        2,
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        7,
+        1,
+        1,
+        10,
+        1
+      ],
+      [
+        8,
+        0,
+        1,
+        4,
+        3
+      ]
+    ],
+    "parameters": 63413,
+    "training_time_seconds": 2.791639804840088,
+    "inference_latency_seconds": 0.17516183853149414,
+    "inference_latency_per_sample_seconds": 0.0028715055496966253,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "440d8f366fa2503b",
+    "score": 39.78797710626762,
+    "status": "evaluated",
+    "evaluation_reused": true,
+    "rank": 1
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G05-C02",
+    "generation": 5,
+    "parent_id": "20261110T193208Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "kernel_sizes[1]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "activation",
+        "from": "GELU",
+        "to": "SiLU"
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.1
+      },
+      {
+        "field": "batch_norm",
+        "to": false
+      },
+      {
+        "field": "pooling",
+        "to": false
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        64,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        5,
+        5
+      ],
+      "batch_norm": false,
+      "activation": "SiLU",
+      "pooling": false,
+      "dropout": 0.1
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 22.624459862709045,
+    "recall": 32.35714137554169,
+    "f1": 22.836366295814514,
+    "f1_present_classes": 22.836366295814514,
+    "precision_present_classes": 22.624459862709045,
+    "recall_present_classes": 32.35714137554169,
+    "mse": 0.15272042155265808,
+    "rmse": 0.3907946050167084,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        2,
+        0,
+        3,
+        5,
+        4
+      ],
+      [
+        0,
+        0,
+        1,
+        6,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        3,
+        0,
+        5,
+        12,
         0
       ],
       [
         6,
         0,
-        0,
+        4,
+        4,
+        2
+      ]
+    ],
+    "parameters": 79381,
+    "training_time_seconds": 7.642596006393433,
+    "inference_latency_seconds": 0.35346508026123047,
+    "inference_latency_per_sample_seconds": 0.005794509512479188,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "fd554af57fc09bd0",
+    "score": 25.864586345796646,
+    "status": "evaluated",
+    "rank": 2
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G05-C03",
+    "generation": 5,
+    "parent_id": "20261110T193208Z-G04-C01",
+    "mutation_operations": [
+      {
+        "field": "filters[0]",
+        "from": 64,
+        "to": 32
+      }
+    ],
+    "config": {
+      "num_layers": 3,
+      "filters": [
+        32,
+        16,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 13.114754098360656,
+    "precision": 18.739131093025208,
+    "recall": 26.28571391105652,
+    "f1": 11.955557018518448,
+    "f1_present_classes": 11.955557018518448,
+    "precision_present_classes": 18.739131093025208,
+    "recall_present_classes": 26.28571391105652,
+    "mse": 0.1611703485250473,
+    "rmse": 0.4014602601528168,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
         1,
         0,
+        11,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        6,
+        0,
+        0
+      ],
+      [
         0,
         0,
         4,
-        11
+        0,
+        0
+      ],
+      [
+        1,
+        3,
+        14,
+        2,
+        0
+      ],
+      [
+        2,
+        1,
+        11,
+        2,
+        0
       ]
     ],
-    "parameters": 114249,
-    "training_time_seconds": 8.02045488357544,
-    "inference_latency_seconds": 0.2551858425140381,
-    "inference_latency_per_sample_seconds": 0.001371966895236764,
-    "num_classes": 9,
+    "parameters": 57845,
+    "training_time_seconds": 2.7199230194091797,
+    "inference_latency_seconds": 0.17664694786071777,
+    "inference_latency_per_sample_seconds": 0.002895851604274062,
+    "num_classes": 5,
     "seed": 42,
-    "config_hash": "9c553fb639d6c4c8",
-    "score": 65.20378739986182,
+    "config_hash": "28bff514a39c0de7",
+    "score": 13.825659062646727,
     "status": "evaluated",
-    "rank": 2
+    "rank": 5
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G05-C04",
+    "generation": 5,
+    "parent_id": "20261110T193208Z-G04-C03",
+    "mutation_operations": [
+      {
+        "field": "num_layers",
+        "from": 3,
+        "to": 4
+      },
+      {
+        "field": "kernel_sizes[2]",
+        "from": 3,
+        "to": 5
+      },
+      {
+        "field": "dropout",
+        "from": 0.2,
+        "to": 0.4
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        16,
+        16,
+        128,
+        128
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5,
+        5
+      ],
+      "batch_norm": true,
+      "activation": "SiLU",
+      "pooling": true,
+      "dropout": 0.4
+    },
+    "accuracy": 31.147540983606557,
+    "precision": 9.3582883477211,
+    "recall": 22.999998927116394,
+    "f1": 13.154761493206024,
+    "f1_present_classes": 13.154761493206024,
+    "precision_present_classes": 9.3582883477211,
+    "recall_present_classes": 22.999998927116394,
+    "mse": 0.15748892724514008,
+    "rmse": 0.39684873819351196,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        5,
+        9,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        5,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        18,
+        0
+      ],
+      [
+        0,
+        0,
+        7,
+        9,
+        0
+      ]
+    ],
+    "parameters": 465045,
+    "training_time_seconds": 2.70593523979187,
+    "inference_latency_seconds": 0.1941838264465332,
+    "inference_latency_per_sample_seconds": 0.003183341417156282,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "56969ffc5fbd39df",
+    "score": 19.519014835799403,
+    "status": "evaluated",
+    "rank": 4
+  },
+  {
+    "run_id": "20261110T193208Z",
+    "candidate_id": "20261110T193208Z-G05-C05",
+    "generation": 5,
+    "parent_id": "20261110T193208Z-G04-C05",
+    "mutation_operations": [
+      {
+        "field": "filters[2]",
+        "from": 128,
+        "to": 16
+      },
+      {
+        "field": "filters[3]",
+        "from": 128,
+        "to": 64
+      }
+    ],
+    "config": {
+      "num_layers": 4,
+      "filters": [
+        64,
+        16,
+        16,
+        64
+      ],
+      "kernel_sizes": [
+        3,
+        3,
+        5,
+        3
+      ],
+      "batch_norm": true,
+      "activation": "GELU",
+      "pooling": true,
+      "dropout": 0.2
+    },
+    "accuracy": 32.78688524590164,
+    "precision": 17.300590872764587,
+    "recall": 28.285712003707886,
+    "f1": 20.95067799091339,
+    "f1_present_classes": 20.95067799091339,
+    "precision_present_classes": 17.300590872764587,
+    "recall_present_classes": 28.285712003707886,
+    "mse": 0.15609635412693024,
+    "rmse": 0.3950903117656708,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        2,
+        1,
+        1
+      ],
+      [
+        1,
+        0,
+        2,
+        4,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        8,
+        0,
+        3,
+        9,
+        0
+      ],
+      [
+        8,
+        0,
+        1,
+        7,
+        0
+      ]
+    ],
+    "parameters": 27365,
+    "training_time_seconds": 3.078428030014038,
+    "inference_latency_seconds": 0.20378494262695312,
+    "inference_latency_per_sample_seconds": 0.0033407367643762806,
+    "num_classes": 5,
+    "seed": 42,
+    "config_hash": "ebe4711ecc2e40d7",
+    "score": 25.003010799683274,
+    "status": "evaluated",
+    "rank": 3
   }
 ]

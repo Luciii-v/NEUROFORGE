@@ -1,0 +1,304 @@
+{
+  "schema_version": 1,
+  "num_classes": 9,
+  "class_names": [
+    "Apple",
+    "Banana",
+    "Grapes",
+    "Kiwi",
+    "Mango",
+    "Orange",
+    "Pineapple",
+    "Sugerapple",
+    "Watermelon"
+  ],
+  "config": {
+    "num_layers": 3,
+    "filters": [
+      32,
+      64,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      5,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.0
+  },
+  "trained_config": {
+    "num_layers": 3,
+    "filters": [
+      32,
+      64,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      5,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.0
+  },
+  "config_hash": "fadb6bc03d4c4b1a",
+  "training_mode": "transfer_learning_resnet18",
+  "seed": 42,
+  "epochs": 2,
+  "best_metrics": {
+    "accuracy": 76.34408602150538,
+    "precision": 72.21617102622986,
+    "recall": 72.08689451217651,
+    "f1": 71.08756303787231,
+    "mse": 0.03738417103886604,
+    "rmse": 0.19334986805915833
+  },
+  "dataset": {
+    "format": "roboflow_csv_classification",
+    "modality": "image",
+    "dataset_root": "/Users/mahathavivaanveer/Developer/NEUROFORGE/datasets/fruits dataset/fruits dataset/Fruits by YOLO/Fruits by YOLO",
+    "class_names": [
+      "Apple",
+      "Banana",
+      "Grapes",
+      "Kiwi",
+      "Mango",
+      "Orange",
+      "Pineapple",
+      "Sugerapple",
+      "Watermelon"
+    ],
+    "class_to_idx": {
+      "Apple": 0,
+      "Banana": 1,
+      "Grapes": 2,
+      "Kiwi": 3,
+      "Mango": 4,
+      "Orange": 5,
+      "Pineapple": 6,
+      "Sugerapple": 7,
+      "Watermelon": 8
+    },
+    "num_classes": 9,
+    "num_samples": 2960,
+    "splits": {
+      "train": 2685,
+      "valid": 186,
+      "test": 89
+    },
+    "quality_report": {
+      "train": {
+        "source_rows": 2697,
+        "usable_rows": 2685,
+        "skipped_rows": 12,
+        "skipped_examples": [
+          {
+            "filename": "Image_4_jpg.rf.bb27af93c4193234d6c56ce43f7c00fb.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          },
+          {
+            "filename": "Image_66_jpg.rf.8dd66d698c416a5bec5821e20b36a89e.jpg",
+            "positive_class_count": 2,
+            "reason": "multiple_labels"
+          },
+          {
+            "filename": "gettyimages-1134709612-612x612_jpg.rf.900ece69506fdb343c631d2619d4bde9.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          },
+          {
+            "filename": "Image_89_png.rf.0c3c45add41e2aa3daba35c1b8873170.jpg",
+            "positive_class_count": 2,
+            "reason": "multiple_labels"
+          },
+          {
+            "filename": "gettyimages-1134709612-612x612_jpg.rf.1010da300ab818699b7be72b4bc6cb4a.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          },
+          {
+            "filename": "Image_66_jpg.rf.12b98cd670135e356fdff79810f942c2.jpg",
+            "positive_class_count": 2,
+            "reason": "multiple_labels"
+          },
+          {
+            "filename": "Image_4_jpg.rf.6bc3ea3ee80d8b9335b8fa62e812dc6a.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          },
+          {
+            "filename": "Image_89_png.rf.6f84b7c336eaaab72b1e516f3f53ec82.jpg",
+            "positive_class_count": 2,
+            "reason": "multiple_labels"
+          },
+          {
+            "filename": "Image_66_jpg.rf.7c1cab107d40445cee5125a128b1bf20.jpg",
+            "positive_class_count": 2,
+            "reason": "multiple_labels"
+          },
+          {
+            "filename": "Image_4_jpg.rf.e72fe4773c9435809b4bf40f135b33e9.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          }
+        ]
+      },
+      "valid": {
+        "source_rows": 187,
+        "usable_rows": 186,
+        "skipped_rows": 1,
+        "skipped_examples": [
+          {
+            "filename": "download-9-_jpeg.rf.ac086ac2b231135d97ce4c28ce1c4c84.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          }
+        ]
+      },
+      "test": {
+        "source_rows": 90,
+        "usable_rows": 89,
+        "skipped_rows": 1,
+        "skipped_examples": [
+          {
+            "filename": "download-90-_jpeg.rf.11c51b1b66635c8f955d5b75987dcb6f.jpg",
+            "positive_class_count": 0,
+            "reason": "no_label"
+          }
+        ]
+      },
+      "policy": "use single-label rows; skip rows with no label or multiple labels"
+    }
+  },
+  "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/efficientnet_b0_comparison_weights.pth",
+  "held_out_test_metrics": {
+    "accuracy": 74.15730337078652,
+    "precision": 69.9076235294342,
+    "recall": 65.3180181980133,
+    "f1": 66.35270118713379,
+    "f1_present_classes": 74.64678883552551,
+    "precision_present_classes": 78.64607572555542,
+    "recall_present_classes": 73.48276376724243,
+    "mse": 0.04224063456058502,
+    "rmse": 0.2055252641439438,
+    "evaluated_class_count": 8,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        9,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        10,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        10,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        11,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        1,
+        2,
+        2,
+        8,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        12,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        4
+      ]
+    ],
+    "split": "test",
+    "sample_count": 89,
+    "inference_latency_seconds": 0.657329797744751,
+    "inference_latency_per_sample_seconds": 0.007385728064547764
+  },
+  "training_complete": true,
+  "model_type": "efficientnet_b0_transfer_baseline",
+  "architecture": "EfficientNet-B0",
+  "transfer_model": "efficientnet_b0",
+  "comparison_role": "fixed_efficientnet_b0_transfer_baseline"
+}

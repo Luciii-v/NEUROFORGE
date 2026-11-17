@@ -1,269 +1,140 @@
 {
   "schema_version": 1,
-  "num_classes": 9,
+  "num_classes": 5,
   "class_names": [
-    "Apple",
-    "Banana",
-    "Grapes",
-    "Kiwi",
-    "Mango",
-    "Orange",
-    "Pineapple",
-    "Sugerapple",
-    "Watermelon"
+    "Rice stem borer",
+    "green leafhopper",
+    "planthopper",
+    "rice bug",
+    "rice leaf roller"
   ],
-  "config_hash": "fadb6bc03d4c4b1a",
+  "config_hash": "440d8f366fa2503b",
   "training_mode": "transfer_learning_resnet18",
   "seed": 42,
-  "epochs": 22,
+  "epochs": 20,
   "best_metrics": {
-    "accuracy": 77.95698924731182,
-    "precision": 74.6699333190918,
-    "recall": 74.84518885612488,
-    "f1": 73.58576655387878,
-    "mse": 0.04155457019805908,
-    "rmse": 0.20384937524795532
+    "accuracy": 59.01639344262295,
+    "precision": 57.17569589614868,
+    "recall": 52.2857129573822,
+    "f1": 53.37774157524109,
+    "mse": 0.12771497666835785,
+    "rmse": 0.35737231373786926
   },
   "dataset": {
-    "format": "roboflow_csv_classification",
+    "format": "imagefolder_classification",
     "modality": "image",
-    "dataset_root": "/Users/mahathavivaanveer/Developer/NEUROFORGE/datasets/fruits dataset/fruits dataset/Fruits by YOLO/Fruits by YOLO",
+    "dataset_root": "/Users/mahathavivaanveer/Developer/NEUROFORGE/datasets/crop pest dataset/crop pest dataset",
     "class_names": [
-      "Apple",
-      "Banana",
-      "Grapes",
-      "Kiwi",
-      "Mango",
-      "Orange",
-      "Pineapple",
-      "Sugerapple",
-      "Watermelon"
+      "Rice stem borer",
+      "green leafhopper",
+      "planthopper",
+      "rice bug",
+      "rice leaf roller"
     ],
     "class_to_idx": {
-      "Apple": 0,
-      "Banana": 1,
-      "Grapes": 2,
-      "Kiwi": 3,
-      "Mango": 4,
-      "Orange": 5,
-      "Pineapple": 6,
-      "Sugerapple": 7,
-      "Watermelon": 8
+      "Rice stem borer": 0,
+      "green leafhopper": 1,
+      "planthopper": 2,
+      "rice bug": 3,
+      "rice leaf roller": 4
     },
-    "num_classes": 9,
-    "num_samples": 2960,
-    "splits": {
-      "train": 2685,
-      "valid": 186,
-      "test": 89
-    },
-    "quality_report": {
-      "train": {
-        "source_rows": 2697,
-        "usable_rows": 2685,
-        "skipped_rows": 12,
-        "skipped_examples": [
-          {
-            "filename": "Image_4_jpg.rf.bb27af93c4193234d6c56ce43f7c00fb.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_66_jpg.rf.8dd66d698c416a5bec5821e20b36a89e.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "gettyimages-1134709612-612x612_jpg.rf.900ece69506fdb343c631d2619d4bde9.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_89_png.rf.0c3c45add41e2aa3daba35c1b8873170.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "gettyimages-1134709612-612x612_jpg.rf.1010da300ab818699b7be72b4bc6cb4a.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_66_jpg.rf.12b98cd670135e356fdff79810f942c2.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_4_jpg.rf.6bc3ea3ee80d8b9335b8fa62e812dc6a.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_89_png.rf.6f84b7c336eaaab72b1e516f3f53ec82.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_66_jpg.rf.7c1cab107d40445cee5125a128b1bf20.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_4_jpg.rf.e72fe4773c9435809b4bf40f135b33e9.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "valid": {
-        "source_rows": 187,
-        "usable_rows": 186,
-        "skipped_rows": 1,
-        "skipped_examples": [
-          {
-            "filename": "download-9-_jpeg.rf.ac086ac2b231135d97ce4c28ce1c4c84.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "test": {
-        "source_rows": 90,
-        "usable_rows": 89,
-        "skipped_rows": 1,
-        "skipped_examples": [
-          {
-            "filename": "download-90-_jpeg.rf.11c51b1b66635c8f955d5b75987dcb6f.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "policy": "use single-label rows; skip rows with no label or multiple labels"
-    }
+    "num_classes": 5,
+    "num_samples": 295,
+    "splits": null
   },
   "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/resnet18_comparison_weights.pth",
   "held_out_test_metrics": {
-    "accuracy": 70.78651685393258,
-    "precision": 70.65138220787048,
-    "recall": 62.007808685302734,
-    "f1": 64.06423449516296,
-    "f1_present_classes": 72.07226157188416,
-    "precision_present_classes": 79.48280572891235,
-    "recall_present_classes": 69.75878477096558,
-    "mse": 0.04773909971117973,
-    "rmse": 0.218492791056633,
-    "evaluated_class_count": 8,
+    "accuracy": 59.01639344262295,
+    "precision": 57.17569589614868,
+    "recall": 52.2857129573822,
+    "f1": 53.37774157524109,
+    "f1_present_classes": 53.37774157524109,
+    "precision_present_classes": 57.17569589614868,
+    "recall_present_classes": 52.2857129573822,
+    "mse": 0.12771497666835785,
+    "rmse": 0.35737231373786926,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        10,
-        0,
-        0,
-        0,
+        6,
         0,
         1,
-        0,
-        0,
-        0
+        5,
+        2
       ],
       [
-        1,
-        9,
-        0,
-        0,
-        1,
-        0,
-        1,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        11,
-        1,
-        0,
-        0,
-        0,
-        2,
-        0
-      ],
-      [
-        2,
-        0,
-        0,
-        10,
-        0,
-        1,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
         1,
         2,
         0,
-        0,
-        0,
-        0
+        3,
+        1
       ],
       [
+        0,
+        0,
+        2,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        18,
+        2
+      ],
+      [
+        2,
         4,
         0,
-        0,
-        1,
-        0,
-        9,
-        1,
-        0,
-        0
-      ],
-      [
         2,
-        1,
-        0,
-        0,
-        0,
-        1,
-        9,
-        2,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        3,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        8
       ]
     ],
     "split": "test",
-    "sample_count": 89,
-    "inference_latency_seconds": 0.19029474258422852,
-    "inference_latency_per_sample_seconds": 0.002138143175103691
+    "sample_count": 61,
+    "inference_latency_seconds": 0.3374478816986084,
+    "inference_latency_per_sample_seconds": 0.005531932486862433
   },
   "training_complete": true,
   "model_type": "resnet18_transfer_baseline",
   "architecture": "ResNet-18",
-  "comparison_role": "fixed_transfer_learning_baseline"
+  "comparison_role": "fixed_resnet18_transfer_baseline",
+  "config": {
+    "num_layers": 3,
+    "filters": [
+      64,
+      16,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      3,
+      5
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.2
+  },
+  "trained_config": {
+    "num_layers": 3,
+    "filters": [
+      64,
+      16,
+      128
+    ],
+    "kernel_sizes": [
+      3,
+      3,
+      5
+    ],
+    "batch_norm": true,
+    "activation": "GELU",
+    "pooling": true,
+    "dropout": 0.2
+  },
+  "transfer_model": "resnet18"
 }

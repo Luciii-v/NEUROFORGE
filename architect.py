@@ -359,6 +359,7 @@ def train_final_model(
     output_metadata_path="best_model_metadata.json",
     seed=42,
     use_transfer_learning=False,
+    transfer_model="resnet18",
 ):
     """Train the selected architecture and return the persisted evaluation bundle."""
     best_accuracy = neuroforge_core.full_train(
@@ -366,6 +367,7 @@ def train_final_model(
         epochs=epochs,
         dataset_dir=dataset_dir,
         use_transfer_learning=use_transfer_learning,
+        transfer_model=transfer_model,
         seed=seed,
         weights_path=output_weights_path,
         metadata_path=output_metadata_path,
