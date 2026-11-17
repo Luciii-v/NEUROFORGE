@@ -55,6 +55,32 @@ What this shows:
 
 Next steps for the search itself are in the roadmap below: a larger dataset (Oxford-IIIT Pet, ESC-50), repeated seeds, and a matched random-search baseline.
 
+## Results: Oxford-IIIT Pet (does the search help with enough data?)
+
+37 cat and dog breeds, 7,390 images (5,172 / 1,109 / 1,109), seed 42, the same search budget (5 × 8 × 3) and protocol as above. Chance is 2.7%. Prepare and reproduce with:
+
+```bash
+python scripts/prepare_oxford_pets.py images.tar.gz datasets/oxford-pets   # from robots.ox.ac.uk/~vgg/data/pets
+python scripts/run_benchmark.py datasets/oxford-pets --epochs 40 --baseline-epochs 25 \
+  --baselines manual_cnn efficientnet_b0 resnet18 mobilenet_v3 shufflenet_v2
+```
+
+| Model | Valid F1 | Test accuracy | Test macro F1 |
+| --- | ---: | ---: | ---: |
+| NEUROFORGE winner (4-layer GELU CNN, filters 64/64/64/128, from scratch) | 50.9 | **49.9** | **49.9** |
+| Manual 2-layer CNN (from scratch) | 8.6 | 10.1 | 8.3 |
+| ResNet-18 (ImageNet-pretrained, frozen, 224px) | 90.9 | 90.8 | 90.8 |
+| EfficientNet-B0 (pretrained) | 89.6 | 88.6 | 88.6 |
+| MobileNet-V3 Small (pretrained) | 83.9 | 85.5 | 85.5 |
+| ShuffleNet-V2 0.5× (pretrained) | 72.8 | 74.9 | 74.3 |
+
+What this shows:
+
+- **With enough data the search clearly beats the hand-designed CNN: 49.9% vs 10.1% test accuracy (about 5×), on 1,109 test images**, where one image moves accuracy by only 0.09 points. On crop pest (207 training images) the two were indistinguishable; the difference is data, not the search.
+- **The winner was still improving at the 40-epoch cap** (best epoch 40), so a longer final training run is the cheapest next gain.
+- **Pretrained backbones remain far ahead (91%).** They bring features learned from 1.2M ImageNet photos; NEUROFORGE builds a network from nothing in about 45 minutes on a laptop. That gap is the honest framing for the viva: the search finds good from-scratch designs, but it does not replace transfer learning on small datasets.
+- Single seed. Repeated seeds and a matched random-search baseline are still needed before claiming mutation beats random search.
+
 ## What the search explores
 
 Each design is a JSON config: 2–5 conv blocks; filters 16/32/64/128 per layer; kernels 3/5; block type plain, residual or depthwise-separable; ReLU, GELU or SiLU; BatchNorm, pooling and dropout 0–0.4; image input size 64/96/128. Generation 1 mutates a seed design. Each later generation keeps its best design (the elite) and breeds mutated children from the top half. Fitness on validation is `0.45·acc + 0.25·precision + 0.30·F1 − params/1e6 − 100·latency`. Children inherit a blueprint, never weights.
@@ -89,7 +115,7 @@ A search never touches the active model. A training run writes its bundle first 
 
 ## Roadmap
 
-1. Benchmark on a larger public dataset (Oxford-IIIT Pet) and ESC-50, where training from scratch has enough data to compete.
+1. ~~Larger image benchmark (Oxford-IIIT Pet)~~ done above; next ESC-50 for audio, and longer final training for the Pets winner.
 2. Repeated seeds with mean ± spread, and a matched random-search baseline to test whether parent-guided mutation helps.
 3. Grouped splits / near-duplicate audit for datasets with multiple crops of one source image.
 4. Optional "search on top of a pretrained backbone" track, reported separately from from-scratch search.
