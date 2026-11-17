@@ -8,8 +8,8 @@ PORT="${NEUROFORGE_PORT:-8000}"
 PYTHON="${PYTHON:-python3}"
 [ -x .venv/bin/python ] && PYTHON=.venv/bin/python
 
-if lsof -ti ":$PORT" >/dev/null 2>&1; then
-    echo "[!] Port $PORT is already in use (PID $(lsof -ti ":$PORT" | tr '\n' ' '))."
+if lsof -ti ":$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "[!] Port $PORT is already in use (PID $(lsof -ti ":$PORT" -sTCP:LISTEN | tr '\n' ' '))."
     echo "    Stop that process or run: NEUROFORGE_PORT=8010 ./run_studio.sh"
     exit 1
 fi
