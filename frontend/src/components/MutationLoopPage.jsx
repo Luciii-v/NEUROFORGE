@@ -42,7 +42,12 @@ const describeMutations = (candidate) => {
   if (!operations.length) return Number(candidate?.generation) === 1
     ? 'Seed architecture; no mutation applied.'
     : 'No mutation recorded for this candidate.';
-  return operations.map(({ field, from, to }) => `${mutationLabel(field)}: ${mutationValue(from, field)} → ${mutationValue(to, field)}`).join(' · ');
+  return operations.map(({ field, from, to }) => {
+    if (field === 'elite') return 'elite: best design carried forward unchanged';
+    // On/off toggles (BatchNorm, pooling) record only the new state.
+    if (from === undefined) return `${mutationLabel(field)} switched ${mutationValue(to, field)}`;
+    return `${mutationLabel(field)}: ${mutationValue(from, field)} → ${mutationValue(to, field)}`;
+  }).join(' · ');
 };
 
 export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrollReady, scrollProgress, navScrolled }) {
@@ -54,6 +59,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
   const [search, setSearch] = useState(initialSearch);
   const [searching, setSearching] = useState(false);
   const [searchStage, setSearchStage] = useState('ready');
+  const socketRef = useRef(null);
   const [currentGeneration, setCurrentGeneration] = useState(1);
   const [liveCandidates, setLiveCandidates] = useState([]);
   const [trainingEpochs, setTrainingEpochs] = useState(20);
@@ -129,7 +135,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
       const generation = Number(candidate.generation);
       if (!generation) return;
       const current = byGeneration.get(generation);
-      if (!current || Number(candidate.accuracy || 0) > Number(current.accuracy || 0)) {
+      if (!current || Number(candidate.score || 0) > Number(current.score || 0)) {
         byGeneration.set(generation, candidate);
       }
     });
@@ -150,6 +156,20 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
           ? 0
           : 0;
   const comparisonMetricKeys = ['accuracy', 'precision', 'recall', 'f1', 'mse', 'rmse'];
+  const bestByMetric = useMemo(() => {
+    const best = {};
+    comparisonMetricKeys.forEach((key) => {
+      const lowerIsBetter = key === 'mse' || key === 'rmse';
+      let winner = null;
+      (comparison?.models || []).forEach((m) => {
+        const v = m.metrics?.[key];
+        if (v === null || v === undefined) return;
+        if (!winner || (lowerIsBetter ? v < winner.v : v > winner.v)) winner = { id: m.id, v };
+      });
+      best[key] = winner?.id;
+    });
+    return best;
+  }, [comparison]);
   const activeDatasetRoot = dataset?.dataset_root || workspace.dataset_dir || '';
   const historyDatasetRoot = historyPayload.search?.dataset?.dataset_root || '';
   const hasSearchResults = Boolean(dataset && history.length && (liveCandidates.length || !historyDatasetRoot || historyDatasetRoot === activeDatasetRoot));
@@ -159,16 +179,25 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
     if (!history.length) return null;
     const bestId = historyPayload.search?.best_candidate_id || historyPayload.metadata?.best_candidate_id;
     return history.find((candidate) => candidate.candidate_id === bestId)
-      || history.reduce((best, candidate) => (!best || Number(candidate.accuracy || 0) > Number(best.accuracy || 0) ? candidate : best), null);
+      || history.reduce((best, candidate) => (!best || Number(candidate.score || 0) > Number(best.score || 0) ? candidate : best), null);
   }, [history, historyPayload]);
+  const championId = champion?.candidate_id;
+  const savedSearch = historyPayload.search || {};
+  const activeCandidateId = status?.active_model?.candidate_id;
+  const activeIsChampion = Boolean(trainedForActiveDataset && championId && activeCandidateId === championId);
+  const deviceLabel = String(status?.device || 'CPU').toUpperCase();
+  const baselineBusy = training || resnetTraining || searching;
 
-  const totalExpected = Math.max(1, (Number(search.generations) || 4) * (Number(search.population) || 5));
+  // Live runs count against the form's budget; a finished run against the budget it actually used.
+  const plannedGenerations = searching ? Number(search.generations) || 1 : Number(savedSearch.generations) || Number(search.generations) || 1;
+  const plannedPopulation = searching ? Number(search.population) || 2 : Number(savedSearch.population_size) || Number(search.population) || 2;
+  const totalExpected = Math.max(1, plannedGenerations * plannedPopulation);
   const evaluatedCount = history.length;
   const searchPercent = Math.min(100, Math.round((evaluatedCount / totalExpected) * 100));
 
   const currentLeader = useMemo(() => {
     if (!history.length) return null;
-    return history.reduce((best, c) => (!best || Number(c.accuracy || 0) > Number(best.accuracy || 0) ? c : best), null);
+    return history.reduce((best, c) => (!best || Number(c.score || 0) > Number(best.score || 0) ? c : best), null);
   }, [history]);
 
   const [candidateFilter, setCandidateFilter] = useState('all');
@@ -198,7 +227,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
   const lastGeneration = history.reduce((max, c) => Math.max(max, Number(c.generation) || 0), 0);
   const filteredCandidates = useMemo(() => {
     if (candidateFilter === 'top') {
-      return [...history].sort((a, b) => Number(b.accuracy || 0) - Number(a.accuracy || 0)).slice(0, 5);
+      return [...history].sort((a, b) => Number(b.score || 0) - Number(a.score || 0)).slice(0, 5);
     }
     if (candidateFilter === 'latest') {
       return history.filter((c) => Number(c.generation) === lastGeneration);
@@ -276,6 +305,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
     setLiveCandidates([]);
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(`${protocol}//${window.location.host}/ws/search`);
+    socketRef.current = socket;
     socket.onopen = () => {
       socket.send(JSON.stringify({
         generations: Number(search.generations),
@@ -299,7 +329,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
         soundEngine.championChord(false);
       }
       if (message.type === 'search_completed') {
-        setSearchStage('complete');
+        setSearchStage(message.stopped_early ? 'stopped' : 'complete');
         setSearching(false);
         soundEngine.championChord(true);
         refresh();
@@ -314,6 +344,22 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
       setSearching(false);
     };
     socket.onclose = () => setSearching(false);
+  };
+
+  const stopSearch = () => {
+    socketRef.current?.send(JSON.stringify({ type: 'stop' }));
+    setSearchStage('stopping');
+  };
+
+  const stageLabel = (stage) => {
+    if (stage === 'ready') return 'ready';
+    if (stage === 'connecting') return 'connecting…';
+    if (stage === 'evaluating') return `evaluating on ${deviceLabel}`;
+    if (stage === 'stopping') return 'stopping after this generation…';
+    if (stage === 'stopped') return 'stopped, best design kept';
+    if (stage === 'complete') return 'search complete';
+    const done = /^generation-(\d+)$/.exec(stage);
+    return done ? `generation ${done[1]} done` : stage;
   };
 
   const trainChampion = async (candidateId = null, epochsOverride = null) => {
@@ -467,23 +513,28 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
           <div className="nf-loop-panel nf-loop-panel-wide">
             <div className="nf-loop-panel-heading"><div><p className="nf-kicker">01 / build</p><h2>Mount the dataset.</h2></div><Database size={20} /></div>
             <p className="nf-loop-muted">Use a local ImageFolder path or upload a ZIP. Removing a local path only unmounts it; uploaded extractions can be deleted from NEUROFORGE’s workspace.</p>
-            <div className="nf-loop-input-row"><input value={path} onChange={(event) => setPath(event.target.value)} placeholder="/path/to/image-folder" /><button className="nf-loop-button" onClick={mountPath} disabled={busyDataset}>{busyDataset ? 'Reading…' : 'Mount path'}</button></div>
-            <div className="nf-loop-upload" onClick={() => uploadRef.current?.click()}><input ref={uploadRef} type="file" accept=".zip" onChange={(event) => uploadDataset(event.target.files?.[0])} /><UploadCloud size={20} /><strong>Upload dataset ZIP</strong><span>ImageFolder or Roboflow single-label export</span></div>
+            <div className="nf-loop-input-row"><input value={path} onChange={(event) => setPath(event.target.value)} placeholder="/path/to/image-folder" /><button className="nf-loop-button" onClick={mountPath} disabled={busyDataset || baselineBusy}>{busyDataset ? 'Reading…' : 'Mount path'}</button></div>
+            <div className="nf-loop-upload" onClick={() => { if (!baselineBusy) uploadRef.current?.click(); }} aria-disabled={baselineBusy}><input ref={uploadRef} type="file" accept=".zip" onChange={(event) => uploadDataset(event.target.files?.[0])} /><UploadCloud size={20} /><strong>Upload dataset ZIP</strong><span>ImageFolder or Roboflow single-label export</span></div>
+            {baselineBusy && <p className="nf-loop-muted" style={{ marginTop: 10 }}>Dataset controls unlock when the running {searching ? 'search' : 'training'} finishes.</p>}
             {datasetError && <div className="nf-loop-error">{datasetError}</div>}
           </div>
           <div className="nf-loop-panel nf-loop-spec-card">
             <div className="nf-loop-panel-heading"><div><p className="nf-kicker">active specimen</p><h2>{dataset ? 'Dataset mounted' : 'Awaiting data'}</h2></div><span className="nf-loop-live-dot" /></div>
-            {dataset ? <><strong className="nf-loop-dataset-name">{dataset.modality === 'audio' ? 'Audio classification' : 'Image classification'}</strong><div className="nf-loop-stat-list"><span>samples <b>{dataset.num_samples}</b></span><span>classes <b>{dataset.num_classes}</b></span><span>format <b>{dataset.format}</b></span></div><div className="nf-loop-tags">{dataset.class_names?.map((name) => <span key={name}>{name}</span>)}</div><button className="nf-loop-remove" onClick={removeDataset} disabled={busyDataset}><Trash2 size={14} /> {workspace.dataset_owned ? 'Delete uploaded extraction' : 'Unmount local path'}</button></> : <div className="nf-loop-empty">Nothing can mutate until a labelled dataset is mounted.</div>}
+            {dataset ? <><strong className="nf-loop-dataset-name">{dataset.modality === 'audio' ? 'Audio classification' : 'Image classification'}</strong><div className="nf-loop-stat-list"><span>samples <b>{dataset.num_samples}</b></span><span>classes <b>{dataset.num_classes}</b></span><span>format <b>{dataset.format}</b></span></div><div className="nf-loop-tags">{dataset.class_names?.map((name) => <span key={name}>{name}</span>)}</div><button className="nf-loop-remove" onClick={removeDataset} disabled={busyDataset || baselineBusy}><Trash2 size={14} /> {workspace.dataset_owned ? 'Delete uploaded extraction' : 'Unmount local path'}</button></> : <div className="nf-loop-empty">Nothing can mutate until a labelled dataset is mounted.</div>}
           </div>
         </section>
 
         <section id="nf-loop-phase-mutate" className="nf-loop-panel nf-loop-search-panel nf-scroll-reveal" data-scroll-reveal="loop-mutate">
-          <div className="nf-loop-panel-heading"><div><p className="nf-kicker">02 / mutate</p><h2>Set the search budget.</h2></div><span className="nf-loop-search-state">{searching ? <><RotateCcw className="nf-spin" size={14} /> {searchStage}</> : searchStage}</span></div>
+          <div className="nf-loop-panel-heading"><div><p className="nf-kicker">02 / mutate</p><h2>Set the search budget.</h2></div><span className="nf-loop-search-state">{searching ? <><RotateCcw className="nf-spin" size={14} /> {stageLabel(searchStage)}</> : stageLabel(searchStage)}</span></div>
           <div className="nf-loop-controls">
-            <label>Generations<input type="number" min="1" max="10" value={search.generations} disabled={searching} onChange={(event) => setSearch({ ...search, generations: event.target.value })} /></label>
-            <label>Population / generation<input type="number" min="2" max="16" value={search.population} disabled={searching} onChange={(event) => setSearch({ ...search, population: event.target.value })} /></label>
+            <label>Generations<input type="number" min="1" max="20" value={search.generations} disabled={searching} onChange={(event) => setSearch({ ...search, generations: event.target.value })} /></label>
+            <label>Population / generation<input type="number" min="2" max="24" value={search.population} disabled={searching} onChange={(event) => setSearch({ ...search, population: event.target.value })} /></label>
             <label>Proxy epochs / candidate<input type="number" min="1" max="5" value={search.proxyEpochs} disabled={searching} onChange={(event) => setSearch({ ...search, proxyEpochs: event.target.value })} /></label>
-            <button className="nf-loop-button nf-loop-button-accent" onClick={startSearch} disabled={searching || !dataset}><Play size={15} fill="currentColor" /> {searching ? 'Evolving…' : 'Start mutation search'}</button>
+            {searching ? (
+              <button className="nf-loop-button" onClick={stopSearch} disabled={searchStage === 'stopping'}>{searchStage === 'stopping' ? 'Stopping…' : 'Stop search'}</button>
+            ) : (
+              <button className="nf-loop-button nf-loop-button-accent" onClick={startSearch} disabled={!dataset || training || resnetTraining}><Play size={15} fill="currentColor" /> Start mutation search</button>
+            )}
           </div>
 
           {/* Real-time Evolution Progress Ribbon */}
@@ -492,7 +543,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
               <div className="nf-search-progress-meta">
                 <div className="nf-search-progress-label">
                   <span className={`nf-status-dot ${searching ? 'animate-pulse' : ''}`} style={{ background: searching ? '#00f0ff' : '#00f5a0' }} />
-                  <strong>{searching ? `Forging Generation ${currentGeneration} of ${search.generations}` : 'Search complete'}</strong>
+                  <strong>{searching ? `Forging generation ${currentGeneration} of ${search.generations}` : savedSearch.stopped_early ? 'Search stopped early' : 'Search complete'}</strong>
                   <span>· {evaluatedCount} of {totalExpected} candidates evaluated</span>
                 </div>
                 <strong className="nf-search-progress-pct">{searchPercent}%</strong>
@@ -508,13 +559,13 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
             <div className="nf-leader-pill">
               <div className="nf-leader-pill-left">
                 <span className="nf-crown">👑</span>
-                <strong>Current Leader: {currentLeader.candidate_id || `Candidate #${evaluatedCount}`}</strong>
-                <span className="nf-leader-score">{Number(currentLeader.accuracy).toFixed(1)}% Proxy Acc</span>
+                <strong>{searching ? 'Current leader' : 'Search winner'}: {formatCandidateDisplayTitle(currentLeader.candidate_id, 0, currentLeader.generation)}</strong>
+                <span className="nf-leader-score">{Number(currentLeader.accuracy).toFixed(1)}% val acc · {Number(currentLeader.f1).toFixed(1)}% F1</span>
                 <span className="nf-leader-meta">
                   {currentLeader.parameters ? `· ${(Number(currentLeader.parameters) / 1000).toFixed(1)}k params` : ''} · {describeMutations(currentLeader)}
                 </span>
               </div>
-              <span className="nf-leader-pill-tag">TOP FITNESS</span>
+              <span className="nf-leader-pill-tag">TOP FITNESS {Number(currentLeader.score).toFixed(1)}</span>
             </div>
           )}
 
@@ -522,10 +573,10 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
           <div 
             className="nf-generation-strip"
             style={{
-              gridTemplateColumns: `repeat(${Math.max(1, Math.min(6, Number(search.generations) || 4))}, minmax(0, 1fr))`,
+              gridTemplateColumns: `repeat(${Math.max(1, Math.min(6, plannedGenerations))}, minmax(0, 1fr))`,
             }}
           >
-            {Array.from({ length: Math.max(1, Number(search.generations) || 4) }, (_, index) => {
+            {Array.from({ length: Math.max(1, plannedGenerations) }, (_, index) => {
               const gen = index + 1;
               const record = generations.find(([number]) => number === gen)?.[1];
               const isCurrent = searching && currentGeneration === gen;
@@ -540,8 +591,8 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
                   <strong>{record ? `${Number(record.accuracy).toFixed(1)}%` : '—'}</strong>
                   <small>
                     {isCurrent 
-                      ? 'breeding population on MPS...' 
-                      : record?.mutation_operations?.[0]?.field || (gen === 1 ? 'seed population' : 'waiting for candidates')}
+                      ? `breeding population on ${deviceLabel}…`
+                      : record ? `best: ${describeMutations(record)}` : (searching ? 'waiting for candidates' : 'not run')}
                   </small>
                 </div>
               );
@@ -558,7 +609,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
               </div>
               <span>{history.length} evaluated</span>
             </div>
-            <p className="nf-loop-muted">Read the change beside the score. Proxy accuracy ranks candidates during search; it is not the final held-out result.</p>
+            <p className="nf-loop-muted">Read the change beside the score. Candidates train briefly and are ranked by a fitness score on the validation split (accuracy, precision and F1, minus size and latency); the sealed test split is only used after full training.</p>
 
             {/* Filter Pills */}
             <div className="nf-candidate-filters">
@@ -576,20 +627,20 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
             </div>
 
             <div className="nf-candidate-list">
-              {filteredCandidates.slice(0, 16).map((candidate, index) => {
+              {filteredCandidates.map((candidate, index) => {
                 const parent = candidate.parent_id ? history.find((item) => item.candidate_id === candidate.parent_id) : null;
                 const delta = parent && Number.isFinite(Number(candidate.accuracy)) && Number.isFinite(Number(parent.accuracy))
                   ? Number(candidate.accuracy) - Number(parent.accuracy)
                   : null;
                 const accuracy = Number.isFinite(Number(candidate.accuracy)) ? `${Number(candidate.accuracy).toFixed(1)}%` : '—';
-                const isChampion = Number(candidate.accuracy) === bestCandidateAccuracy && bestCandidateAccuracy > 0;
+                const isChampion = candidate.candidate_id === (searching ? currentLeader?.candidate_id : championId);
 
                 return (
                   <article className={`nf-candidate ${isChampion ? 'is-champion-blueprint' : ''}`} key={`${candidate.candidate_id || 'candidate'}-${index}`}>
                     <div className="nf-candidate-copy">
                       <div className="flex items-center">
                         <strong>{formatCandidateDisplayTitle(candidate.candidate_id, index, candidate.generation)}</strong>
-                        {isChampion && <span className="nf-candidate-crown-tag">👑 TOURNAMENT CHAMPION</span>}
+                        {isChampion && <span className="nf-candidate-crown-tag">👑 {searching ? 'CURRENT LEADER' : 'SEARCH WINNER'}</span>}
                       </div>
                       <span>
                         gen {candidate.generation || '—'} · {candidate.parent_id ? `parent ${candidate.parent_id.split('-').at(-1)}` : 'seed'}
@@ -603,7 +654,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
                       )}
                     </div>
                     <div className="nf-candidate-score">
-                      <span>proxy accuracy</span>
+                      <span>validation acc</span>
                       <b>{accuracy}</b>
                       <small>F1 {Number.isFinite(Number(candidate.f1)) ? `${Number(candidate.f1).toFixed(1)}%` : '—'}</small>
                       <small>{formatParamCount(candidate.parameters)}</small>
@@ -657,7 +708,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
                   <span>up to {trainingEpochs} epochs · validation picks the checkpoint</span>
                 </div>
                 <div className="nf-deep-train-bar">
-                  <div className="nf-deep-train-fill" />
+                  <div className="nf-deep-train-fill" style={liveBest ? { width: `${Math.round((liveCurve[liveCurve.length - 1].epoch / jobProgress[jobProgress.length - 1].total_epochs) * 100)}%`, animation: 'none' } : undefined} />
                 </div>
                 <small className="nf-deep-train-note">
                   {liveBest
@@ -668,26 +719,30 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
             ) : (
               <button 
                 className="nf-loop-button nf-loop-button-dark" 
-                disabled={!dataset || training || !(historyPayload?.config || champion?.config)} 
-                onClick={() => trainChampion()}
+                disabled={!dataset || baselineBusy || !hasSearchResults || !champion?.config}
+                onClick={() => trainChampion(championId)}
               >
-                Train selected architecture
+                {hasSearchResults ? 'Train the search winner' : 'Run a search on this dataset first'}
               </button>
             )}
 
-            {trainingComplete && !training && (
+            {trainedForActiveDataset && !training && (
               <div className="nf-trained-success-banner">
                 <Check size={14} />
-                <span>Champion Weights Verified & Ready for Live Inference</span>
+                <span>{activeIsChampion
+                  ? 'Search winner trained and serving live inference'
+                  : `Serving ${formatCandidateDisplayTitle(activeCandidateId, 0)} from an earlier run; the current search winner is not trained yet`}</span>
               </div>
             )}
 
-            <div className="nf-loop-final-metrics">
-              <span>accuracy <b>{latest.accuracy ? `${latest.accuracy.toFixed(1)}%` : '—'}</b></span>
-              <span>macro F1 <b>{latest.f1 ? `${latest.f1.toFixed(1)}%` : '—'}</b></span>
-            </div>
+            {trainedForActiveDataset && (
+              <div className="nf-loop-final-metrics">
+                <span>test accuracy <b>{Number.isFinite(latest.accuracy) ? `${latest.accuracy.toFixed(1)}%` : '—'}</b></span>
+                <span>test macro F1 <b>{Number.isFinite(latest.f1) ? `${latest.f1.toFixed(1)}%` : '—'}</b></span>
+              </div>
+            )}
 
-            {trainingComplete && (
+            {trainedForActiveDataset && (
               <button 
                 className="nf-loop-button nf-loop-button-crucible"
                 onClick={() => { window.location.href = '/#crucible'; }}
@@ -696,9 +751,18 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
               </button>
             )}
 
-            <a className="nf-loop-download" href="/api/download/weights" download>
-              <Download size={14} /> Download checkpoint weights
-            </a>
+            {trainedForActiveDataset && (
+              <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+                {status?.active_model?.bundle_id && (
+                  <a className="nf-loop-download" href="/api/download/bundle" download>
+                    <Download size={14} /> Download full bundle (.zip)
+                  </a>
+                )}
+                <a className="nf-loop-download" href="/api/download/weights" download>
+                  <Download size={14} /> Weights only
+                </a>
+              </div>
+            )}
           </div>
         </section>
 
@@ -732,7 +796,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
                 {comparisonLoading && <tr><td colSpan="8">Reading saved comparison evidence…</td></tr>}
                 {!comparisonLoading && comparisonModels.map((model) => <tr key={model.id}>
                   <th><strong>{model.label}</strong><small>{model.kind}<br />{model.budget}</small></th>
-                  {comparisonMetricKeys.map((key) => <td key={key}>{formatMetric(model.metrics?.[key], key)}</td>)}
+                  {comparisonMetricKeys.map((key) => <td key={key} className={bestByMetric[key] === model.id ? 'is-best' : undefined}>{formatMetric(model.metrics?.[key], key)}</td>)}
                   <td><span className={`nf-comparison-status nf-comparison-status-${model.status}`}>{model.status === 'not_run' ? 'not run' : model.status}</span></td>
                 </tr>)}
                 {!comparisonLoading && !comparisonModels.length && <tr><td colSpan="8">Mount a dataset to create a comparison context.</td></tr>}
@@ -742,27 +806,24 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
           <div className="nf-comparison-actions">
             <div>
               <p className="nf-kicker">Industry baselines / transfer learning</p>
-              <h3>Run transfer-learning comparisons.</h3>
-              <p>Train frozen-backbone vision architectures on your active dataset. The backbone is frozen; only the replacement classifier head learns, without overwriting your champion checkpoint.</p>
+              <h3>Train a baseline on the same split.</h3>
+              <p>The manual CNN trains from scratch. The pretrained models keep their ImageNet backbone frozen and learn a new classifier head at 224px. Baselines never replace the champion checkpoint.</p>
+              {resnetTraining && (
+                <p className="nf-loop-muted" aria-live="polite">
+                  {liveBest
+                    ? `Epoch ${liveCurve[liveCurve.length - 1].epoch} of up to ${jobProgress[jobProgress.length - 1].total_epochs}: best validation F1 ${liveBest.valid_f1.toFixed(1)}%.`
+                    : 'Loading data and pretrained weights…'}
+                </p>
+              )}
             </div>
             <div className="nf-comparison-run">
               <label>
                 Baseline
                 <select
+                  className="nf-loop-select"
                   value={selectedTransferModel}
-                  disabled={resnetTraining}
+                  disabled={baselineBusy}
                   onChange={(event) => setSelectedTransferModel(event.target.value)}
-                  style={{
-                    background: '#18181b',
-                    color: '#f4f4f5',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    outline: 'none',
-                    marginRight: '8px',
-                  }}
                 >
                   {transferOptions.map((opt) => (
                     <option key={opt.id} value={opt.id}>
@@ -784,7 +845,7 @@ export default function MutationLoopPage({ theme, onToggleTheme, onReturn, scrol
               </label>
               <button
                 className="nf-loop-button nf-loop-button-accent"
-                disabled={!dataset || resnetTraining}
+                disabled={!dataset || baselineBusy}
                 onClick={runTransferComparison}
               >
                 {resnetTraining ? (

@@ -2187,3 +2187,12 @@ input:focus-visible {
   text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 2px;
 }
 .nf-theme-dark .nf-home-more a { color: #8ea2ff; }
+
+/* Loop page: baseline picker matches the inputs beside it in both themes. */
+.nf-loop-select {
+  width: 100%; padding: 0.75rem 0.8rem; border: 1px solid var(--nf-line); border-radius: 0;
+  background: var(--nf-paper-light); color: var(--nf-ink); font: 0.72rem 'IBM Plex Mono', monospace;
+}
+/* Best value per metric column (highest, or lowest for MSE/RMSE). */
+.nf-comparison-table td.is-best { color: var(--nf-cobalt); font-weight: 700; box-shadow: inset 0 -2px 0 var(--nf-cobalt); }
+.nf-loop-upload[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
