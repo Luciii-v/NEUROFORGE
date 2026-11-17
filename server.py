@@ -1,211 +1,358 @@
+"""NEUROFORGE Studio API.
+
+FastAPI service that wraps the search (architect.py) and training/inference
+core (neuroforge_core.py), and serves the React studio from frontend/dist.
+
+Evaluation contract (see docs/neuroforge-ultimate-plan, section 08):
+  * search candidates are ranked on the validation split
+  * final training picks its checkpoint on validation
+  * the test split is measured once, on the locked checkpoint
+Every number this API returns says which split and budget produced it. Models
+that have not been trained on the active dataset are reported as "not_run"
+with no metrics — never with placeholder figures.
+"""
+
 import asyncio
 import base64
+import io
 import json
 import os
 import shutil
-import tempfile
+import threading
 import time
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 import torch
 import torch.nn.functional as F
 from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
-from PIL import Image
-import io
-
-import neuroforge_core
-import architect
-
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from PIL import Image
+from pydantic import BaseModel, Field
+
+import architect
+import neuroforge_core
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 WEIGHTS_PATH = PROJECT_ROOT / "best_model_weights.pth"
 CONFIG_PATH = PROJECT_ROOT / "best_model_config.json"
 METADATA_PATH = PROJECT_ROOT / "best_model_metadata.json"
 HISTORY_PATH = PROJECT_ROOT / "search_history.json"
+LATEST_SEARCH_PATH = PROJECT_ROOT / "latest_search.json"
 MANUAL_BASELINE_PATH = PROJECT_ROOT / "manual_baseline.json"
-RESNET_WEIGHTS_PATH = PROJECT_ROOT / "resnet18_comparison_weights.pth"
-RESNET_METADATA_PATH = PROJECT_ROOT / "resnet18_comparison_metadata.json"
+DATASETS_DIR = PROJECT_ROOT / "datasets"
+RUNS_DIR = Path(architect.RUNS_DIR)
+FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
+MAX_UPLOAD_BYTES = 2 * 1024 ** 3
 
-TRANSFER_SPECS = {
+BASELINE_SPECS = {
+    "manual_cnn": {
+        "name": "Manual CNN",
+        "kind": "hand-designed 2-layer reference",
+        "transfer": False,
+        "note": "Fixed human-designed CNN trained with the same final-training protocol as the winner.",
+    },
     "resnet18": {
-        "id": "resnet18",
         "name": "ResNet-18",
-        "weights_path": RESNET_WEIGHTS_PATH,
-        "metadata_path": RESNET_METADATA_PATH,
-        "kind": "deep residual baseline",
-        "config": {"backbone": "ResNet-18", "pretrained": True, "trainable_head": True},
-        "default_metrics": {"accuracy": 70.8, "precision": 70.3, "recall": 62.0, "f1": 64.0, "mse": 0.0479, "rmse": 0.2189},
-        "note": "Classic ImageNet-pretrained frozen backbone with retrained linear classification head.",
+        "kind": "pretrained residual backbone",
+        "transfer": True,
+        "note": "ImageNet-pretrained, frozen backbone, retrained linear head, 224px input.",
     },
     "mobilenet_v3": {
-        "id": "mobilenet_v3",
         "name": "MobileNet-V3 Small",
-        "weights_path": PROJECT_ROOT / "mobilenet_v3_comparison_weights.pth",
-        "metadata_path": PROJECT_ROOT / "mobilenet_v3_comparison_metadata.json",
-        "kind": "Google edge standard",
-        "config": {"backbone": "MobileNet-V3-Small", "inverted_residuals": True, "depthwise": True},
-        "default_metrics": {"accuracy": 73.4, "precision": 71.8, "recall": 70.2, "f1": 68.5, "mse": 0.0412, "rmse": 0.2029},
-        "note": "Google mobile edge baseline with depthwise separable convolutions and squeeze-and-excitation.",
+        "kind": "pretrained edge backbone",
+        "transfer": True,
+        "note": "Depthwise-separable mobile backbone, frozen, retrained head, 224px input.",
     },
     "shufflenet_v2": {
-        "id": "shufflenet_v2",
         "name": "ShuffleNet-V2 0.5x",
-        "weights_path": PROJECT_ROOT / "shufflenet_v2_comparison_weights.pth",
-        "metadata_path": PROJECT_ROOT / "shufflenet_v2_comparison_metadata.json",
-        "kind": "compact sub-1.5M",
-        "config": {"backbone": "ShuffleNet-V2", "channel_shuffle": True, "flops_optimized": True},
-        "default_metrics": {"accuracy": 68.2, "precision": 66.4, "recall": 65.1, "f1": 63.1, "mse": 0.0528, "rmse": 0.2297},
-        "note": "Channel-shuffled ultra-compact CNN designed for direct hardware metrics.",
+        "kind": "pretrained compact backbone",
+        "transfer": True,
+        "note": "Channel-shuffle compact backbone, frozen, retrained head, 224px input.",
     },
     "efficientnet_b0": {
-        "id": "efficientnet_b0",
         "name": "EfficientNet-B0",
-        "weights_path": PROJECT_ROOT / "efficientnet_b0_comparison_weights.pth",
-        "metadata_path": PROJECT_ROOT / "efficientnet_b0_comparison_metadata.json",
-        "kind": "compound scaled baseline",
-        "config": {"backbone": "EfficientNet-B0", "compound_scaling": True},
-        "default_metrics": {"accuracy": 74.8, "precision": 72.5, "recall": 71.0, "f1": 70.1, "mse": 0.0392, "rmse": 0.1980},
-        "note": "Compound-scaled vision backbone balancing depth, width, and resolution.",
+        "kind": "pretrained compound-scaled backbone",
+        "transfer": True,
+        "note": "Compound-scaled backbone, frozen, retrained head, 224px input.",
     },
 }
-FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
 
-app = FastAPI(title="NEUROFORGE Studio Engine", version="2.0.0")
 
+def _baseline_paths(model_key):
+    return (
+        PROJECT_ROOT / f"{model_key}_comparison_weights.pth",
+        PROJECT_ROOT / f"{model_key}_comparison_metadata.json",
+    )
+
+
+app = FastAPI(title="NEUROFORGE Studio Engine", version="3.0.0")
+
+_default_origins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8000,http://127.0.0.1:8000"
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[o.strip() for o in os.environ.get("NEUROFORGE_CORS_ORIGINS", _default_origins).split(",") if o.strip()],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
+
+# ---------------------------------------------------------------------------
+# Workspace + job state
+# ---------------------------------------------------------------------------
+
+workspace_state: Dict[str, Any] = {
+    "dataset_dir": None,
+    "dataset_metadata": None,
+    "dataset_owned": False,
+}
+
+# One heavy job (search or training) at a time: they share the accelerator and
+# both write experiment artifacts.
+job_lock = threading.Lock()
+job_state: Dict[str, Any] = {"kind": None, "label": None, "started_at": None, "progress": [], "result": None, "error": None}
+
+
+def _begin_job(kind, label):
+    if not job_lock.acquire(blocking=False):
+        raise HTTPException(status_code=409, detail=f"Busy: {job_state.get('label') or job_state.get('kind')} is still running.")
+    job_state.update({"kind": kind, "label": label, "started_at": time.time(), "progress": [], "result": None, "error": None})
+
+
+def _end_job(result=None, error=None):
+    job_state.update({"kind": None, "result": result, "error": error, "finished_at": time.time()})
+    job_lock.release()
+
+
+def load_json(path: Path) -> Optional[Any]:
+    try:
+        with open(path, "r") as handle:
+            return json.load(handle)
+    except (OSError, ValueError):
+        return None
+
+
+def _same_path(a, b):
+    if not a or not b:
+        return False
+    try:
+        return os.path.realpath(str(a)) == os.path.realpath(str(b))
+    except (OSError, TypeError):
+        return str(a) == str(b)
+
+
+def _active_dataset_dir():
+    if workspace_state["dataset_dir"]:
+        return workspace_state["dataset_dir"]
+    return ((load_json(METADATA_PATH) or {}).get("dataset") or {}).get("dataset_root")
+
+
+def _active_dataset_metadata():
+    if workspace_state["dataset_metadata"]:
+        return workspace_state["dataset_metadata"]
+    dataset_dir = _active_dataset_dir()
+    if dataset_dir and Path(dataset_dir).exists():
+        try:
+            return neuroforge_core.get_dataset_metadata(dataset_dir)
+        except Exception:
+            return None
+    return None
+
+
+def resolve_active_model() -> Dict[str, Any]:
+    """Single source of truth for the checkpoint live inference serves.
+
+    ``trained_config`` in the metadata is written in the same promotion step as
+    the weights, so it is authoritative. ``best_model_config.json`` is only a
+    fallback for checkpoints produced before that contract existed.
+    """
+    metadata = load_json(METADATA_PATH) or {}
+    config = metadata.get("trained_config") or metadata.get("config") or load_json(CONFIG_PATH)
+    ready = bool(WEIGHTS_PATH.exists() and config and metadata.get("training_complete"))
+    test = metadata.get("held_out_test_metrics") or {}
+    return {
+        "ready": ready,
+        "config": config,
+        "metadata": metadata,
+        "protocol_version": metadata.get("schema_version", 1),
+        # Schema 1 checkpoints selected epochs on the same split they reported as "test".
+        "test_is_independent": metadata.get("schema_version", 1) >= 2,
+        "test_metrics": test,
+        "validation_metrics": metadata.get("validation_metrics") or {},
+    }
+
+
+# ---------------------------------------------------------------------------
+# Status, history, runs
+# ---------------------------------------------------------------------------
 
 
 @app.get("/health")
 def health_check():
     return {"status": "ok", "service": "neuroforge-studio"}
 
-# Global in-memory workspace state
-workspace_state = {
-    "dataset_dir": None,
-    "dataset_metadata": None,
-    "dataset_owned": False,
-    "model_trained": False,
-    "search_in_progress": False,
-    "current_run_id": None,
-}
-
-
-def load_json(path: Path) -> Optional[Any]:
-    try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-
-def get_checkpoint_status() -> Dict[str, Any]:
-    has_weights = WEIGHTS_PATH.exists()
-    config = load_json(CONFIG_PATH)
-    metadata = load_json(METADATA_PATH) or {}
-
-    # Ensure config strictly matches the checkpoint weights in best_model_weights.pth
-    trained_config = metadata.get("trained_config") or metadata.get("config")
-    if not trained_config and metadata.get("config_hash"):
-        target_hash = metadata.get("config_hash")
-        if not config or neuroforge_core.config_hash(config) != target_hash:
-            history = load_json(HISTORY_PATH)
-            if isinstance(history, list):
-                for candidate in history:
-                    if candidate.get("config_hash") == target_hash and candidate.get("config"):
-                        trained_config = candidate["config"]
-                        break
-    if trained_config:
-        config = trained_config
-    history = load_json(HISTORY_PATH) or []
-    
-    is_ready = bool(has_weights and config and metadata.get("training_complete"))
-    
-    return {
-        "ready": is_ready,
-        "has_weights": has_weights,
-        "config": config,
-        "metadata": metadata,
-        "history_count": len(history),
-        "device": str(neuroforge_core.device),
-        "best_test_metrics": metadata.get("held_out_test_metrics", {}),
-    }
-
 
 @app.get("/api/status")
 def get_status():
-    ckpt = get_checkpoint_status()
+    active = resolve_active_model()
+    dataset_metadata = _active_dataset_metadata()
     return {
         "status": "online",
         "device": str(neuroforge_core.device).upper(),
         "workspace": {
-            "dataset_dir": workspace_state["dataset_dir"],
-            "dataset_metadata": workspace_state["dataset_metadata"],
+            "dataset_dir": _active_dataset_dir(),
+            "dataset_metadata": dataset_metadata,
             "dataset_owned": workspace_state["dataset_owned"],
-            "model_trained": ckpt["ready"] or workspace_state["model_trained"],
-            "search_in_progress": workspace_state["search_in_progress"],
+            "dataset_mounted": bool(workspace_state["dataset_dir"]),
+            "model_trained": active["ready"],
+            "model_matches_dataset": _same_path(
+                (active["metadata"].get("dataset") or {}).get("dataset_root"),
+                (dataset_metadata or {}).get("dataset_root"),
+            ),
         },
-        "checkpoint": ckpt,
+        "job": _job_snapshot(),
+        "active_model": {k: active[k] for k in ("ready", "config", "protocol_version", "test_is_independent", "test_metrics", "validation_metrics")}
+        | {
+            "bundle_id": active["metadata"].get("bundle_id"),
+            "candidate_id": active["metadata"].get("candidate_id") or active["metadata"].get("best_candidate_id"),
+            "class_names": active["metadata"].get("class_names"),
+            "parameters": active["metadata"].get("parameters"),
+            "best_epoch": active["metadata"].get("best_epoch"),
+            "epochs_run": active["metadata"].get("epochs_run"),
+            "learning_curve": active["metadata"].get("learning_curve"),
+            "training": active["metadata"].get("training"),
+            "preprocessing": active["metadata"].get("preprocessing"),
+        },
+        "latest_search": load_json(LATEST_SEARCH_PATH),
     }
+
+
+def _job_snapshot():
+    return {
+        "running": job_state["kind"] is not None,
+        "kind": job_state["kind"],
+        "label": job_state["label"],
+        "started_at": job_state["started_at"],
+        "progress": job_state["progress"][-200:],
+        "result": job_state["result"],
+        "error": job_state["error"],
+    }
+
+
+@app.get("/api/job")
+def get_job():
+    return _job_snapshot()
+
+
+@app.get("/api/history")
+def get_history():
+    active = resolve_active_model()
+    return {
+        "history": load_json(HISTORY_PATH) or [],
+        "search": load_json(LATEST_SEARCH_PATH),
+        "manual_baseline": load_json(MANUAL_BASELINE_PATH),
+        "metadata": active["metadata"],
+        "config": active["config"],
+    }
+
+
+@app.get("/api/runs")
+def list_runs():
+    """Immutable run registry: every search and every trained bundle."""
+    runs = []
+    if RUNS_DIR.exists():
+        for run_dir in sorted(RUNS_DIR.iterdir(), reverse=True):
+            if not run_dir.is_dir():
+                continue
+            summary = load_json(run_dir / "search_summary.json") or {}
+            bundles = []
+            for bundle in sorted(run_dir.glob("model-*")):
+                metrics = load_json(bundle / "metrics.json") or {}
+                test = metrics.get("held_out_test_metrics") or {}
+                bundles.append({
+                    "bundle_id": metrics.get("bundle_id") or f"{run_dir.name}/{bundle.name}",
+                    "training_mode": metrics.get("training_mode"),
+                    "test_accuracy": test.get("accuracy"),
+                    "test_f1": test.get("f1"),
+                    "valid_f1": (metrics.get("validation_metrics") or {}).get("f1"),
+                    "best_epoch": metrics.get("best_epoch"),
+                })
+            runs.append({
+                "run_id": run_dir.name,
+                "dataset_root": (summary.get("dataset") or {}).get("dataset_root"),
+                "best_candidate_id": summary.get("best_candidate_id"),
+                "best_metrics": summary.get("best_metrics"),
+                "candidates": (summary.get("unique_evaluations") or 0) + (summary.get("reused_evaluations") or 0),
+                "bundles": bundles,
+            })
+    return {"runs": runs}
+
+
+# ---------------------------------------------------------------------------
+# Dataset intake
+# ---------------------------------------------------------------------------
 
 
 class LoadDatasetRequest(BaseModel):
     path: str
 
 
+def _mount(path: Path, owned: bool):
+    meta = neuroforge_core.get_dataset_metadata(str(path))
+    workspace_state.update({"dataset_dir": str(path), "dataset_metadata": meta, "dataset_owned": owned})
+    return meta
+
+
 @app.post("/api/dataset/load")
 def load_dataset(req: LoadDatasetRequest):
+    if job_state["kind"]:
+        raise HTTPException(status_code=409, detail="Wait for the running job to finish before changing datasets.")
     p = Path(req.path).expanduser().resolve()
-    if not p.exists() or not p.is_dir():
+    if not p.is_dir():
         raise HTTPException(status_code=400, detail=f"Directory not found: {req.path}")
-    
     try:
-        meta = neuroforge_core.get_dataset_metadata(str(p))
-        workspace_state["dataset_dir"] = str(p)
-        workspace_state["dataset_metadata"] = meta
-        workspace_state["dataset_owned"] = False
-        return {"success": True, "metadata": meta}
+        return {"success": True, "metadata": _mount(p, owned=False)}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to inspect dataset: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to inspect dataset: {e}")
 
 
 @app.post("/api/dataset/upload-zip")
 async def upload_zip(file: UploadFile = File(...)):
-    if not file.filename.endswith(".zip"):
+    if job_state["kind"]:
+        raise HTTPException(status_code=409, detail="Wait for the running job to finish before changing datasets.")
+    if not (file.filename or "").lower().endswith(".zip"):
         raise HTTPException(status_code=400, detail="Only .zip files are supported.")
-    
-    target_dir = PROJECT_ROOT / "datasets" / Path(file.filename).stem
+
+    target_dir = (DATASETS_DIR / Path(file.filename).stem).resolve()
+    if DATASETS_DIR.resolve() not in target_dir.parents:
+        raise HTTPException(status_code=400, detail="Invalid archive name.")
     target_dir.mkdir(parents=True, exist_ok=True)
-    
-    temp_zip = target_dir / "temp_upload.zip"
+    temp_zip = target_dir / ".upload.zip"
     try:
+        written = 0
         with open(temp_zip, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        
-        with zipfile.ZipFile(temp_zip, "r") as zip_ref:
-            zip_ref.extractall(target_dir)
-        
-        temp_zip.unlink(missing_ok=True)
-        
-        meta = neuroforge_core.get_dataset_metadata(str(target_dir))
-        workspace_state["dataset_dir"] = str(target_dir)
-        workspace_state["dataset_metadata"] = meta
-        workspace_state["dataset_owned"] = True
+            while chunk := await file.read(1024 * 1024):
+                written += len(chunk)
+                if written > MAX_UPLOAD_BYTES:
+                    raise HTTPException(status_code=413, detail="Archive is larger than 2 GB; mount it by local path instead.")
+                buffer.write(chunk)
+        with zipfile.ZipFile(temp_zip, "r") as archive:
+            for member in archive.namelist():
+                destination = (target_dir / member).resolve()
+                if destination != target_dir and target_dir not in destination.parents:
+                    raise HTTPException(status_code=400, detail=f"Archive entry escapes the dataset folder: {member}")
+            archive.extractall(target_dir)
+        meta = _mount(target_dir, owned=True)
         return {"success": True, "metadata": meta, "extracted_to": str(target_dir)}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to extract and inspect zip: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to extract and inspect zip: {e}")
+    finally:
+        temp_zip.unlink(missing_ok=True)
 
 
 class UnloadDatasetRequest(BaseModel):
@@ -215,220 +362,143 @@ class UnloadDatasetRequest(BaseModel):
 @app.post("/api/dataset/unload")
 def unload_dataset(req: UnloadDatasetRequest):
     """Clear the active workspace dataset; only remove app-owned ZIP extracts."""
+    if job_state["kind"]:
+        raise HTTPException(status_code=409, detail="Wait for the running job to finish before changing datasets.")
     dataset_dir = workspace_state.get("dataset_dir")
-    was_owned = bool(workspace_state.get("dataset_owned"))
     deleted = False
-
-    if req.delete_uploaded and was_owned and dataset_dir:
+    if req.delete_uploaded and workspace_state.get("dataset_owned") and dataset_dir:
         dataset_path = Path(dataset_dir).resolve()
-        managed_root = (PROJECT_ROOT / "datasets").resolve()
+        managed_root = DATASETS_DIR.resolve()
         if managed_root == dataset_path or managed_root not in dataset_path.parents:
-            raise HTTPException(status_code=400, detail="Only uploaded datasets managed inside the local datasets folder can be deleted.")
-        shutil.rmtree(dataset_path, ignore_errors=False)
+            raise HTTPException(status_code=400, detail="Only uploaded datasets inside the local datasets folder can be deleted.")
+        shutil.rmtree(dataset_path)
         deleted = True
-
-    workspace_state["dataset_dir"] = None
-    workspace_state["dataset_metadata"] = None
-    workspace_state["dataset_owned"] = False
-    workspace_state["model_trained"] = False
+    workspace_state.update({"dataset_dir": None, "dataset_metadata": None, "dataset_owned": False})
     return {"success": True, "deleted": deleted, "unmounted": True}
 
 
-@app.get("/api/history")
-def get_history():
-    history = load_json(HISTORY_PATH) or []
-    metadata = load_json(METADATA_PATH) or {}
-    config = load_json(CONFIG_PATH) or {}
-    return {
-        "history": history,
-        "metadata": metadata,
-        "config": config,
-    }
-
+# ---------------------------------------------------------------------------
+# Comparison
+# ---------------------------------------------------------------------------
 
 COMPARISON_METRICS = ("accuracy", "precision", "recall", "f1", "mse", "rmse")
 
 
 def _metric_bundle(metrics):
+    if not metrics:
+        return None
     return {key: metrics.get(key) for key in COMPARISON_METRICS}
-
-
-def _active_dataset_dir():
-    if workspace_state["dataset_dir"]:
-        return workspace_state["dataset_dir"]
-    metadata = load_json(METADATA_PATH) or {}
-    return metadata.get("dataset", {}).get("dataset_root")
-
-
-def _dataset_matches_model(model_metadata, dataset_metadata, dataset_dir):
-    model_root = (model_metadata.get("dataset") or {}).get("dataset_root")
-    active_root = (dataset_metadata or {}).get("dataset_root") or dataset_dir
-    if not model_root or not active_root:
-        return False
-    try:
-        return os.path.realpath(str(model_root)) == os.path.realpath(str(active_root))
-    except (OSError, TypeError):
-        return str(model_root) == str(active_root)
-
-
-def _evaluate_saved_checkpoint(metadata, config, dataset_dir, weights_path, use_transfer_learning=False, transfer_model="resnet18"):
-    metrics = dict(metadata.get("held_out_test_metrics") or {})
-    if metrics.get("mse") is not None and metrics.get("rmse") is not None:
-        return metrics
-    if not (config and dataset_dir and Path(weights_path).exists()):
-        return metrics
-    try:
-        evaluated = neuroforge_core.evaluate_checkpoint(
-            config,
-            int(metadata.get("num_classes") or len(metadata.get("class_names") or [])),
-            dataset_dir=dataset_dir,
-            evaluation_split="test",
-            use_transfer_learning=use_transfer_learning,
-            transfer_model=transfer_model,
-            weights_path=str(weights_path),
-            seed=int(metadata.get("seed", 42)),
-        )
-        metrics.update(evaluated)
-    except Exception:
-        # A comparison card can still show the persisted classification metrics
-        # when an older or mismatched checkpoint cannot be re-evaluated.
-        pass
-    return metrics
 
 
 @app.get("/api/comparison")
 def get_model_comparison():
-    """Return comparable metrics for the mutated CNN, manual CNN and transfer baselines."""
-    dataset_dir = _active_dataset_dir()
-    metadata = load_json(METADATA_PATH) or {}
-    config = load_json(CONFIG_PATH) or {}
-    dataset_metadata = workspace_state["dataset_metadata"] or metadata.get("dataset")
+    """Comparable metrics for every model trained on the active dataset.
 
-    dynamic_matches = _dataset_matches_model(metadata, dataset_metadata, dataset_dir)
-    dynamic_metrics = _evaluate_saved_checkpoint(
-        metadata,
-        config,
-        dataset_dir,
-        WEIGHTS_PATH,
-        use_transfer_learning=False,
-    ) if dynamic_matches else {}
-    if not dynamic_metrics and metadata.get("best_metrics"):
-        dynamic_metrics = metadata["best_metrics"]
+    Rows are only "ready" when the checkpoint was trained on the active dataset.
+    Test metrics are only labelled independent for protocol v2 checkpoints.
+    """
+    dataset_metadata = _active_dataset_metadata()
+    dataset_root = (dataset_metadata or {}).get("dataset_root")
+    active = resolve_active_model()
+    rows = []
 
-    manual = load_json(MANUAL_BASELINE_PATH) or metadata.get("manual_baseline") or {}
-    manual_metrics = dict(manual)
-    if dataset_dir and not manual_metrics.get("accuracy"):
-        try:
-            split_metadata = neuroforge_core.get_dataset_split_metadata(
-                dataset_dir,
-                seed=int(metadata.get("seed", 42)),
-            )
-            manual_metrics.update(neuroforge_core.evaluate_candidate(
-                architect.MANUAL_BASELINE_CONFIG,
-                epochs=int(metadata.get("proxy_epochs", 3)),
-                dataset_dir=dataset_dir,
-                seed=int(metadata.get("seed", 42)),
-                split_indices=split_metadata,
-            ))
-        except Exception:
-            pass
+    def row_for(model_id, label, kind, metadata, note, ready):
+        test = (metadata or {}).get("held_out_test_metrics") or {}
+        matches = _same_path((metadata or {}).get("dataset", {}).get("dataset_root"), dataset_root)
+        status = "ready" if ready and matches else ("other_dataset" if ready else "not_run")
+        independent = (metadata or {}).get("schema_version", 1) >= 2
+        return {
+            "id": model_id,
+            "label": label,
+            "kind": kind,
+            "status": status,
+            "metrics": _metric_bundle(test) if status == "ready" else None,
+            "validation": _metric_bundle((metadata or {}).get("validation_metrics")) if status == "ready" else None,
+            "split": "test" if independent else "test (legacy: also used for selection)",
+            "test_is_independent": independent,
+            "sample_count": test.get("sample_count"),
+            "parameters": (metadata or {}).get("parameters"),
+            "trainable_parameters": (metadata or {}).get("trainable_parameters"),
+            "latency_ms": (test.get("inference_latency_per_sample_seconds") or 0) * 1000 or None,
+            "budget": f"{metadata.get('epochs_run', metadata.get('epochs'))} epochs (best {metadata.get('best_epoch')})" if status == "ready" and metadata.get("best_epoch") else (f"{metadata.get('epochs')} epochs" if status == "ready" else None),
+            "config": (metadata or {}).get("trained_config"),
+            "note": note,
+        }
 
-    models_list = [
-        {
-            "id": "dynamic_cnn",
-            "label": "Selected DynamicCNN",
-            "kind": "mutation winner",
-            "status": "ready" if dynamic_metrics else ("stale" if metadata.get("training_complete") else "unavailable"),
-            "metrics": _metric_bundle(dynamic_metrics),
-            "config": config,
-            "run_id": metadata.get("run_id"),
-            "budget": f"{metadata.get('epochs', '—')} final epochs",
-            "note": "Architecture selected by mutation search; final checkpoint is used by live inference." if dynamic_matches else "Saved checkpoint belongs to a different dataset. Run a search or training cycle for the active dataset before comparing it.",
-        },
-        {
-            "id": "manual_cnn",
-            "label": "Manual CNN baseline",
-            "kind": "fixed reference",
-            "status": "ready" if manual_metrics else "unavailable",
-            "metrics": _metric_bundle(manual_metrics),
-            "config": manual.get("config", architect.MANUAL_BASELINE_CONFIG),
-            "run_id": manual.get("run_id"),
-            "budget": f"{metadata.get('proxy_epochs', '—')} proxy epochs",
-            "note": "Fixed human-designed CNN evaluated under the proxy search budget.",
-        },
-    ]
+    rows.append(row_for(
+        "dynamic_cnn", "NEUROFORGE winner", "evolved DynamicCNN", active["metadata"],
+        "Architecture selected by mutation search on validation, then fully trained.", active["ready"],
+    ))
 
-    for model_key, spec in TRANSFER_SPECS.items():
-        t_meta = load_json(spec["metadata_path"]) or {}
-        t_matches = _dataset_matches_model(t_meta, dataset_metadata, dataset_dir)
-        t_metrics = _evaluate_saved_checkpoint(
-            t_meta,
-            config,
-            dataset_dir,
-            spec["weights_path"],
-            use_transfer_learning=True,
-            transfer_model=model_key,
-        ) if t_matches else {}
+    for model_key, spec in BASELINE_SPECS.items():
+        weights_path, metadata_path = _baseline_paths(model_key)
+        meta = load_json(metadata_path) or {}
+        ready = bool(weights_path.exists() and meta.get("training_complete"))
+        rows.append(row_for(model_key, spec["name"], spec["kind"], meta, spec["note"], ready))
 
-        is_trained = bool(t_meta.get("training_complete") and t_metrics)
-        models_list.append({
-            "id": spec["id"],
-            "label": spec["name"],
-            "kind": spec["kind"],
-            "status": "ready" if is_trained else ("stale" if t_meta.get("training_complete") else "not_run"),
-            "metrics": _metric_bundle(t_metrics) if is_trained else spec["default_metrics"],
-            "config": spec["config"],
-            "run_id": t_meta.get("run_id"),
-            "budget": f"{t_meta.get('epochs', 20)} final epochs" if is_trained else "not run",
-            "note": spec["note"],
-        })
-
-    models_list.append({
-        "id": "vit_tiny",
-        "label": "Vision Transformer (ViT-Tiny)",
-        "kind": "self-attention foundation",
-        "status": "ready",
-        "metrics": {"accuracy": 76.5, "precision": 74.2, "recall": 73.0, "f1": 71.2, "mse": 0.0385, "rmse": 0.1962},
-        "config": {"backbone": "ViT-Tiny", "patch_size": 16, "heads": 6, "embed_dim": 192},
-        "run_id": "vit-attention-benchmark",
-        "budget": "20 transfer epochs",
-        "note": "Multi-head self-attention transformer; high memory bandwidth on edge accelerators.",
-    })
+    # The proxy-search baseline is a different (shorter) budget; report it separately.
+    proxy_baseline = load_json(MANUAL_BASELINE_PATH)
+    latest_search = load_json(LATEST_SEARCH_PATH) or {}
+    proxy = None
+    if proxy_baseline and _same_path((latest_search.get("dataset") or {}).get("dataset_root"), dataset_root):
+        proxy = {
+            "manual_baseline": _metric_bundle(proxy_baseline),
+            "search_winner": latest_search.get("best_metrics"),
+            "budget": latest_search.get("proxy_epochs"),
+            "split": proxy_baseline.get("evaluation_split", "valid"),
+        }
 
     return {
         "success": True,
         "dataset": dataset_metadata,
         "metric_definitions": {
             "accuracy": "Percent of correctly classified samples.",
-            "precision": "Macro precision across the class vocabulary, in percent.",
-            "recall": "Macro recall across the class vocabulary, in percent.",
-            "f1": "Macro F1 across the class vocabulary, in percent.",
-            "mse": "Mean squared error between the probability vector and one-hot target; lower is better.",
+            "precision": "Macro precision across classes, in percent.",
+            "recall": "Macro recall across classes, in percent.",
+            "f1": "Macro F1 across classes, in percent.",
+            "mse": "Mean squared error between probability vector and one-hot target; lower is better.",
             "rmse": "Square root of probability-vector MSE; lower is better.",
         },
-        "models": models_list,
+        "models": rows,
+        "proxy_comparison": proxy,
     }
 
 
+# ---------------------------------------------------------------------------
+# Training
+# ---------------------------------------------------------------------------
+
+
 class FullTrainRequest(BaseModel):
-    epochs: int = 15
+    epochs: int = Field(30, ge=1, le=200)
+    candidate_id: Optional[str] = None
+
+
+def _record_progress(update):
+    job_state["progress"].append(update)
+
+
+def _resolve_training_config(candidate_id, dataset_dir):
+    history = load_json(HISTORY_PATH) or []
+    summary = load_json(LATEST_SEARCH_PATH) or {}
+    summary_matches = _same_path((summary.get("dataset") or {}).get("dataset_root"), (neuroforge_core.get_dataset_metadata(dataset_dir) or {}).get("dataset_root"))
+    if candidate_id:
+        for candidate in history:
+            if candidate.get("candidate_id") == candidate_id:
+                return candidate["config"], candidate_id, summary if summary_matches else None, history
+        raise HTTPException(status_code=404, detail=f"Candidate {candidate_id} is not in the latest search.")
+    if summary_matches and summary.get("best_config"):
+        return summary["best_config"], summary.get("best_candidate_id"), summary, history
+    raise HTTPException(status_code=400, detail="Run a search on this dataset first, or pass a candidate_id.")
 
 
 @app.post("/api/train/full")
 def run_full_training(req: FullTrainRequest):
-    if req.epochs < 1 or req.epochs > 100:
-        raise HTTPException(status_code=400, detail="epochs must be between 1 and 100")
-    dataset_dir = workspace_state["dataset_dir"]
+    dataset_dir = _active_dataset_dir()
     if not dataset_dir:
-        meta = load_json(METADATA_PATH) or {}
-        dataset_dir = meta.get("dataset", {}).get("dataset_root")
-        if not dataset_dir:
-            raise HTTPException(status_code=400, detail="No dataset loaded to train on.")
-    
-    config = load_json(CONFIG_PATH)
-    if not config:
-        raise HTTPException(status_code=400, detail="No active architecture configuration found to train.")
-    
+        raise HTTPException(status_code=400, detail="No dataset loaded to train on.")
+    config, candidate_id, summary, history = _resolve_training_config(req.candidate_id, dataset_dir)
+    _begin_job("train", f"Training {candidate_id or 'selected architecture'}")
     try:
         result = architect.train_final_model(
             config=config,
@@ -436,467 +506,369 @@ def run_full_training(req: FullTrainRequest):
             epochs=req.epochs,
             output_weights_path=str(WEIGHTS_PATH),
             output_metadata_path=str(METADATA_PATH),
+            output_config_path=str(CONFIG_PATH),
+            search_summary=summary,
+            search_history=history,
+            candidate_id=candidate_id,
+            progress_callback=_record_progress,
         )
-        with open(CONFIG_PATH, "w") as f:
-            json.dump(config, f, indent=2)
-        meta = load_json(METADATA_PATH) or {}
-        meta["config"] = config
-        meta["trained_config"] = config
-        with open(METADATA_PATH, "w") as f:
-            json.dump(meta, f, indent=2)
-
-        workspace_state["model_trained"] = True
+        _end_job(result=result)
         return {"success": True, "metrics": result}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Full training failed: {str(e)}")
+        _end_job(error=str(e))
+        raise HTTPException(status_code=500, detail=f"Full training failed: {e}")
 
 
-class TransferTrainRequest(BaseModel):
+class BaselineTrainRequest(BaseModel):
     model_type: str = "resnet18"
-    epochs: int = 20
+    epochs: int = Field(20, ge=1, le=200)
 
 
-@app.post("/api/train/transfer")
-def run_transfer_training(req: TransferTrainRequest):
-    if req.epochs < 1 or req.epochs > 100:
-        raise HTTPException(status_code=400, detail="epochs must be between 1 and 100")
-
+@app.post("/api/train/baseline")
+def run_baseline_training(req: BaselineTrainRequest):
     model_key = req.model_type.lower()
-    spec = TRANSFER_SPECS.get(model_key, TRANSFER_SPECS["resnet18"])
-    weights_path = spec["weights_path"]
-    metadata_path = spec["metadata_path"]
-
+    spec = BASELINE_SPECS.get(model_key)
+    if not spec:
+        raise HTTPException(status_code=400, detail=f"Unknown baseline '{req.model_type}'. Options: {', '.join(BASELINE_SPECS)}")
     dataset_dir = _active_dataset_dir()
     if not dataset_dir:
         raise HTTPException(status_code=400, detail=f"No dataset loaded to compare with {spec['name']}.")
+    dataset_metadata = neuroforge_core.get_dataset_metadata(dataset_dir)
+    if spec["transfer"] and dataset_metadata.get("modality") != "image":
+        raise HTTPException(status_code=400, detail=f"{spec['name']} is available for image datasets only.")
 
+    weights_path, metadata_path = _baseline_paths(model_key)
+    _begin_job("train", f"Training baseline {spec['name']}")
     try:
-        dataset_metadata = neuroforge_core.get_dataset_metadata(dataset_dir)
-        if dataset_metadata.get("modality") != "image":
-            raise HTTPException(status_code=400, detail=f"{spec['name']} comparison is available for image datasets only.")
-        config = load_json(CONFIG_PATH) or architect.MANUAL_BASELINE_CONFIG
         result = architect.train_final_model(
-            config=config,
+            config=architect.MANUAL_BASELINE_CONFIG,
             dataset_dir=dataset_dir,
             epochs=req.epochs,
             output_weights_path=str(weights_path),
             output_metadata_path=str(metadata_path),
-            use_transfer_learning=True,
-            transfer_model=model_key,
+            use_transfer_learning=spec["transfer"],
+            transfer_model=model_key if spec["transfer"] else "resnet18",
+            progress_callback=_record_progress,
         )
-        t_meta = load_json(metadata_path) or {}
-        t_meta.update({
-            "model_type": f"{model_key}_transfer_baseline",
-            "architecture": spec["name"],
-            "transfer_model": model_key,
-            "dataset": dataset_metadata,
-            "training_complete": True,
-            "comparison_role": f"fixed_{model_key}_transfer_baseline",
-        })
-        with open(metadata_path, "w") as handle:
-            json.dump(t_meta, handle, indent=2)
-        return {
-            "success": True,
-            "model": spec["name"],
-            "model_type": model_key,
-            "metrics": result,
-            "comparison": get_model_comparison(),
-        }
-    except HTTPException:
-        raise
+        meta = load_json(metadata_path) or {}
+        meta.update({"model_type": f"{model_key}_baseline", "architecture": spec["name"], "comparison_role": f"fixed_{model_key}_baseline"})
+        architect._write_json(str(metadata_path), meta)
+        _end_job(result=result)
+        return {"success": True, "model": spec["name"], "model_type": model_key, "metrics": result, "comparison": get_model_comparison()}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{spec['name']} comparison failed: {str(e)}")
+        _end_job(error=str(e))
+        raise HTTPException(status_code=500, detail=f"{spec['name']} comparison failed: {e}")
 
 
-class ResNetTrainRequest(BaseModel):
-    epochs: int = 20
+# Backwards-compatible aliases for the previous studio build.
+@app.post("/api/train/transfer")
+def run_transfer_training(req: BaselineTrainRequest):
+    return run_baseline_training(req)
 
 
-@app.post("/api/train/resnet")
-def run_resnet_training(req: ResNetTrainRequest):
-    return run_transfer_training(TransferTrainRequest(model_type="resnet18", epochs=req.epochs))
+# ---------------------------------------------------------------------------
+# Inference
+# ---------------------------------------------------------------------------
 
 
 def compute_gradcam_overlay(model, input_tensor, target_class_idx: int, target_size: tuple = (256, 256)) -> Optional[str]:
+    """Grad-CAM on the last convolution; returns a turbo-coloured RGBA PNG data URL."""
+    last_conv = None
+    for module in getattr(model, "features", torch.nn.Sequential()).modules():
+        if isinstance(module, torch.nn.Conv2d):
+            last_conv = module
+    if last_conv is None:
+        return None
+
+    captured = {}
+    h1 = last_conv.register_forward_hook(lambda m, i, o: captured.__setitem__("activations", o))
+    h2 = last_conv.register_full_backward_hook(lambda m, gi, go: captured.__setitem__("gradients", go[0]))
     try:
-        last_conv = None
-        if hasattr(model, "features"):
-            for m in model.features.modules():
-                if isinstance(m, torch.nn.Conv2d):
-                    last_conv = m
-        if not last_conv:
-            return None
-
-        activations = None
-        gradients = None
-
-        def f_hook(mod, inp, out):
-            nonlocal activations
-            activations = out
-
-        def b_hook(mod, gin, gout):
-            nonlocal gradients
-            gradients = gout[0]
-
-        h1 = last_conv.register_forward_hook(f_hook)
-        h2 = last_conv.register_full_backward_hook(b_hook)
-
         x = input_tensor.clone().detach().requires_grad_(True)
-        out = model(x)
-        score = out[0, target_class_idx]
-        score.backward()
-
+        model.zero_grad()
+        model(x)[0, target_class_idx].backward()
+    finally:
         h1.remove()
         h2.remove()
-
-        if gradients is None or activations is None:
-            return None
-
-        # Grad-CAM calculation
-        weights = gradients.mean(dim=(2, 3), keepdim=True)
-        cam = (weights * activations).sum(dim=1, keepdim=True)
-        cam = F.relu(cam)
-        cam = F.interpolate(cam, size=target_size, mode="bilinear", align_corners=False)
-        cam_min, cam_max = cam.min(), cam.max()
-        cam = (cam - cam_min) / (cam_max - cam_min + 1e-8)
-        cam_np = cam.squeeze().detach().cpu().numpy()
-
-        # Turbo/Jet RGBA colormap for high-contrast heat visualization
-        r = np.clip(1.5 - np.abs(4.0 * cam_np - 3.0), 0.0, 1.0)
-        g = np.clip(1.5 - np.abs(4.0 * cam_np - 2.0), 0.0, 1.0)
-        b = np.clip(1.5 - np.abs(4.0 * cam_np - 1.0), 0.0, 1.0)
-        a = np.clip(cam_np * 1.8, 0.15, 0.90)
-        rgba = np.stack([r * 255, g * 255, b * 255, a * 255], axis=-1).astype(np.uint8)
-
-        img = Image.fromarray(rgba, mode="RGBA")
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-        return f"data:image/png;base64,{b64}"
-    except Exception as e:
-        print("Grad-CAM generation failed:", e)
+    if "gradients" not in captured or "activations" not in captured:
         return None
+
+    weights = captured["gradients"].mean(dim=(2, 3), keepdim=True)
+    cam = F.relu((weights * captured["activations"]).sum(dim=1, keepdim=True))
+    cam = F.interpolate(cam, size=(target_size[1], target_size[0]), mode="bilinear", align_corners=False)
+    cam = (cam - cam.min()) / (cam.max() - cam.min() + 1e-8)
+    cam_np = cam.squeeze().detach().cpu().numpy()
+
+    r = np.clip(1.5 - np.abs(4.0 * cam_np - 3.0), 0.0, 1.0)
+    g = np.clip(1.5 - np.abs(4.0 * cam_np - 2.0), 0.0, 1.0)
+    b = np.clip(1.5 - np.abs(4.0 * cam_np - 1.0), 0.0, 1.0)
+    a = np.clip(cam_np * 1.8, 0.15, 0.90)
+    rgba = np.stack([r * 255, g * 255, b * 255, a * 255], axis=-1).astype(np.uint8)
+    buffer = io.BytesIO()
+    Image.fromarray(rgba, mode="RGBA").save(buffer, format="PNG")
+    return "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+_model_cache: Dict[str, Any] = {"key": None, "model": None}
+
+
+def _load_active_model(config, num_classes, dataset_dir):
+    key = (WEIGHTS_PATH.stat().st_mtime_ns, neuroforge_core.config_hash(config), num_classes)
+    if _model_cache["key"] != key:
+        model = neuroforge_core._build_model(config, num_classes=num_classes, dataset_dir=dataset_dir)
+        model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=neuroforge_core.device, weights_only=True))
+        model.to(neuroforge_core.device).eval()
+        _model_cache.update({"key": key, "model": model})
+    return _model_cache["model"]
 
 
 @app.post("/api/predict")
 async def predict_sample(file: UploadFile = File(...)):
-    if not WEIGHTS_PATH.exists() or not CONFIG_PATH.exists():
-        raise HTTPException(status_code=400, detail="Trained model checkpoint not found.")
+    active = resolve_active_model()
+    if not active["ready"]:
+        raise HTTPException(status_code=400, detail="No trained model yet. Run a search and train the winner first.")
+    config, metadata = active["config"], active["metadata"]
+    dataset_dir = (metadata.get("dataset") or {}).get("dataset_root") or _active_dataset_dir()
+    modality = (metadata.get("dataset") or {}).get("modality", "image")
+    class_names = metadata.get("class_names") or []
+    num_classes = metadata.get("num_classes") or len(class_names)
+    if not num_classes:
+        raise HTTPException(status_code=400, detail="Checkpoint metadata is missing its class list; retrain the model.")
 
-    config = load_json(CONFIG_PATH)
-    metadata = load_json(METADATA_PATH) or {}
-
-    # Ensure config strictly matches the checkpoint weights in best_model_weights.pth
-    trained_config = metadata.get("trained_config") or metadata.get("config")
-    if not trained_config and metadata.get("config_hash"):
-        target_hash = metadata.get("config_hash")
-        if not config or neuroforge_core.config_hash(config) != target_hash:
-            history = load_json(HISTORY_PATH)
-            if isinstance(history, list):
-                for candidate in history:
-                    if candidate.get("config_hash") == target_hash and candidate.get("config"):
-                        trained_config = candidate["config"]
-                        break
-    if trained_config:
-        config = trained_config
-    dataset_dir = workspace_state["dataset_dir"] or metadata.get("dataset", {}).get("dataset_root")
-    dataset_metadata = workspace_state.get("dataset_metadata")
-    if not dataset_metadata and dataset_dir:
-        try:
-            dataset_metadata = neuroforge_core.get_dataset_metadata(dataset_dir)
-        except Exception:
-            dataset_metadata = None
-
-    modality = (dataset_metadata or metadata.get("dataset") or {}).get("modality", "image")
-    class_names = (dataset_metadata or {}).get("class_names") or metadata.get("class_names") or metadata.get("dataset", {}).get("class_names")
-    num_classes = (dataset_metadata or {}).get("num_classes") or metadata.get("num_classes") or (len(class_names) if class_names else 2)
-    if not class_names:
-        class_names = [f"Class_{i}" for i in range(num_classes)]
+    contents = await file.read()
+    is_wav = (file.filename or "").lower().endswith(".wav")
+    if is_wav and modality != "audio":
+        raise HTTPException(status_code=400, detail="The active model was trained on images. Mount an audio dataset (ESC-50 / UrbanSound8K) and train it to classify WAV files.")
+    if not is_wav and modality == "audio":
+        raise HTTPException(status_code=400, detail="The active model was trained on audio. Upload a 16-bit PCM WAV file.")
 
     try:
-        contents = await file.read()
         start_time = time.perf_counter()
-        is_wav = file.filename.lower().endswith(".wav") if file.filename else False
-        
-        if is_wav and modality != "audio":
-            raise HTTPException(
-                status_code=400,
-                detail="Active model is trained on image data (3-channel RGB). To evaluate WAV audio, mount an audio dataset (e.g., ESC-50 or UrbanSound8K) in the Mutation Loop."
-            )
-        if not is_wav and modality == "audio":
-            raise HTTPException(
-                status_code=400,
-                detail="Active model is trained on audio data (1-channel log-mel spectrogram). Please upload a 16-bit PCM WAV audio file."
-            )
-
+        saliency_map = None
+        feature_shape = None
         if modality == "audio":
-            if not is_wav:
-                raise ValueError("Audio inference requires 16-bit PCM WAV files.")
             probs, feature_shape = neuroforge_core.predict_audio_distribution(
-                contents,
-                config,
-                num_classes=num_classes,
-                weights_path=str(WEIGHTS_PATH),
-                dataset_dir=dataset_dir,
+                contents, config, num_classes=num_classes, weights_path=str(WEIGHTS_PATH), dataset_dir=dataset_dir,
             )
             probs = probs.numpy()
+            latency_ms = (time.perf_counter() - start_time) * 1000
         else:
             image = Image.open(io.BytesIO(contents)).convert("RGB")
-            model = neuroforge_core._build_model(config, num_classes=num_classes, dataset_dir=dataset_dir)
-            state_dict = torch.load(WEIGHTS_PATH, map_location=neuroforge_core.device, weights_only=True)
-            model.load_state_dict(state_dict)
-            model.to(neuroforge_core.device)
-            model.eval()
-            transform = neuroforge_core._image_transform(dataset_dir=dataset_dir, train=False)
+            model = _load_active_model(config, num_classes, dataset_dir)
+            transform = neuroforge_core._image_transform(dataset_dir=dataset_dir, train=False, image_size=neuroforge_core.input_size_for(config))
             input_tensor = transform(image).unsqueeze(0).to(neuroforge_core.device)
             with torch.no_grad():
-                outputs = model(input_tensor)
-                probs = torch.softmax(outputs, dim=1)[0].cpu().numpy()
-        latency_ms = (time.perf_counter() - start_time) * 1000
-
-        ranked_predictions = []
-        for idx, prob in enumerate(probs):
-            name = class_names[idx] if idx < len(class_names) else f"Class_{idx}"
-            ranked_predictions.append({
-                "class_index": idx,
-                "class_name": name,
-                "confidence": float(prob),
-                "percentage": round(float(prob) * 100, 2),
-            })
-        ranked_predictions.sort(key=lambda x: x["confidence"], reverse=True)
-        
-        top_pred = ranked_predictions[0]
-
-        saliency_map = None
-        if modality != "audio":
+                probs = torch.softmax(model(input_tensor), dim=1)[0].cpu().numpy()
+            latency_ms = (time.perf_counter() - start_time) * 1000
             try:
-                saliency_map = compute_gradcam_overlay(
-                    model,
-                    input_tensor,
-                    target_class_idx=top_pred["class_index"],
-                    target_size=image.size,
-                )
-            except Exception as cam_err:
-                print("Grad-CAM generation skipped:", cam_err)
+                saliency_map = compute_gradcam_overlay(model, input_tensor, int(probs.argmax()), target_size=image.size)
+            except Exception as cam_error:
+                print("Grad-CAM skipped:", cam_error)
 
+        ranked = sorted(
+            (
+                {
+                    "class_index": idx,
+                    "class_name": class_names[idx] if idx < len(class_names) else f"Class_{idx}",
+                    "confidence": float(prob),
+                    "percentage": round(float(prob) * 100, 2),
+                }
+                for idx, prob in enumerate(probs)
+            ),
+            key=lambda item: item["confidence"],
+            reverse=True,
+        )
+        top = ranked[0]
         response = {
             "success": True,
             "modality": modality,
-            "prediction": top_pred["class_name"],
-            "confidence": top_pred["confidence"],
-            "percentage": top_pred["percentage"],
+            "prediction": top["class_name"],
+            "confidence": top["confidence"],
+            "percentage": top["percentage"],
+            "chance_percentage": round(100 / num_classes, 2),
             "latency_ms": round(latency_ms, 2),
-            "all_classes": ranked_predictions,
+            "all_classes": ranked,
             "saliency_map": saliency_map,
         }
-        if modality == "audio":
-            response.update({
-                "feature_shape": feature_shape,
-                "preprocessing": "16 kHz mono · 4 s · 64-band log-mel",
-            })
+        if feature_shape:
+            response.update({"feature_shape": feature_shape, "preprocessing": "16 kHz mono · 4 s · 64-band log-mel"})
         return response
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Inference failed: {e}")
 
 
 @app.post("/api/audio/predict")
 async def predict_audio_sample(file: UploadFile = File(...)):
-    """Dedicated endpoint for 16-bit PCM WAV audio inference."""
     return await predict_sample(file)
+
+
+# ---------------------------------------------------------------------------
+# Live search
+# ---------------------------------------------------------------------------
 
 
 @app.websocket("/ws/search")
 async def websocket_search(websocket: WebSocket):
     await websocket.accept()
-    workspace_state["search_in_progress"] = True
-    
+    if not job_lock.acquire(blocking=False):
+        await websocket.send_json({"type": "error", "message": f"Busy: {job_state.get('label')} is still running."})
+        await websocket.close()
+        return
+    stop_event = threading.Event()
+    loop = asyncio.get_running_loop()
+
+    def send(payload):
+        future = asyncio.run_coroutine_threadsafe(websocket.send_json(payload), loop)
+        try:
+            future.result(timeout=10)
+        except Exception:
+            stop_event.set()  # client is gone; stop spending compute
+
+    async def listen_for_stop():
+        try:
+            while True:
+                message = await websocket.receive_json()
+                if message.get("type") == "stop":
+                    stop_event.set()
+        except Exception:
+            stop_event.set()
+
+    listener = None
     try:
         init_data = await websocket.receive_json()
-        generations = init_data.get("generations", 3)
-        population = init_data.get("population", 4)
-        proxy_epochs = init_data.get("proxy_epochs", 2)
-        dataset_dir = workspace_state["dataset_dir"] or init_data.get("dataset_dir")
-        
+        generations = int(init_data.get("generations", 3))
+        population = int(init_data.get("population", 4))
+        proxy_epochs = int(init_data.get("proxy_epochs", 2))
+        dataset_dir = _active_dataset_dir()
         if not dataset_dir:
-            await websocket.send_json({"type": "error", "message": "No dataset specified or loaded."})
+            await websocket.send_json({"type": "error", "message": "Mount a dataset before starting a search."})
             return
-        
+        if not (1 <= generations <= 20 and 2 <= population <= 24 and 1 <= proxy_epochs <= 5):
+            await websocket.send_json({"type": "error", "message": "Budget out of range: generations 1–20, population 2–24, proxy epochs 1–5."})
+            return
+
+        job_state.update({"kind": "search", "label": f"Search {generations}×{population}", "started_at": time.time(), "progress": [], "result": None, "error": None})
         await websocket.send_json({
             "type": "started",
-            "message": f"Starting Forge Search: {generations} gens × {population} candidates, {proxy_epochs} proxy epochs",
-            "config": {"generations": generations, "population": population, "proxy_epochs": proxy_epochs}
+            "config": {"generations": generations, "population": population, "proxy_epochs": proxy_epochs},
+            "evaluation_split": "valid",
         })
-        
-        # Define callback to stream candidate completions over websocket
-        loop = asyncio.get_event_loop()
-        
-        def on_candidate_evaluated(candidate_data):
-            asyncio.run_coroutine_threadsafe(
-                websocket.send_json({
-                    "type": "candidate_evaluated",
-                    "data": candidate_data
-                }),
-                loop
-            )
-            
-        def on_generation_completed(gen_idx, generation_summary):
-            asyncio.run_coroutine_threadsafe(
-                websocket.send_json({
-                    "type": "generation_completed",
-                    "generation": gen_idx,
-                    "summary": generation_summary
-                }),
-                loop
-            )
-        
-        # Run search in background thread so websocket event loop is unblocked
-        search_result = await loop.run_in_executor(
-            None,
-            lambda: architect.run_architect_search(
-                dataset_dir=dataset_dir,
-                generations=generations,
-                population_size=population,
-                proxy_epochs=proxy_epochs,
-                progress_callback=on_candidate_evaluated,
-                generation_callback=on_generation_completed,
-            )
-        )
-        
+        listener = asyncio.create_task(listen_for_stop())
+
+        def on_candidate(candidate):
+            job_state["progress"].append({"candidate_id": candidate["candidate_id"], "score": candidate["score"]})
+            send({"type": "candidate_evaluated", "data": candidate})
+
+        def on_generation(gen_idx, summary):
+            send({"type": "generation_completed", "generation": gen_idx, "summary": summary})
+
+        result = await loop.run_in_executor(None, lambda: architect.run_architect_search(
+            dataset_dir=dataset_dir,
+            generations=generations,
+            population_size=population,
+            proxy_epochs=proxy_epochs,
+            output_dir=str(PROJECT_ROOT),
+            progress_callback=on_candidate,
+            generation_callback=on_generation,
+            should_stop=stop_event.is_set,
+        ))
+        job_state["result"] = {"run_id": result["run_id"], "best_candidate_id": result["best_candidate_id"]}
         await websocket.send_json({
             "type": "search_completed",
-            "best_candidate_id": search_result.get("best_candidate_id"),
-            "best_result": search_result.get("best_result"),
-            "manual_baseline": search_result.get("manual_baseline"),
+            "run_id": result["run_id"],
+            "stopped_early": result["metadata"].get("stopped_early"),
+            "best_candidate_id": result["best_candidate_id"],
+            "best_result": result["best_result"],
+            "manual_baseline": result["manual_baseline"],
         })
-        
     except WebSocketDisconnect:
-        print("Search WebSocket client disconnected.")
+        stop_event.set()
     except Exception as e:
-        await websocket.send_json({"type": "error", "message": str(e)})
+        job_state["error"] = str(e)
+        try:
+            await websocket.send_json({"type": "error", "message": str(e)})
+        except Exception:
+            pass
     finally:
-        workspace_state["search_in_progress"] = False
+        if listener:
+            listener.cancel()
+        job_state.update({"kind": None, "finished_at": time.time()})
+        job_lock.release()
+
+
+# ---------------------------------------------------------------------------
+# Samples + downloads
+# ---------------------------------------------------------------------------
+
+
+def _contained_file(root: Path, rel_path: str, suffixes) -> Path:
+    """Resolve rel_path under root and refuse anything that escapes it."""
+    root = root.resolve()
+    candidate = (root / rel_path).resolve()
+    if root not in candidate.parents or candidate.suffix.lower() not in suffixes or not candidate.is_file():
+        raise HTTPException(status_code=404, detail="Sample not found.")
+    return candidate
 
 
 @app.get("/api/samples")
 def get_sample_files():
-    """Return sample files from the active modality for instant inference."""
-    dataset_dir = workspace_state["dataset_dir"]
-    if not dataset_dir:
-        meta = load_json(METADATA_PATH) or {}
-        dataset_dir = meta.get("dataset", {}).get("dataset_root")
-    
+    """One sample per class (up to 8), preferring the test/valid partitions."""
+    dataset_dir = _active_dataset_dir()
     if not dataset_dir or not Path(dataset_dir).exists():
         return {"samples": []}
+    dataset_metadata = _active_dataset_metadata() or {}
+    root = Path(dataset_dir).resolve()
+    samples, seen = [], set()
 
-    dataset_metadata = workspace_state.get("dataset_metadata")
-    if not dataset_metadata:
-        try:
-            dataset_metadata = neuroforge_core.get_dataset_metadata(dataset_dir)
-        except Exception:
-            dataset_metadata = None
+    def add(path, class_name, modality):
+        if class_name in seen or len(samples) >= 8:
+            return
+        seen.add(class_name)
+        samples.append({"class_name": class_name, "filename": Path(path).name, "rel_path": str(Path(path).resolve().relative_to(root)), "modality": modality})
 
-    if (dataset_metadata or {}).get("modality") == "audio":
+    if dataset_metadata.get("modality") == "audio":
         descriptor = neuroforge_core.audio_pipeline.detect_audio_dataset(dataset_dir)
-        if not descriptor:
-            return {"samples": []}
-        samples = []
-        seen_classes = set()
-        for path, _, class_name, _ in descriptor["samples"]:
-            if class_name in seen_classes:
-                continue
-            seen_classes.add(class_name)
-            samples.append({
-                "class_name": class_name,
-                "filename": Path(path).name,
-                "rel_path": str(Path(path).resolve().relative_to(Path(dataset_dir).resolve())),
-                "modality": "audio",
-            })
-        return {"samples": samples[:6]}
+        for path, _, class_name, _ in (descriptor or {}).get("samples", []):
+            add(path, class_name, "audio")
+        return {"samples": samples}
 
     roboflow_root = neuroforge_core.find_roboflow_dataset_root(dataset_dir)
     if roboflow_root:
-        samples = []
-        seen_classes = set()
         for split in ("test", "valid"):
-            split_dir = roboflow_root / split
-            if split_dir.is_dir():
-                try:
-                    class_names, split_samples, _ = neuroforge_core._read_roboflow_labels(split_dir)
-                    for img_path, label_idx in split_samples:
-                        c_name = class_names[label_idx]
-                        if c_name in seen_classes:
-                            continue
-                        seen_classes.add(c_name)
-                        p_obj = Path(img_path)
-                        samples.append({
-                            "class_name": c_name,
-                            "filename": p_obj.name,
-                            "rel_path": str(p_obj.resolve().relative_to(Path(dataset_dir).resolve())),
-                            "modality": "image",
-                        })
-                        if len(samples) >= 6:
-                            break
-                except Exception:
-                    pass
-            if len(samples) >= 6:
-                break
-        if samples:
-            return {"samples": samples}
+            try:
+                class_names, split_samples, _ = neuroforge_core._read_roboflow_labels(roboflow_root / split)
+            except Exception:
+                continue
+            for img_path, label_idx in split_samples:
+                add(img_path, class_names[label_idx], "image")
+        return {"samples": samples}
 
-    p = Path(dataset_dir)
-    samples = []
-    # Search for up to 6 diverse class samples
-    for class_dir in sorted(p.iterdir()):
-        if class_dir.is_dir() and not class_dir.name.startswith((".", "_")):
-            images = [f for f in class_dir.iterdir() if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]]
-            if images:
-                chosen = images[0]
-                samples.append({
-                    "class_name": class_dir.name,
-                    "filename": chosen.name,
-                    "rel_path": f"{class_dir.name}/{chosen.name}",
-                    "modality": "image",
-                })
-    return {"samples": samples[:6]}
+    # ImageFolder: draw from the sealed test partition so demos aren't training images.
+    image_root = neuroforge_core.find_imagefolder_dataset_root(dataset_dir)
+    dataset = neuroforge_core.CleanImageFolder(root=image_root, is_valid_file=neuroforge_core._is_usable_image_file)
+    split = neuroforge_core.get_split_indices(len(dataset), labels=dataset.targets)
+    for index in split["test"]:
+        path, label = dataset.samples[index]
+        add(path, dataset.classes[label], "image")
+    return {"samples": samples}
 
 
 @app.get("/api/sample-image")
 def get_sample_image(rel_path: str):
-    """Serve a sample image file."""
     dataset_dir = _active_dataset_dir()
     if not dataset_dir:
         raise HTTPException(status_code=404, detail="Dataset directory not configured.")
-    
-    effective_root = neuroforge_core.find_roboflow_dataset_root(dataset_dir) or Path(dataset_dir)
-    img_path = (Path(effective_root) / rel_path).resolve()
-    if not img_path.exists() or not img_path.is_file():
-        img_path = (Path(dataset_dir) / rel_path).resolve()
-    
-    if not img_path.exists() or not img_path.is_file():
-        raise HTTPException(status_code=404, detail="Image not found.")
-    
-    return FileResponse(img_path)
+    return FileResponse(_contained_file(Path(dataset_dir), rel_path, neuroforge_core.SUPPORTED_IMAGE_EXTENSIONS))
 
 
 @app.get("/api/sample-audio")
 def get_sample_audio(rel_path: str):
-    """Serve a WAV sample from the active audio dataset."""
-    dataset_dir = workspace_state["dataset_dir"]
-    if not dataset_dir:
-        meta = load_json(METADATA_PATH) or {}
-        dataset_dir = meta.get("dataset", {}).get("dataset_root")
+    dataset_dir = _active_dataset_dir()
     if not dataset_dir:
         raise HTTPException(status_code=404, detail="Dataset directory not configured.")
-
-    audio_path = (Path(dataset_dir) / rel_path).resolve()
-    dataset_root = Path(dataset_dir).resolve()
-    if dataset_root not in audio_path.parents or audio_path.suffix.lower() != ".wav":
-        raise HTTPException(status_code=400, detail="Invalid audio sample path.")
-    if not audio_path.exists() or not audio_path.is_file():
-        raise HTTPException(status_code=404, detail="Audio sample not found.")
-    return FileResponse(audio_path, media_type="audio/wav")
+    return FileResponse(_contained_file(Path(dataset_dir), rel_path, {".wav"}), media_type="audio/wav")
 
 
 @app.get("/api/download/weights")
@@ -908,24 +880,32 @@ def download_weights():
 
 @app.get("/api/download/config")
 def download_config():
-    if not CONFIG_PATH.exists():
-        raise HTTPException(status_code=404, detail="Config file not found.")
-    return FileResponse(CONFIG_PATH, filename="best_model_config.json")
+    active = resolve_active_model()
+    if not active["config"]:
+        raise HTTPException(status_code=404, detail="Config not found.")
+    path = RUNS_DIR / ".export_config.json"
+    RUNS_DIR.mkdir(exist_ok=True)
+    architect._write_json(str(path), active["config"])
+    return FileResponse(path, filename="best_model_config.json")
 
 
-@app.get("/api/download/resnet-weights")
-def download_resnet_weights():
-    if not RESNET_WEIGHTS_PATH.exists():
-        raise HTTPException(status_code=404, detail="ResNet-18 comparison checkpoint has not been trained yet.")
-    return FileResponse(RESNET_WEIGHTS_PATH, filename="resnet18_comparison_weights.pth")
+@app.get("/api/download/bundle")
+def download_bundle():
+    """Zip of the active model's immutable bundle (config, weights, labels, preprocessing, splits, metrics, lineage)."""
+    bundle_dir = resolve_active_model()["metadata"].get("bundle_dir")
+    if not bundle_dir or not Path(bundle_dir).is_dir():
+        raise HTTPException(status_code=404, detail="The active model predates run bundles. Retrain it to produce one.")
+    archive = shutil.make_archive(str(RUNS_DIR / ".export_bundle"), "zip", bundle_dir)
+    return FileResponse(archive, filename=f"neuroforge-{Path(bundle_dir).name}.zip")
 
 
 @app.get("/api/download/transfer-weights")
 def download_transfer_weights(model: str = "resnet18"):
-    spec = TRANSFER_SPECS.get(model.lower(), TRANSFER_SPECS["resnet18"])
-    weights_path = spec["weights_path"]
+    if model.lower() not in BASELINE_SPECS:
+        raise HTTPException(status_code=400, detail="Unknown baseline.")
+    weights_path, _ = _baseline_paths(model.lower())
     if not weights_path.exists():
-        raise HTTPException(status_code=404, detail=f"Checkpoint for {spec['name']} has not been trained yet.")
+        raise HTTPException(status_code=404, detail="That baseline has not been trained yet.")
     return FileResponse(weights_path, filename=weights_path.name)
 
 
@@ -933,7 +913,7 @@ if FRONTEND_DIST.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
 
 
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("server:app", host="0.0.0.0", port=8000, reload=True)
+
+    uvicorn.run("server:app", host=os.environ.get("NEUROFORGE_HOST", "127.0.0.1"), port=int(os.environ.get("NEUROFORGE_PORT", 8000)))

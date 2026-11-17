@@ -56,6 +56,10 @@ def validate_config(config):
     dropout = config.get("dropout", 0)
     if not isinstance(dropout, (int, float)) or not 0 <= dropout <= 0.5:
         raise ValueError("dropout must be between 0 and 0.5")
+    if config.get("block_type", "plain") not in SUPPORTED_BLOCK_TYPES:
+        raise ValueError("block_type must be plain, residual, or depthwise")
+    if config.get("input_size", DEFAULT_INPUT_SIZE) not in SUPPORTED_INPUT_SIZES:
+        raise ValueError("input_size must be 64, 96, or 128")
     return config
 
 
@@ -64,44 +68,66 @@ def config_hash(config):
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
-def get_split_indices(dataset_size, seed=42, train_fraction=0.8, labels=None):
-    """Create one deterministic, class-aware train/evaluation split."""
-    if dataset_size < 2:
-        raise ValueError("Dataset must contain at least two samples")
+SPLIT_SCHEMA_VERSION = 2
+VALID_FRACTION = 0.15
+TEST_FRACTION = 0.15
+
+
+def get_split_indices(dataset_size, seed=42, labels=None, valid_fraction=VALID_FRACTION, test_fraction=TEST_FRACTION):
+    """Create one deterministic train/valid/test split.
+
+    Validation is used for every development decision (candidate ranking,
+    checkpoint choice, early stopping). Test is touched exactly once, after
+    the model is locked. Classes with fewer than three samples stay in train
+    because they cannot be represented in all three partitions.
+    """
+    if dataset_size < 3:
+        raise ValueError("Dataset must contain at least three samples")
     generator = torch.Generator().manual_seed(seed)
 
+    def carve(indices):
+        count = len(indices)
+        if count < 3:
+            return list(indices), [], []
+        test_count = max(1, round(count * test_fraction))
+        valid_count = max(1, round(count * valid_fraction))
+        return (
+            indices[test_count + valid_count:],
+            indices[test_count:test_count + valid_count],
+            indices[:test_count],
+        )
+
+    train_indices, valid_indices, test_indices = [], [], []
     if labels is not None:
         if len(labels) != dataset_size:
             raise ValueError("labels must have one entry per dataset sample")
         grouped_indices = {}
         for index, label in enumerate(labels):
             grouped_indices.setdefault(label, []).append(index)
-        train_indices = []
-        test_indices = []
-        for class_indices in grouped_indices.values():
+        for label in sorted(grouped_indices):
+            class_indices = grouped_indices[label]
             order = torch.randperm(len(class_indices), generator=generator).tolist()
-            shuffled = [class_indices[index] for index in order]
-            if len(shuffled) == 1:
-                train_indices.extend(shuffled)
-                continue
-            train_size = max(1, min(len(shuffled) - 1, int(train_fraction * len(shuffled))))
-            train_indices.extend(shuffled[:train_size])
-            test_indices.extend(shuffled[train_size:])
-        return {
-            "train": train_indices,
-            "test": test_indices,
-            "seed": seed,
-            "stratified": True,
-        }
+            train, valid, test = carve([class_indices[index] for index in order])
+            train_indices.extend(train)
+            valid_indices.extend(valid)
+            test_indices.extend(test)
+    else:
+        train_indices, valid_indices, test_indices = carve(torch.randperm(dataset_size, generator=generator).tolist())
 
-    train_size = max(1, min(dataset_size - 1, int(train_fraction * dataset_size)))
-    indices = torch.randperm(dataset_size, generator=generator).tolist()
     return {
-        "train": indices[:train_size],
-        "test": indices[train_size:],
+        "schema": SPLIT_SCHEMA_VERSION,
+        "strategy": "stratified_imagefolder" if labels is not None else "random_imagefolder",
+        "train": sorted(train_indices),
+        "valid": sorted(valid_indices),
+        "test": sorted(test_indices),
         "seed": seed,
-        "stratified": False,
+        "stratified": labels is not None,
     }
+
+
+def split_is_current(split_indices):
+    """Older runs stored a two-way train/test split that leaked test into selection."""
+    return bool(split_indices) and "valid" in split_indices and "test" in split_indices
 
 
 def find_roboflow_dataset_root(dataset_dir):
@@ -213,7 +239,55 @@ class RoboflowClassificationDataset(torch.utils.data.Dataset):
         return image, label
 
 
-def _image_transform(dataset_dir=None, train=False):
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
+TRANSFER_INPUT_SIZE = 224
+DEFAULT_INPUT_SIZE = 64
+SUPPORTED_INPUT_SIZES = {64, 96, 128}
+SUPPORTED_BLOCK_TYPES = {"plain", "residual", "depthwise"}
+
+
+def input_size_for(config):
+    return int((config or {}).get("input_size", DEFAULT_INPUT_SIZE))
+
+
+def preprocessing_descriptor(config=None, dataset_dir=None, transfer=False):
+    """Describe exactly how inference inputs must be prepared for a checkpoint."""
+    if _dataset_modality(dataset_dir) == "audio":
+        return {
+            "modality": "audio",
+            "sample_rate": audio_pipeline.TARGET_SAMPLE_RATE,
+            "clip_seconds": audio_pipeline.TARGET_SAMPLES / audio_pipeline.TARGET_SAMPLE_RATE,
+            "n_fft": audio_pipeline.N_FFT,
+            "n_mels": audio_pipeline.N_MELS,
+            "features": "log-mel, per-clip normalised",
+        }
+    if transfer:
+        return {
+            "modality": "image",
+            "resize": 256,
+            "center_crop": TRANSFER_INPUT_SIZE,
+            "mean": list(IMAGENET_MEAN),
+            "std": list(IMAGENET_STD),
+        }
+    size = input_size_for(config)
+    return {"modality": "image", "resize": [size, size], "mean": [0.5] * 3, "std": [0.5] * 3}
+
+
+def _image_transform(dataset_dir=None, train=False, transfer=False, image_size=DEFAULT_INPUT_SIZE):
+    if transfer:
+        # Pretrained backbones expect ImageNet resolution and statistics;
+        # feeding them 64px images with 0.5/0.5 normalisation cripples them.
+        if train:
+            operations = [
+                transforms.RandomResizedCrop(TRANSFER_INPUT_SIZE, scale=(0.7, 1.0)),
+                transforms.RandomHorizontalFlip(),
+                transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.1),
+            ]
+        else:
+            operations = [transforms.Resize(256), transforms.CenterCrop(TRANSFER_INPUT_SIZE)]
+        return transforms.Compose(operations + [transforms.ToTensor(), transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)])
+
     if dataset_dir is None:
         if train:
             return transforms.Compose([
@@ -229,12 +303,15 @@ def _image_transform(dataset_dir=None, train=False):
             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
         ])
 
-    operations = [transforms.Resize((64, 64))]
     if train:
-        operations.extend([
+        operations = [
+            transforms.RandomResizedCrop(image_size, scale=(0.8, 1.0), ratio=(0.9, 1.1)),
             transforms.RandomHorizontalFlip(),
             transforms.RandomRotation(8),
-        ])
+            transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.1),
+        ]
+    else:
+        operations = [transforms.Resize((image_size, image_size))]
     operations.extend([
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -242,8 +319,8 @@ def _image_transform(dataset_dir=None, train=False):
     return transforms.Compose(operations)
 
 
-def get_image_split_indices(dataset_dir, seed=42, train_fraction=0.8):
-    """Build a deterministic stratified split for an ImageFolder dataset."""
+def get_image_split_indices(dataset_dir, seed=42):
+    """Build a deterministic stratified train/valid/test split for an image dataset."""
     if find_roboflow_dataset_root(dataset_dir):
         metadata = get_dataset_metadata(dataset_dir)
         return {
@@ -255,20 +332,15 @@ def get_image_split_indices(dataset_dir, seed=42, train_fraction=0.8):
         }
     imagefolder_root = find_imagefolder_dataset_root(dataset_dir)
     dataset = CleanImageFolder(root=imagefolder_root, is_valid_file=_is_usable_image_file)
-    return get_split_indices(
-        len(dataset),
-        seed=seed,
-        train_fraction=train_fraction,
-        labels=dataset.targets,
-    )
+    return get_split_indices(len(dataset), seed=seed, labels=dataset.targets)
 
 
-def get_dataset_split_metadata(dataset_dir, seed=42, train_fraction=0.8):
+def get_dataset_split_metadata(dataset_dir, seed=42):
     """Return the stable split descriptor for either image or audio data."""
     audio_metadata = audio_pipeline.get_split_metadata(dataset_dir, seed=seed)
     if audio_metadata:
         return audio_metadata
-    return get_image_split_indices(dataset_dir, seed=seed, train_fraction=train_fraction)
+    return get_image_split_indices(dataset_dir, seed=seed)
 
 
 def get_dataset_metadata(dataset_dir=None):
@@ -303,15 +375,18 @@ def get_dataset_metadata(dataset_dir=None):
             }
         imagefolder_root = find_imagefolder_dataset_root(dataset_dir)
         dataset = CleanImageFolder(root=imagefolder_root, is_valid_file=_is_usable_image_file)
+        split = get_split_indices(len(dataset), labels=dataset.targets) if len(dataset) >= 3 else None
+        counts = torch.bincount(torch.tensor(dataset.targets, dtype=torch.long), minlength=len(dataset.classes)).tolist()
         return {
             "format": "imagefolder_classification",
             "modality": "image",
             "dataset_root": str(imagefolder_root),
             "class_names": list(dataset.classes),
             "class_to_idx": dict(dataset.class_to_idx),
+            "class_counts": dict(zip(dataset.classes, counts)),
             "num_classes": len(dataset.classes),
             "num_samples": len(dataset),
-            "splits": None,
+            "splits": {key: len(split[key]) for key in ("train", "valid", "test")} if split else None,
         }
 
     classes = [
@@ -331,7 +406,24 @@ def get_dataset_metadata(dataset_dir=None):
 
 
 # 2. Dataset & Preprocessing (Supports CIFAR-10 Fallback or Custom ImageFolder)
-def get_dataloaders(batch_size=64, dataset_dir=None, split_indices=None, seed=42, evaluation_split="valid"):
+def get_dataloaders(
+    batch_size=64,
+    dataset_dir=None,
+    split_indices=None,
+    seed=42,
+    evaluation_split="valid",
+    transfer=False,
+    image_size=DEFAULT_INPUT_SIZE,
+):
+    """Return (train loader, evaluation loader, class count).
+
+    ``evaluation_split`` is "valid" for every development decision and "test"
+    only for the single final measurement of a locked model.
+    """
+    if evaluation_split not in {"valid", "test"}:
+        raise ValueError("evaluation_split must be 'valid' or 'test'")
+    train_transform = _image_transform(dataset_dir, train=True, transfer=transfer, image_size=image_size)
+    eval_transform = _image_transform(dataset_dir, train=False, transfer=transfer, image_size=image_size)
     if dataset_dir:
         if audio_pipeline.detect_audio_dataset(dataset_dir):
             return audio_pipeline.get_audio_dataloaders(
@@ -341,18 +433,10 @@ def get_dataloaders(batch_size=64, dataset_dir=None, split_indices=None, seed=42
                 seed=seed,
                 evaluation_split=evaluation_split,
             )
-        if evaluation_split not in {"valid", "test"}:
-            raise ValueError("evaluation_split must be 'valid' or 'test'")
         roboflow_root = find_roboflow_dataset_root(dataset_dir)
         if roboflow_root:
-            trainset = RoboflowClassificationDataset(
-                roboflow_root / "train",
-                transform=_image_transform(dataset_dir, train=True),
-            )
-            evaluation_set = RoboflowClassificationDataset(
-                roboflow_root / evaluation_split,
-                transform=_image_transform(dataset_dir, train=False),
-            )
+            trainset = RoboflowClassificationDataset(roboflow_root / "train", transform=train_transform)
+            evaluation_set = RoboflowClassificationDataset(roboflow_root / evaluation_split, transform=eval_transform)
             loader_generator = torch.Generator().manual_seed(seed)
             trainloader = torch.utils.data.DataLoader(
                 trainset,
@@ -372,26 +456,16 @@ def get_dataloaders(batch_size=64, dataset_dir=None, split_indices=None, seed=42
         # Custom Dataset Pipeline. Keep separate dataset objects so only the
         # training subset receives augmentation; evaluation must remain stable.
         imagefolder_root = find_imagefolder_dataset_root(dataset_dir)
-        train_dataset = CleanImageFolder(
-            root=imagefolder_root,
-            transform=_image_transform(dataset_dir, train=True),
-            is_valid_file=_is_usable_image_file,
-        )
-        evaluation_dataset = CleanImageFolder(
-            root=imagefolder_root,
-            transform=_image_transform(dataset_dir, train=False),
-            is_valid_file=_is_usable_image_file,
-        )
+        train_dataset = CleanImageFolder(root=imagefolder_root, transform=train_transform, is_valid_file=_is_usable_image_file)
+        evaluation_dataset = CleanImageFolder(root=imagefolder_root, transform=eval_transform, is_valid_file=_is_usable_image_file)
         num_classes = len(train_dataset.classes)
 
         # Reuse one deterministic split for every candidate in a search run.
-        split_indices = split_indices or get_split_indices(
-            len(train_dataset),
-            seed=seed,
-            labels=train_dataset.targets,
-        )
+        # Legacy two-way splits are regenerated so test never drives selection.
+        if not split_is_current(split_indices):
+            split_indices = get_split_indices(len(train_dataset), seed=seed, labels=train_dataset.targets)
         trainset = torch.utils.data.Subset(train_dataset, split_indices["train"])
-        testset = torch.utils.data.Subset(evaluation_dataset, split_indices["test"])
+        testset = torch.utils.data.Subset(evaluation_dataset, split_indices[evaluation_split])
 
         loader_generator = torch.Generator().manual_seed(seed)
         trainloader = torch.utils.data.DataLoader(
@@ -405,16 +479,18 @@ def get_dataloaders(batch_size=64, dataset_dir=None, split_indices=None, seed=42
         return trainloader, testloader, num_classes
         
     else:
-        # Fallback to CIFAR-10
-        transform_train = _image_transform(train=True)
-        transform_test = _image_transform(train=False)
-    
-        trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+        # Fallback to CIFAR-10: carve a fixed 5,000-image validation set out of
+        # the official training split so the official test set stays sealed.
+        cifar_train = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=train_transform)
+        full_eval = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=eval_transform)
+        order = torch.randperm(len(cifar_train), generator=torch.Generator().manual_seed(seed)).tolist()
+        trainset = torch.utils.data.Subset(cifar_train, order[5000:])
+        if evaluation_split == "valid":
+            evalset = torch.utils.data.Subset(full_eval, order[:5000])
+        else:
+            evalset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=eval_transform)
         trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=0)
-    
-        testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
-        testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=0)
-    
+        testloader = torch.utils.data.DataLoader(evalset, batch_size=batch_size, shuffle=False, num_workers=0)
         return trainloader, testloader, 10
 
 
@@ -442,14 +518,75 @@ def _class_weights(dataset, num_classes):
     return weights
 
 # 3. Dynamic Candidate Generator (The Forge)
+def _activation(name):
+    return {"ReLU": nn.ReLU, "GELU": nn.GELU, "SiLU": nn.SiLU}[name]()
+
+
+class ResidualBlock(nn.Module):
+    """Two convolutions with an identity (or 1x1 projection) shortcut."""
+
+    def __init__(self, in_channels, out_channels, kernel, batch_norm, activation):
+        super().__init__()
+        padding = kernel // 2
+        norm = (lambda c: nn.BatchNorm2d(c)) if batch_norm else (lambda c: nn.Identity())
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel, padding=padding)
+        self.bn1 = norm(out_channels)
+        self.act1 = _activation(activation)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel, padding=padding)
+        self.bn2 = norm(out_channels)
+        self.shortcut = (
+            nn.Identity() if in_channels == out_channels
+            else nn.Sequential(nn.Conv2d(in_channels, out_channels, 1), norm(out_channels))
+        )
+        self.act2 = _activation(activation)
+
+    def forward(self, x):
+        out = self.act1(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        return self.act2(out + self.shortcut(x))
+
+
+class DepthwiseSeparableBlock(nn.Module):
+    """Depthwise k x k convolution followed by a 1x1 pointwise mix (edge-friendly)."""
+
+    def __init__(self, in_channels, out_channels, kernel, batch_norm, activation):
+        super().__init__()
+        self.depthwise = nn.Conv2d(in_channels, in_channels, kernel, padding=kernel // 2, groups=in_channels)
+        self.pointwise = nn.Conv2d(in_channels, out_channels, 1)
+        self.bn = nn.BatchNorm2d(out_channels) if batch_norm else nn.Identity()
+        self.act = _activation(activation)
+
+    def forward(self, x):
+        return self.act(self.bn(self.pointwise(self.depthwise(x))))
+
+
 class DynamicCNN(nn.Module):
     def __init__(self, config, num_classes=10, in_channels=3):
         super(DynamicCNN, self).__init__()
         validate_config(config)
         layers = []
         current_channels = in_channels
-        
-        # Build Convolutional Layers dynamically based on config
+        block_type = config.get("block_type", "plain")
+
+        if block_type != "plain":
+            block_class = ResidualBlock if block_type == "residual" else DepthwiseSeparableBlock
+            for i in range(config["num_layers"]):
+                filters = config["filters"][i]
+                layers.append(block_class(
+                    current_channels, filters, config["kernel_sizes"][i],
+                    config.get("batch_norm", True), config.get("activation", "ReLU"),
+                ))
+                if config.get("pooling", True):
+                    layers.append(nn.MaxPool2d(2, 2))
+                if config.get("dropout", 0) > 0:
+                    layers.append(nn.Dropout2d(config["dropout"]))
+                current_channels = filters
+            self.features = nn.Sequential(*layers)
+            self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))
+            self.classifier = nn.Linear(current_channels, num_classes)
+            return
+
+        # Plain blocks keep the original module layout so older checkpoints load unchanged.
         for i in range(config.get('num_layers', 2)):
             filters = config['filters'][i]
             kernel = config['kernel_sizes'][i]
@@ -602,10 +739,13 @@ def evaluate_candidate(config, epochs=3, dataset_dir=None, seed=42, split_indice
     print(f"\n--- Testing Candidate Architecture ---")
     validate_config(config)
     set_random_seed(seed)
+    # Candidates are ranked on the validation split only; test stays sealed.
     trainloader, testloader, num_classes = get_dataloaders(
         dataset_dir=dataset_dir,
         split_indices=split_indices,
         seed=seed,
+        evaluation_split="valid",
+        image_size=input_size_for(config),
     )
     model = _build_model(config, num_classes, dataset_dir=dataset_dir).to(device)
     
@@ -662,10 +802,23 @@ def evaluate_candidate(config, epochs=3, dataset_dir=None, seed=42, split_indice
         "config_hash": config_hash(config),
     }
 
-# 5. Full Trainer (To achieve >90% accuracy)
+# 5. Full Trainer
+def _run_eval(model, loader, num_classes):
+    model.eval()
+    labels, predictions, probabilities = [], [], []
+    with torch.no_grad():
+        for inputs, batch_labels in loader:
+            outputs = model(inputs.to(device))
+            batch_probabilities = torch.softmax(outputs, dim=1)
+            labels.extend(batch_labels.tolist())
+            predictions.extend(batch_probabilities.argmax(dim=1).cpu().tolist())
+            probabilities.extend(batch_probabilities.cpu().tolist())
+    return classification_metrics(labels, predictions, num_classes, probabilities), len(labels)
+
+
 def full_train(
     config,
-    epochs=50,
+    epochs=30,
     st_callback=None,
     dataset_dir=None,
     use_transfer_learning=False,
@@ -673,47 +826,55 @@ def full_train(
     seed=42,
     weights_path="best_model_weights.pth",
     metadata_path="best_model_metadata.json",
+    patience=8,
+    split_indices=None,
 ):
-    print(f"\n--- Starting Full Deep Training for {epochs} Epochs ---")
+    """Train from fresh weights with validation-only model selection.
+
+    Protocol (matches docs/neuroforge-ultimate-plan section 08):
+      * train split  -> weight updates
+      * valid split  -> checkpoint choice (macro F1, accuracy tie-break) and early stopping
+      * test split   -> evaluated exactly once on the locked checkpoint
+    """
+    print(f"\n--- Starting full training for up to {epochs} epochs ---")
     set_random_seed(seed)
-    trainloader, testloader, num_classes = get_dataloaders(
-        batch_size=128,
+    image_size = input_size_for(config)
+    trainloader, validloader, num_classes = get_dataloaders(
+        batch_size=64,
         dataset_dir=dataset_dir,
+        split_indices=split_indices,
         seed=seed,
+        evaluation_split="valid",
+        transfer=use_transfer_learning,
+        image_size=image_size,
     )
-    
-    if use_transfer_learning:
-        print(f"Using Pretrained {transfer_model} for Transfer Learning...")
-        model = _build_model(
-            config,
-            num_classes,
-            dataset_dir=dataset_dir,
-            use_transfer_learning=True,
-            transfer_model=transfer_model,
-            pretrained=True,
-        ).to(device)
-    else:
-        model = _build_model(config, num_classes, dataset_dir=dataset_dir).to(device)
-    
-    criterion = nn.CrossEntropyLoss(
-        weight=_class_weights(trainloader.dataset, num_classes).to(device),
-    )
-    # Using AdamW with weight decay for better regularization
+    model = _build_model(
+        config,
+        num_classes,
+        dataset_dir=dataset_dir,
+        use_transfer_learning=use_transfer_learning,
+        transfer_model=transfer_model,
+        pretrained=use_transfer_learning,
+    ).to(device)
+
+    class_weights = _class_weights(trainloader.dataset, num_classes)
+    criterion = nn.CrossEntropyLoss(weight=class_weights.to(device))
     trainable_params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = optim.AdamW(trainable_params if trainable_params else model.parameters(), lr=0.003, weight_decay=1e-4)
-    # Cosine Annealing Learning Rate Scheduler helps push accuracy in later epochs
+    learning_rate = 0.003
+    optimizer = optim.AdamW(trainable_params, lr=learning_rate, weight_decay=1e-4)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-    
-    best_accuracy = -1.0
-    best_metrics = None
-    
-    for epoch in range(epochs):
+
+    best_key = None
+    best_epoch = 0
+    best_valid_metrics = None
+    curve = []
+    epochs_without_improvement = 0
+    started = time.time()
+
+    for epoch in range(1, epochs + 1):
         epoch_start = time.time()
         model.train()
-        running_loss = 0.0
-        train_correct = 0
-        train_total = 0
-        
+        running_loss, train_correct, train_total = 0.0, 0, 0
         for inputs, labels in trainloader:
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -722,116 +883,117 @@ def full_train(
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-            
-            _, predicted = torch.max(outputs.data, 1)
             train_total += labels.size(0)
-            train_correct += (predicted == labels).sum().item()
-            
-        train_accuracy = 100 * train_correct / train_total
+            train_correct += (outputs.argmax(dim=1) == labels).sum().item()
         scheduler.step()
-        
-        # Validation Phase
-        model.eval()
-        validation_labels = []
-        validation_predictions = []
-        validation_probabilities = []
-        with torch.no_grad():
-            for inputs, batch_labels in testloader:
-                inputs, batch_labels = inputs.to(device), batch_labels.to(device)
-                outputs = model(inputs)
-                batch_probabilities = torch.softmax(outputs, dim=1)
-                _, predicted = torch.max(batch_probabilities.data, 1)
-                validation_labels.extend(batch_labels.detach().cpu().tolist())
-                validation_predictions.extend(predicted.detach().cpu().tolist())
-                validation_probabilities.extend(batch_probabilities.detach().cpu().tolist())
 
-        validation_metrics = classification_metrics(
-            validation_labels,
-            validation_predictions,
-            num_classes,
-            validation_probabilities,
+        valid_metrics, _ = _run_eval(model, validloader, num_classes)
+        train_accuracy = 100 * train_correct / max(1, train_total)
+        key = (round(valid_metrics["f1"], 4), round(valid_metrics["accuracy"], 4))
+        improved = best_key is None or key > best_key
+        curve.append({
+            "epoch": epoch,
+            "train_loss": running_loss / max(1, len(trainloader)),
+            "train_accuracy": train_accuracy,
+            "valid_accuracy": valid_metrics["accuracy"],
+            "valid_f1": valid_metrics["f1"],
+        })
+        eta = int((time.time() - epoch_start) * (epochs - epoch))
+        print(
+            f"Epoch [{epoch}/{epochs}] loss {curve[-1]['train_loss']:.4f} | train {train_accuracy:.1f}% "
+            f"| valid acc {valid_metrics['accuracy']:.1f}% f1 {valid_metrics['f1']:.1f}%"
+            + ("  <- best" if improved else "")
         )
-        val_accuracy = validation_metrics["accuracy"]
-        
-        epoch_time = time.time() - epoch_start
-        eta_seconds = epoch_time * (epochs - epoch - 1)
-        mins, secs = divmod(int(eta_seconds), 60)
-        eta_str = f"{mins}m {secs}s"
-        
-        print(f"Epoch [{epoch+1}/{epochs}] | Loss: {running_loss/len(trainloader):.4f} | Train Acc: {train_accuracy:.2f}% | Val Acc: {val_accuracy:.2f}% | ETA: {eta_str}")
-        
         if st_callback:
             st_callback({
-                "epoch": epoch + 1,
+                "epoch": epoch,
                 "total_epochs": epochs,
                 "train_acc": train_accuracy,
-                "val_acc": val_accuracy,
-                "val_precision": validation_metrics["precision"],
-                "val_recall": validation_metrics["recall"],
-                "val_f1": validation_metrics["f1"],
-                "eta": eta_str,
+                "val_acc": valid_metrics["accuracy"],
+                "val_precision": valid_metrics["precision"],
+                "val_recall": valid_metrics["recall"],
+                "val_f1": valid_metrics["f1"],
+                "eta": f"{eta // 60}m {eta % 60}s",
             })
-        
-        # Checkpoint the best model weights
-        if val_accuracy > best_accuracy:
-            best_accuracy = val_accuracy
-            best_metrics = validation_metrics
+        if improved:
+            best_key, best_epoch, best_valid_metrics = key, epoch, valid_metrics
+            epochs_without_improvement = 0
             torch.save(model.state_dict(), weights_path)
-            print(f"  -> New best model saved! ({best_accuracy:.2f}%)")
+        else:
+            epochs_without_improvement += 1
+            if patience and epochs_without_improvement >= patience:
+                print(f"Early stopping: no validation F1 gain for {patience} epochs.")
+                break
 
-            existing_metadata = {}
-            if os.path.exists(metadata_path):
-                with open(metadata_path) as handle:
-                    existing_metadata = json.load(handle)
-            existing_metadata.update({
-                "schema_version": 1,
-                "num_classes": num_classes,
-                "class_names": get_dataset_metadata(dataset_dir)["class_names"],
-                "config": copy.deepcopy(config),
-                "trained_config": copy.deepcopy(config),
-                "config_hash": config_hash(config),
-                "training_mode": "transfer_learning_resnet18" if use_transfer_learning else "dynamic_cnn",
-                "seed": seed,
-                "epochs": epochs,
-                "best_metrics": {
-                    key: best_metrics[key]
-                    for key in ("accuracy", "precision", "recall", "f1", "mse", "rmse")
-                },
-                "dataset": get_dataset_metadata(dataset_dir),
-                "weights_path": weights_path,
-            })
-            with open(metadata_path, "w") as handle:
-                json.dump(existing_metadata, handle, indent=2)
-
-            if not use_transfer_learning and "best_model_weights.pth" in str(weights_path):
-                config_out = os.path.join(os.path.dirname(weights_path) or ".", "best_model_config.json")
-                with open(config_out, "w") as ch:
-                    json.dump(config, ch, indent=2)
-            
-    print(f"\n✅ Full Training Complete. Best Validation Accuracy: {best_accuracy:.2f}%")
-
-    # Evaluate the best checkpoint on the held-out test split and persist it
-    # separately from the validation metrics shown during training.
-    held_out_test_metrics = evaluate_checkpoint(
-        config,
-        num_classes,
+    # Lock the best validation checkpoint, then open the sealed test split once.
+    model.load_state_dict(torch.load(weights_path, map_location=device, weights_only=True))
+    _, testloader, _ = get_dataloaders(
+        batch_size=64,
         dataset_dir=dataset_dir,
-        evaluation_split="test",
-        use_transfer_learning=use_transfer_learning,
-        transfer_model=transfer_model,
-        weights_path=weights_path,
+        split_indices=split_indices,
         seed=seed,
+        evaluation_split="test",
+        transfer=use_transfer_learning,
+        image_size=image_size,
     )
-    existing_metadata = {}
-    if os.path.exists(metadata_path):
-        with open(metadata_path) as handle:
-            existing_metadata = json.load(handle)
-    existing_metadata["held_out_test_metrics"] = held_out_test_metrics
-    existing_metadata["training_complete"] = True
-    with open(metadata_path, "w") as handle:
-        json.dump(existing_metadata, handle, indent=2)
+    test_start = time.time()
+    test_metrics, test_count = _run_eval(model, testloader, num_classes)
+    test_elapsed = time.time() - test_start
+    test_metrics.update({
+        "split": "test",
+        "sample_count": test_count,
+        "inference_latency_seconds": test_elapsed,
+        "inference_latency_per_sample_seconds": test_elapsed / max(1, test_count),
+    })
 
-    return best_accuracy
+    dataset_metadata = get_dataset_metadata(dataset_dir)
+    metadata = {
+        "schema_version": 2,
+        "num_classes": num_classes,
+        "class_names": dataset_metadata["class_names"],
+        "config": copy.deepcopy(config),
+        "trained_config": copy.deepcopy(config),
+        "config_hash": config_hash(config),
+        "training_mode": f"transfer_learning_{transfer_model}" if use_transfer_learning else "dynamic_cnn",
+        "transfer_model": transfer_model if use_transfer_learning else None,
+        "seed": seed,
+        "epochs": epochs,
+        "epochs_run": len(curve),
+        "best_epoch": best_epoch,
+        "parameters": sum(p.numel() for p in model.parameters()),
+        "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad),
+        "training_seconds": time.time() - started,
+        "device": str(device),
+        "training": {
+            "optimizer": "AdamW",
+            "learning_rate": learning_rate,
+            "weight_decay": 1e-4,
+            "scheduler": "CosineAnnealingLR",
+            "loss": "class-weighted cross-entropy",
+            "class_weights": [round(w, 4) for w in class_weights.tolist()],
+            "selection_rule": "best validation macro F1 (accuracy tie-break)",
+            "early_stopping_patience": patience,
+        },
+        "evaluation_protocol": "train -> weights; valid -> checkpoint + early stopping; test -> evaluated once on the locked checkpoint",
+        "preprocessing": preprocessing_descriptor(config, dataset_dir, transfer=use_transfer_learning),
+        "best_metrics": {k: best_valid_metrics[k] for k in ("accuracy", "precision", "recall", "f1", "mse", "rmse")},
+        "validation_metrics": best_valid_metrics,
+        "held_out_test_metrics": test_metrics,
+        "learning_curve": curve,
+        "dataset": dataset_metadata,
+        "weights_path": str(weights_path),
+        "training_complete": True,
+    }
+    temporary_path = f"{metadata_path}.tmp"
+    with open(temporary_path, "w") as handle:
+        json.dump(metadata, handle, indent=2)
+    os.replace(temporary_path, metadata_path)
+
+    print(
+        f"\nTraining complete. Best epoch {best_epoch}: valid acc {best_valid_metrics['accuracy']:.2f}% / F1 {best_valid_metrics['f1']:.2f}%"
+        f" | test acc {test_metrics['accuracy']:.2f}% / F1 {test_metrics['f1']:.2f}% (n={test_count})"
+    )
+    return best_valid_metrics["accuracy"]
 
 # 6. Live Inference
 def evaluate_checkpoint(
@@ -867,6 +1029,8 @@ def evaluate_checkpoint(
         dataset_dir=dataset_dir,
         seed=seed,
         evaluation_split=evaluation_split,
+        transfer=use_transfer_learning,
+        image_size=input_size_for(config),
     )
     if detected_classes != num_classes:
         raise ValueError("Dataset class count does not match the saved model")
