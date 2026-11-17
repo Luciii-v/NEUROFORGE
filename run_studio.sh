@@ -6,7 +6,13 @@ PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR"
 PORT="${NEUROFORGE_PORT:-8000}"
 PYTHON="${PYTHON:-python3}"
-[ -x .venv/bin/python ] && PYTHON=.venv/bin/python
+if [ -x .venv/bin/python ] && .venv/bin/python -c "import uvicorn, fastapi, torch" 2>/dev/null; then
+    PYTHON=.venv/bin/python
+fi
+if ! "$PYTHON" -c "import uvicorn, fastapi, torch" 2>/dev/null; then
+    echo "[!] $PYTHON is missing the studio dependencies. Run: $PYTHON -m pip install -r requirements.txt"
+    exit 1
+fi
 
 if lsof -ti ":$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
     echo "[!] Port $PORT is already in use (PID $(lsof -ti ":$PORT" -sTCP:LISTEN | tr '\n' ' '))."
