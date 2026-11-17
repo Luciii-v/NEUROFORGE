@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "num_classes": 5,
   "class_names": [
     "Rice stem borer",
@@ -8,18 +8,370 @@
     "rice bug",
     "rice leaf roller"
   ],
-  "config_hash": "440d8f366fa2503b",
-  "training_mode": "transfer_learning_resnet18",
-  "seed": 42,
-  "epochs": 20,
-  "best_metrics": {
-    "accuracy": 59.01639344262295,
-    "precision": 57.17569589614868,
-    "recall": 52.2857129573822,
-    "f1": 53.37774157524109,
-    "mse": 0.12771497666835785,
-    "rmse": 0.35737231373786926
+  "config": {
+    "num_layers": 2,
+    "filters": [
+      32,
+      64
+    ],
+    "kernel_sizes": [
+      3,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "ReLU",
+    "pooling": true,
+    "dropout": 0.2
   },
+  "trained_config": {
+    "num_layers": 2,
+    "filters": [
+      32,
+      64
+    ],
+    "kernel_sizes": [
+      3,
+      3
+    ],
+    "batch_norm": true,
+    "activation": "ReLU",
+    "pooling": true,
+    "dropout": 0.2
+  },
+  "config_hash": "e446a9d0cdeab3aa",
+  "training_mode": "transfer_learning_resnet18",
+  "transfer_model": "resnet18",
+  "seed": 42,
+  "epochs": 25,
+  "epochs_run": 25,
+  "best_epoch": 22,
+  "parameters": 11179077,
+  "trainable_parameters": 2565,
+  "training_seconds": 37.19865798950195,
+  "device": "mps",
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "weight_decay": 0.0001,
+    "scheduler": "CosineAnnealingLR",
+    "loss": "class-weighted cross-entropy",
+    "class_weights": [
+      0.5646,
+      1.1291,
+      2.3524,
+      0.4213,
+      0.5326
+    ],
+    "selection_rule": "best validation macro F1 (accuracy tie-break)",
+    "early_stopping_patience": 8
+  },
+  "evaluation_protocol": "train -> weights; valid -> checkpoint + early stopping; test -> evaluated once on the locked checkpoint",
+  "preprocessing": {
+    "modality": "image",
+    "resize": 256,
+    "center_crop": 224,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "best_metrics": {
+    "accuracy": 90.9090909090909,
+    "precision": 93.1944489479065,
+    "recall": 92.66666173934937,
+    "f1": 92.86360740661621,
+    "mse": 0.03531579673290253,
+    "rmse": 0.18792498111724854
+  },
+  "validation_metrics": {
+    "accuracy": 90.9090909090909,
+    "precision": 93.1944489479065,
+    "recall": 92.66666173934937,
+    "f1": 92.86360740661621,
+    "f1_present_classes": 92.86360740661621,
+    "precision_present_classes": 93.1944489479065,
+    "recall_present_classes": 92.66666173934937,
+    "mse": 0.03531579673290253,
+    "rmse": 0.18792498111724854,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        8,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        15,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        10
+      ]
+    ]
+  },
+  "held_out_test_metrics": {
+    "accuracy": 93.18181818181817,
+    "precision": 96.00000381469727,
+    "recall": 92.66666173934937,
+    "f1": 93.8132643699646,
+    "f1_present_classes": 93.8132643699646,
+    "precision_present_classes": 96.00000381469727,
+    "recall_present_classes": 92.66666173934937,
+    "mse": 0.033803731203079224,
+    "rmse": 0.18385791778564453,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        9,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        4,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        14,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        12
+      ]
+    ],
+    "split": "test",
+    "sample_count": 44,
+    "inference_latency_seconds": 0.26461005210876465,
+    "inference_latency_per_sample_seconds": 0.006013864820653742
+  },
+  "learning_curve": [
+    {
+      "epoch": 1,
+      "train_loss": 1.7998112440109253,
+      "train_accuracy": 26.08695652173913,
+      "valid_accuracy": 40.909090909090914,
+      "valid_f1": 23.067227005958557
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.364983469247818,
+      "train_accuracy": 49.27536231884058,
+      "valid_accuracy": 70.45454545454545,
+      "valid_f1": 54.41666841506958
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.1296561062335968,
+      "train_accuracy": 71.98067632850241,
+      "valid_accuracy": 61.36363636363637,
+      "valid_f1": 50.17856955528259
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.8483549952507019,
+      "train_accuracy": 75.3623188405797,
+      "valid_accuracy": 75.0,
+      "valid_f1": 67.91666746139526
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.7522523254156113,
+      "train_accuracy": 81.64251207729468,
+      "valid_accuracy": 79.54545454545455,
+      "valid_f1": 74.39349889755249
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.6493862122297287,
+      "train_accuracy": 83.09178743961353,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 84.53612327575684
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.5660522431135178,
+      "train_accuracy": 87.43961352657004,
+      "valid_accuracy": 81.81818181818183,
+      "valid_f1": 76.97106003761292
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.4400288313627243,
+      "train_accuracy": 88.88888888888889,
+      "valid_accuracy": 81.81818181818183,
+      "valid_f1": 83.39988589286804
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.5117623135447502,
+      "train_accuracy": 88.40579710144928,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 87.00701594352722
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.3623543716967106,
+      "train_accuracy": 91.78743961352657,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.3804338425397873,
+      "train_accuracy": 90.33816425120773,
+      "valid_accuracy": 90.9090909090909,
+      "valid_f1": 91.37778282165527
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.3375561088323593,
+      "train_accuracy": 92.7536231884058,
+      "valid_accuracy": 84.0909090909091,
+      "valid_f1": 80.46594858169556
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.38175075501203537,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 81.81818181818183,
+      "valid_f1": 78.23066115379333
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.321621410548687,
+      "train_accuracy": 91.78743961352657,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.28304438665509224,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.3321661874651909,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.31092388927936554,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 90.9090909090909,
+      "valid_f1": 91.66677594184875
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.3027517832815647,
+      "train_accuracy": 94.20289855072464,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.28533368185162544,
+      "train_accuracy": 95.16908212560386,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.30785800516605377,
+      "train_accuracy": 94.20289855072464,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.2784699350595474,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 22,
+      "train_loss": 0.26796331256628036,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 90.9090909090909,
+      "valid_f1": 92.86360740661621
+    },
+    {
+      "epoch": 23,
+      "train_loss": 0.3188711702823639,
+      "train_accuracy": 94.20289855072464,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 83.47249031066895
+    },
+    {
+      "epoch": 24,
+      "train_loss": 0.29572924971580505,
+      "train_accuracy": 93.71980676328502,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    },
+    {
+      "epoch": 25,
+      "train_loss": 0.2848617285490036,
+      "train_accuracy": 94.20289855072464,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.79929089546204
+    }
+  ],
   "dataset": {
     "format": "imagefolder_classification",
     "modality": "image",
@@ -38,103 +390,26 @@
       "rice bug": 3,
       "rice leaf roller": 4
     },
+    "class_counts": {
+      "Rice stem borer": 70,
+      "green leafhopper": 35,
+      "planthopper": 16,
+      "rice bug": 97,
+      "rice leaf roller": 77
+    },
     "num_classes": 5,
     "num_samples": 295,
-    "splits": null
+    "splits": {
+      "train": 207,
+      "valid": 44,
+      "test": 44
+    }
   },
   "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/resnet18_comparison_weights.pth",
-  "held_out_test_metrics": {
-    "accuracy": 59.01639344262295,
-    "precision": 57.17569589614868,
-    "recall": 52.2857129573822,
-    "f1": 53.37774157524109,
-    "f1_present_classes": 53.37774157524109,
-    "precision_present_classes": 57.17569589614868,
-    "recall_present_classes": 52.2857129573822,
-    "mse": 0.12771497666835785,
-    "rmse": 0.35737231373786926,
-    "evaluated_class_count": 5,
-    "metric_average": "macro",
-    "metric_scale": "percent",
-    "confusion_matrix": [
-      [
-        6,
-        0,
-        1,
-        5,
-        2
-      ],
-      [
-        1,
-        2,
-        0,
-        3,
-        1
-      ],
-      [
-        0,
-        0,
-        2,
-        1,
-        1
-      ],
-      [
-        0,
-        0,
-        0,
-        18,
-        2
-      ],
-      [
-        2,
-        4,
-        0,
-        2,
-        8
-      ]
-    ],
-    "split": "test",
-    "sample_count": 61,
-    "inference_latency_seconds": 0.3374478816986084,
-    "inference_latency_per_sample_seconds": 0.005531932486862433
-  },
   "training_complete": true,
-  "model_type": "resnet18_transfer_baseline",
-  "architecture": "ResNet-18",
-  "comparison_role": "fixed_resnet18_transfer_baseline",
-  "config": {
-    "num_layers": 3,
-    "filters": [
-      64,
-      16,
-      128
-    ],
-    "kernel_sizes": [
-      3,
-      3,
-      5
-    ],
-    "batch_norm": true,
-    "activation": "GELU",
-    "pooling": true,
-    "dropout": 0.2
-  },
-  "trained_config": {
-    "num_layers": 3,
-    "filters": [
-      64,
-      16,
-      128
-    ],
-    "kernel_sizes": [
-      3,
-      3,
-      5
-    ],
-    "batch_norm": true,
-    "activation": "GELU",
-    "pooling": true,
-    "dropout": 0.2
-  },
-  "transfer_model": "resnet18"
+  "bundle_id": "20261117T162516Z/model-resnet18-20261117T162516Z",
+  "bundle_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T162516Z/model-resnet18-20261117T162516Z",
+  "run_id": "20261117T162516Z",
+  "model_type": "resnet18_baseline",
+  "comparison_role": "fixed_resnet18_baseline"
 }

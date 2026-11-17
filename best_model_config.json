@@ -2,16 +2,17 @@
   "num_layers": 3,
   "filters": [
     64,
-    16,
+    128,
     128
   ],
   "kernel_sizes": [
     3,
     3,
-    5
+    3
   ],
   "batch_norm": true,
-  "activation": "GELU",
-  "pooling": true,
-  "dropout": 0.2
+  "activation": "ReLU",
+  "pooling": false,
+  "dropout": 0.4,
+  "block_type": "residual"
 }

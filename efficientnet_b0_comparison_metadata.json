@@ -1,212 +1,123 @@
 {
-  "schema_version": 1,
-  "num_classes": 9,
+  "schema_version": 2,
+  "num_classes": 5,
   "class_names": [
-    "Apple",
-    "Banana",
-    "Grapes",
-    "Kiwi",
-    "Mango",
-    "Orange",
-    "Pineapple",
-    "Sugerapple",
-    "Watermelon"
+    "Rice stem borer",
+    "green leafhopper",
+    "planthopper",
+    "rice bug",
+    "rice leaf roller"
   ],
   "config": {
-    "num_layers": 3,
+    "num_layers": 2,
     "filters": [
       32,
-      64,
-      128
+      64
     ],
     "kernel_sizes": [
       3,
-      5,
       3
     ],
     "batch_norm": true,
-    "activation": "GELU",
+    "activation": "ReLU",
     "pooling": true,
-    "dropout": 0.0
+    "dropout": 0.2
   },
   "trained_config": {
-    "num_layers": 3,
+    "num_layers": 2,
     "filters": [
       32,
-      64,
-      128
+      64
     ],
     "kernel_sizes": [
       3,
-      5,
       3
     ],
     "batch_norm": true,
-    "activation": "GELU",
+    "activation": "ReLU",
     "pooling": true,
-    "dropout": 0.0
+    "dropout": 0.2
   },
-  "config_hash": "fadb6bc03d4c4b1a",
-  "training_mode": "transfer_learning_resnet18",
+  "config_hash": "e446a9d0cdeab3aa",
+  "training_mode": "transfer_learning_efficientnet_b0",
+  "transfer_model": "efficientnet_b0",
   "seed": 42,
-  "epochs": 2,
-  "best_metrics": {
-    "accuracy": 76.34408602150538,
-    "precision": 72.21617102622986,
-    "recall": 72.08689451217651,
-    "f1": 71.08756303787231,
-    "mse": 0.03738417103886604,
-    "rmse": 0.19334986805915833
-  },
-  "dataset": {
-    "format": "roboflow_csv_classification",
-    "modality": "image",
-    "dataset_root": "/Users/mahathavivaanveer/Developer/NEUROFORGE/datasets/fruits dataset/fruits dataset/Fruits by YOLO/Fruits by YOLO",
-    "class_names": [
-      "Apple",
-      "Banana",
-      "Grapes",
-      "Kiwi",
-      "Mango",
-      "Orange",
-      "Pineapple",
-      "Sugerapple",
-      "Watermelon"
+  "epochs": 25,
+  "epochs_run": 13,
+  "best_epoch": 5,
+  "parameters": 4013953,
+  "trainable_parameters": 6405,
+  "training_seconds": 25.81904101371765,
+  "device": "mps",
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "weight_decay": 0.0001,
+    "scheduler": "CosineAnnealingLR",
+    "loss": "class-weighted cross-entropy",
+    "class_weights": [
+      0.5646,
+      1.1291,
+      2.3524,
+      0.4213,
+      0.5326
     ],
-    "class_to_idx": {
-      "Apple": 0,
-      "Banana": 1,
-      "Grapes": 2,
-      "Kiwi": 3,
-      "Mango": 4,
-      "Orange": 5,
-      "Pineapple": 6,
-      "Sugerapple": 7,
-      "Watermelon": 8
-    },
-    "num_classes": 9,
-    "num_samples": 2960,
-    "splits": {
-      "train": 2685,
-      "valid": 186,
-      "test": 89
-    },
-    "quality_report": {
-      "train": {
-        "source_rows": 2697,
-        "usable_rows": 2685,
-        "skipped_rows": 12,
-        "skipped_examples": [
-          {
-            "filename": "Image_4_jpg.rf.bb27af93c4193234d6c56ce43f7c00fb.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_66_jpg.rf.8dd66d698c416a5bec5821e20b36a89e.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "gettyimages-1134709612-612x612_jpg.rf.900ece69506fdb343c631d2619d4bde9.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_89_png.rf.0c3c45add41e2aa3daba35c1b8873170.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "gettyimages-1134709612-612x612_jpg.rf.1010da300ab818699b7be72b4bc6cb4a.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_66_jpg.rf.12b98cd670135e356fdff79810f942c2.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_4_jpg.rf.6bc3ea3ee80d8b9335b8fa62e812dc6a.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          },
-          {
-            "filename": "Image_89_png.rf.6f84b7c336eaaab72b1e516f3f53ec82.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_66_jpg.rf.7c1cab107d40445cee5125a128b1bf20.jpg",
-            "positive_class_count": 2,
-            "reason": "multiple_labels"
-          },
-          {
-            "filename": "Image_4_jpg.rf.e72fe4773c9435809b4bf40f135b33e9.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "valid": {
-        "source_rows": 187,
-        "usable_rows": 186,
-        "skipped_rows": 1,
-        "skipped_examples": [
-          {
-            "filename": "download-9-_jpeg.rf.ac086ac2b231135d97ce4c28ce1c4c84.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "test": {
-        "source_rows": 90,
-        "usable_rows": 89,
-        "skipped_rows": 1,
-        "skipped_examples": [
-          {
-            "filename": "download-90-_jpeg.rf.11c51b1b66635c8f955d5b75987dcb6f.jpg",
-            "positive_class_count": 0,
-            "reason": "no_label"
-          }
-        ]
-      },
-      "policy": "use single-label rows; skip rows with no label or multiple labels"
-    }
+    "selection_rule": "best validation macro F1 (accuracy tie-break)",
+    "early_stopping_patience": 8
   },
-  "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/efficientnet_b0_comparison_weights.pth",
-  "held_out_test_metrics": {
-    "accuracy": 74.15730337078652,
-    "precision": 69.9076235294342,
-    "recall": 65.3180181980133,
-    "f1": 66.35270118713379,
-    "f1_present_classes": 74.64678883552551,
-    "precision_present_classes": 78.64607572555542,
-    "recall_present_classes": 73.48276376724243,
-    "mse": 0.04224063456058502,
-    "rmse": 0.2055252641439438,
-    "evaluated_class_count": 8,
+  "evaluation_protocol": "train -> weights; valid -> checkpoint + early stopping; test -> evaluated once on the locked checkpoint",
+  "preprocessing": {
+    "modality": "image",
+    "resize": 256,
+    "center_crop": 224,
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "best_metrics": {
+    "accuracy": 88.63636363636364,
+    "precision": 93.03167462348938,
+    "recall": 90.666663646698,
+    "f1": 91.22058749198914,
+    "mse": 0.04603534936904907,
+    "rmse": 0.21455849707126617
+  },
+  "validation_metrics": {
+    "accuracy": 88.63636363636364,
+    "precision": 93.03167462348938,
+    "recall": 90.666663646698,
+    "f1": 91.22058749198914,
+    "f1_present_classes": 91.22058749198914,
+    "precision_present_classes": 93.03167462348938,
+    "recall_present_classes": 90.666663646698,
+    "mse": 0.04603534936904907,
+    "rmse": 0.21455849707126617,
+    "evaluated_class_count": 5,
     "metric_average": "macro",
     "metric_scale": "percent",
     "confusion_matrix": [
       [
-        9,
+        7,
         0,
         0,
         0,
-        1,
-        0,
-        0,
-        1,
-        0
+        3
       ],
       [
         0,
-        10,
+        5,
         0,
         0,
+        0
+      ],
+      [
         0,
         0,
         2,
@@ -216,89 +127,205 @@
       [
         0,
         0,
-        10,
         0,
-        0,
-        0,
-        1,
-        3,
+        15,
         0
       ],
       [
-        0,
-        0,
-        1,
-        11,
-        0,
-        0,
-        0,
-        1,
-        0
-      ],
-      [
-        0,
         0,
         0,
         0,
         2,
+        10
+      ]
+    ]
+  },
+  "held_out_test_metrics": {
+    "accuracy": 88.63636363636364,
+    "precision": 93.33332777023315,
+    "recall": 90.666663646698,
+    "f1": 91.31907224655151,
+    "f1_present_classes": 91.31907224655151,
+    "precision_present_classes": 93.33332777023315,
+    "recall_present_classes": 90.666663646698,
+    "mse": 0.045067887753248215,
+    "rmse": 0.21229198575019836,
+    "evaluated_class_count": 5,
+    "metric_average": "macro",
+    "metric_scale": "percent",
+    "confusion_matrix": [
+      [
+        7,
+        0,
+        0,
         1,
+        2
+      ],
+      [
+        0,
+        5,
         0,
         0,
         0
       ],
       [
-        1,
-        1,
-        1,
+        0,
+        0,
         2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        15,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
         2,
-        8,
-        0,
-        0,
-        0
-      ],
-      [
-        0,
-        2,
-        1,
-        0,
-        0,
-        0,
-        12,
-        0,
-        0
-      ],
-      [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
-      [
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1,
-        4
+        10
       ]
     ],
     "split": "test",
-    "sample_count": 89,
-    "inference_latency_seconds": 0.657329797744751,
-    "inference_latency_per_sample_seconds": 0.007385728064547764
+    "sample_count": 44,
+    "inference_latency_seconds": 0.299954891204834,
+    "inference_latency_per_sample_seconds": 0.006817156618291681
   },
+  "learning_curve": [
+    {
+      "epoch": 1,
+      "train_loss": 1.503217101097107,
+      "train_accuracy": 44.44444444444444,
+      "valid_accuracy": 81.81818181818183,
+      "valid_f1": 78.87121438980103
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.029529631137848,
+      "train_accuracy": 77.77777777777777,
+      "valid_accuracy": 79.54545454545455,
+      "valid_f1": 76.60453915596008
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.7775013148784637,
+      "train_accuracy": 88.40579710144928,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 89.30555582046509
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.5609711408615112,
+      "train_accuracy": 89.85507246376811,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 89.30555582046509
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.5069786161184311,
+      "train_accuracy": 89.3719806763285,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 91.22058749198914
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.4076402559876442,
+      "train_accuracy": 90.33816425120773,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 88.38297724723816
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.3402702212333679,
+      "train_accuracy": 92.27053140096618,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 88.29630017280579
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.2832297272980213,
+      "train_accuracy": 93.23671497584542,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 88.29630017280579
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.2821226082742214,
+      "train_accuracy": 93.71980676328502,
+      "valid_accuracy": 84.0909090909091,
+      "valid_f1": 86.78246736526489
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.23042308166623116,
+      "train_accuracy": 95.65217391304348,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.8995041847229
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.22635109722614288,
+      "train_accuracy": 95.65217391304348,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.8995041847229
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.21456576883792877,
+      "train_accuracy": 96.61835748792271,
+      "valid_accuracy": 86.36363636363636,
+      "valid_f1": 87.43354678153992
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.22002388164401054,
+      "train_accuracy": 97.58454106280193,
+      "valid_accuracy": 88.63636363636364,
+      "valid_f1": 89.8995041847229
+    }
+  ],
+  "dataset": {
+    "format": "imagefolder_classification",
+    "modality": "image",
+    "dataset_root": "/Users/mahathavivaanveer/Developer/NEUROFORGE/datasets/crop pest dataset/crop pest dataset",
+    "class_names": [
+      "Rice stem borer",
+      "green leafhopper",
+      "planthopper",
+      "rice bug",
+      "rice leaf roller"
+    ],
+    "class_to_idx": {
+      "Rice stem borer": 0,
+      "green leafhopper": 1,
+      "planthopper": 2,
+      "rice bug": 3,
+      "rice leaf roller": 4
+    },
+    "class_counts": {
+      "Rice stem borer": 70,
+      "green leafhopper": 35,
+      "planthopper": 16,
+      "rice bug": 97,
+      "rice leaf roller": 77
+    },
+    "num_classes": 5,
+    "num_samples": 295,
+    "splits": {
+      "train": 207,
+      "valid": 44,
+      "test": 44
+    }
+  },
+  "weights_path": "/Users/mahathavivaanveer/Developer/NEUROFORGE/efficientnet_b0_comparison_weights.pth",
   "training_complete": true,
-  "model_type": "efficientnet_b0_transfer_baseline",
-  "architecture": "EfficientNet-B0",
-  "transfer_model": "efficientnet_b0",
-  "comparison_role": "fixed_efficientnet_b0_transfer_baseline"
+  "bundle_id": "20261117T162450Z/model-efficientnet_b0-20261117T162450Z",
+  "bundle_dir": "/Users/mahathavivaanveer/Developer/NEUROFORGE/runs/20261117T162450Z/model-efficientnet_b0-20261117T162450Z",
+  "run_id": "20261117T162450Z",
+  "model_type": "efficientnet_b0_baseline",
+  "comparison_role": "fixed_efficientnet_b0_baseline"
 }

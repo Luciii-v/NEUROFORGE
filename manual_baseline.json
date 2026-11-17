@@ -1,5 +1,8 @@
 {
   "model_type": "manual_baseline",
+  "run_id": "20261117T162226Z",
+  "budget": "3 proxy epochs",
+  "evaluation_split": "valid",
   "config": {
     "num_layers": 2,
     "filters": [
@@ -15,62 +18,62 @@
     "pooling": true,
     "dropout": 0.2
   },
-  "accuracy": 40.98360655737705,
-  "precision": 39.356037974357605,
-  "recall": 36.85714304447174,
-  "f1": 37.39955425262451,
-  "f1_present_classes": 37.39955425262451,
-  "precision_present_classes": 39.356037974357605,
-  "recall_present_classes": 36.85714304447174,
-  "mse": 0.15524764358997345,
-  "rmse": 0.39401477575302124,
+  "accuracy": 11.363636363636363,
+  "precision": 13.015873730182648,
+  "recall": 20.666666328907013,
+  "f1": 9.287450462579727,
+  "f1_present_classes": 9.287450462579727,
+  "precision_present_classes": 13.015873730182648,
+  "recall_present_classes": 20.666666328907013,
+  "mse": 0.15991254150867462,
+  "rmse": 0.399890661239624,
   "evaluated_class_count": 5,
   "metric_average": "macro",
   "metric_scale": "percent",
   "confusion_matrix": [
     [
-      5,
       0,
-      1,
-      3,
-      5
-    ],
-    [
-      1,
-      2,
-      1,
-      3,
+      6,
+      4,
+      0,
       0
     ],
     [
+      0,
       2,
+      2,
+      1,
+      0
+    ],
+    [
       0,
       1,
+      1,
       0,
-      1
+      0
     ],
     [
+      0,
+      7,
+      6,
+      2,
+      0
+    ],
+    [
+      1,
       5,
-      2,
-      2,
-      9,
-      2
-    ],
-    [
-      4,
-      0,
-      0,
-      4,
-      8
+      5,
+      1,
+      0
     ]
   ],
   "parameters": 19909,
-  "training_time_seconds": 2.4039618968963623,
-  "inference_latency_seconds": 0.1775519847869873,
-  "inference_latency_per_sample_seconds": 0.0029106882751965134,
+  "training_time_seconds": 2.16853404045105,
+  "inference_latency_seconds": 0.10228419303894043,
+  "inference_latency_per_sample_seconds": 0.0023246407508850098,
   "num_classes": 5,
   "seed": 42,
   "config_hash": "e446a9d0cdeab3aa",
-  "score": 39.19052089267677,
+  "score": 10.901466859867442,
   "status": "evaluated"
 }
